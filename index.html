@@ -6,6 +6,7 @@
     <title>FracShr | Fractional Real Estate Investment</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.css">
     <style>
         :root {
             --primary: #4a6bff;
@@ -644,11 +645,13 @@
             background-color: var(--card-bg);
             border-radius: 12px;
             width: 90%;
-            max-width: 500px;
+            max-width: 800px;
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             transform: translateY(-20px);
             transition: transform 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .modal.show .modal-content {
@@ -756,6 +759,111 @@
             font-size: 0.9rem;
         }
 
+        /* Navigation Sidebar */
+        .nav-sidebar {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--card-bg);
+            padding: 15px 10px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .nav-item {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .nav-item:hover:not(.active) {
+            background-color: var(--bg);
+        }
+
+        .nav-tooltip {
+            position: absolute;
+            left: 50px;
+            background-color: var(--card-bg);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .nav-item:hover .nav-tooltip {
+            opacity: 1;
+            left: 55px;
+        }
+
+        /* ROI Chart Modal */
+        .roi-chart-container {
+            margin-top: 30px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            color: var(--text);
+        }
+
+        .chart-period {
+            display: flex;
+            gap: 10px;
+        }
+
+        .period-btn {
+            padding: 5px 10px;
+            border-radius: 4px;
+            background-color: var(--bg);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .period-btn.active {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        @media (max-width: 1200px) {
+            .nav-sidebar {
+                left: 10px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .nav-sidebar {
+                display: none;
+            }
+        }
+
         @media (max-width: 768px) {
             .hero h1 {
                 font-size: 2.2rem;
@@ -794,6 +902,11 @@
             .contact-form {
                 padding: 20px;
             }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
         }
 
         /* Smooth scrolling and animations */
@@ -822,6 +935,34 @@
     <!-- Token Animation Background -->
     <div class="token-animation" id="tokenAnimation"></div>
 
+    <!-- Navigation Sidebar -->
+    <div class="nav-sidebar" id="navSidebar">
+        <div class="nav-item" data-section="hero" title="Home">
+            <i class="fas fa-home"></i>
+            <span class="nav-tooltip">Home</span>
+        </div>
+        <div class="nav-item" data-section="properties" title="Properties">
+            <i class="fas fa-building"></i>
+            <span class="nav-tooltip">Properties</span>
+        </div>
+        <div class="nav-item" data-section="how-it-works" title="How It Works">
+            <i class="fas fa-cogs"></i>
+            <span class="nav-tooltip">How It Works</span>
+        </div>
+        <div class="nav-item" data-section="benefits" title="Benefits">
+            <i class="fas fa-star"></i>
+            <span class="nav-tooltip">Benefits</span>
+        </div>
+        <div class="nav-item" data-section="map" title="Locations">
+            <i class="fas fa-map-marked-alt"></i>
+            <span class="nav-tooltip">Locations</span>
+        </div>
+        <div class="nav-item" data-section="contact" title="Contact">
+            <i class="fas fa-envelope"></i>
+            <span class="nav-tooltip">Contact</span>
+        </div>
+    </div>
+
     <!-- Header -->
     <header class="blur-effect">
         <div class="container">
@@ -846,7 +987,7 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="hero">
+    <section class="hero" id="hero">
         <div class="container fade-in">
             <h1>Invest in UAE Real Estate with Just a Few Clicks</h1>
             <p>FracShr makes real estate investment accessible to everyone by tokenizing premium properties in the UAE. Own a fraction, earn rental income, and build your wealth effortlessly.</p>
@@ -897,7 +1038,7 @@
                             </div>
                         </div>
                         <div class="property-actions">
-                            <button class="btn btn-primary btn-small invest-btn">
+                            <button class="btn btn-primary btn-small invest-btn" data-property="Luxury Beachfront Villa">
                                 <i class="fas fa-coins"></i> Invest Now
                             </button>
                             <button class="favorite-btn">
@@ -935,7 +1076,7 @@
                             </div>
                         </div>
                         <div class="property-actions">
-                            <button class="btn btn-primary btn-small invest-btn">
+                            <button class="btn btn-primary btn-small invest-btn" data-property="Premium Downtown Apartment">
                                 <i class="fas fa-coins"></i> Invest Now
                             </button>
                             <button class="favorite-btn">
@@ -973,7 +1114,7 @@
                             </div>
                         </div>
                         <div class="property-actions">
-                            <button class="btn btn-primary btn-small invest-btn">
+                            <button class="btn btn-primary btn-small invest-btn" data-property="Commercial Office Tower">
                                 <i class="fas fa-coins"></i> Invest Now
                             </button>
                             <button class="favorite-btn">
@@ -1011,7 +1152,7 @@
                             </div>
                         </div>
                         <div class="property-actions">
-                            <button class="btn btn-primary btn-small invest-btn">
+                            <button class="btn btn-primary btn-small invest-btn" data-property="Waterfront Residence">
                                 <i class="fas fa-coins"></i> Invest Now
                             </button>
                             <button class="favorite-btn">
@@ -1049,7 +1190,7 @@
                             </div>
                         </div>
                         <div class="property-actions">
-                            <button class="btn btn-primary btn-small invest-btn">
+                            <button class="btn btn-primary btn-small invest-btn" data-property="Modern Family Townhouse">
                                 <i class="fas fa-coins"></i> Invest Now
                             </button>
                             <button class="favorite-btn">
@@ -1087,7 +1228,7 @@
                             </div>
                         </div>
                         <div class="property-actions">
-                            <button class="btn btn-primary btn-small invest-btn">
+                            <button class="btn btn-primary btn-small invest-btn" data-property="Desert Oasis Resort">
                                 <i class="fas fa-coins"></i> Invest Now
                             </button>
                             <button class="favorite-btn">
@@ -1101,7 +1242,7 @@
     </section>
 
     <!-- How It Works Section -->
-    <section class="section how-it-works">
+    <section class="section how-it-works" id="how-it-works">
         <div class="container">
             <div class="section-title fade-in">
                 <h2>How FracShr Works</h2>
@@ -1155,7 +1296,7 @@
     </section>
 
     <!-- Why Not Blockchain Section -->
-    <section class="section">
+    <section class="section" id="benefits">
         <div class="container">
             <div class="section-title fade-in">
                 <h2>Why Our Proprietary Tokens (Not Blockchain)</h2>
@@ -1254,7 +1395,7 @@
     </section>
 
     <!-- Map Section -->
-    <section class="section">
+    <section class="section" id="map">
         <div class="container">
             <div class="section-title fade-in">
                 <h2>Our Properties Across UAE</h2>
@@ -1323,7 +1464,7 @@
         </div>
     </section>
 
-    <!-- Modal -->
+    <!-- Contact Modal -->
     <div class="modal" id="contactModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1358,6 +1499,27 @@
         </div>
     </div>
 
+    <!-- ROI Chart Modal -->
+    <div class="modal" id="roiModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="roiModalTitle">Historical ROI</h3>
+                <button class="close-btn" id="closeRoiModal">&times;</button>
+            </div>
+            <div class="roi-chart-container">
+                <div class="chart-header">
+                    <h4 class="chart-title">Monthly Return on Investment</h4>
+                    <div class="chart-period">
+                        <button class="period-btn active" data-period="6">6M</button>
+                        <button class="period-btn" data-period="12">1Y</button>
+                        <button class="period-btn" data-period="24">2Y</button>
+                    </div>
+                </div>
+                <canvas id="roiChart"></canvas>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer>
         <div class="container">
@@ -1385,6 +1547,7 @@
     </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
     <script>
         // Theme Toggle
         const themeToggle = document.getElementById('themeToggle');
@@ -1411,7 +1574,7 @@
 
         // Token Animation
         const tokenAnimation = document.getElementById('tokenAnimation');
-        const tokensCount = 50; // Increased number of tokens
+        const tokensCount = 50;
 
         for (let i = 0; i < tokensCount; i++) {
             const token = document.createElement('div');
@@ -1422,7 +1585,7 @@
             const top = Math.random() * 100;
             
             // Random size
-            const size = 15 + Math.random() * 25; // Larger tokens
+            const size = 15 + Math.random() * 25;
             
             // Random animation duration
             const duration = 10 + Math.random() * 20;
@@ -1441,7 +1604,7 @@
             token.style.transform = `rotate(${Math.random() * 360}deg)`;
             
             // Random opacity
-            token.style.opacity = 0.4 + Math.random() * 0.5; // More visible
+            token.style.opacity = 0.4 + Math.random() * 0.5;
             
             tokenAnimation.appendChild(token);
         }
@@ -1465,18 +1628,28 @@
 
         // Modal Handling
         const contactModal = document.getElementById('contactModal');
+        const roiModal = document.getElementById('roiModal');
         const sellPropertyBtn = document.getElementById('sellPropertyBtn');
         const sellPropertyBtn2 = document.getElementById('sellPropertyBtn2');
         const investNowBtn = document.getElementById('investNowBtn');
         const closeModal = document.getElementById('closeModal');
+        const closeRoiModal = document.getElementById('closeRoiModal');
 
         const openModal = () => {
             contactModal.classList.add('show');
             document.body.style.overflow = 'hidden';
         };
 
+        const openRoiModal = (propertyName) => {
+            document.getElementById('roiModalTitle').textContent = `${propertyName} - Historical ROI`;
+            roiModal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+            updateChart(6); // Default to 6 months
+        };
+
         const closeModalFunc = () => {
             contactModal.classList.remove('show');
+            roiModal.classList.remove('show');
             document.body.style.overflow = '';
         };
 
@@ -1496,10 +1669,17 @@
         });
 
         closeModal.addEventListener('click', closeModalFunc);
+        closeRoiModal.addEventListener('click', closeModalFunc);
 
         // Close modal when clicking outside
         contactModal.addEventListener('click', (e) => {
             if (e.target === contactModal) {
+                closeModalFunc();
+            }
+        });
+
+        roiModal.addEventListener('click', (e) => {
+            if (e.target === roiModal) {
                 closeModalFunc();
             }
         });
@@ -1525,9 +1705,7 @@
             form.reset();
             
             // Close modal if it's open
-            if (form === modalContactForm) {
-                closeModalFunc();
-            }
+            closeModalFunc();
         };
 
         contactForm.addEventListener('submit', (e) => handleFormSubmit(contactForm, e));
@@ -1551,13 +1729,14 @@
             });
         });
 
-        // Invest Now Buttons
+        // Invest Now Buttons - Open ROI Modal
         const investButtons = document.querySelectorAll('.invest-btn');
 
         investButtons.forEach(button => {
             button.addEventListener('click', (e) => {
                 e.preventDefault();
-                openModal();
+                const propertyName = button.getAttribute('data-property');
+                openRoiModal(propertyName);
             });
         });
 
@@ -1638,6 +1817,137 @@
         // Fit map to show all markers
         const markerGroup = new L.featureGroup(properties.map(p => L.marker(p.location)));
         propertyMap.fitBounds(markerGroup.getBounds().pad(0.2));
+
+        // Navigation Sidebar
+        const navSidebar = document.getElementById('navSidebar');
+        const navItems = document.querySelectorAll('.nav-item');
+
+        // Update active nav item based on scroll position
+        const updateActiveNavItem = () => {
+            const sections = document.querySelectorAll('section');
+            let currentSection = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                
+                if (window.scrollY >= sectionTop - 200 && window.scrollY < sectionTop + sectionHeight - 200) {
+                    currentSection = section.id;
+                }
+            });
+            
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-section') === currentSection) {
+                    item.classList.add('active');
+                }
+            });
+        };
+
+        // Scroll to section when nav item is clicked
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const sectionId = item.getAttribute('data-section');
+                const section = document.getElementById(sectionId);
+                
+                if (section) {
+                    window.scrollTo({
+                        top: section.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        window.addEventListener('scroll', updateActiveNavItem);
+        window.addEventListener('load', updateActiveNavItem);
+
+        // ROI Chart
+        const roiChartCtx = document.getElementById('roiChart').getContext('2d');
+        let roiChart;
+
+        // Generate random ROI data
+        const generateRoiData = (months) => {
+            const data = [];
+            const labels = [];
+            const currentDate = new Date();
+            
+            for (let i = months - 1; i >= 0; i--) {
+                const date = new Date(currentDate);
+                date.setMonth(date.getMonth() - i);
+                labels.push(date.toLocaleString('default', { month: 'short', year: 'numeric' }));
+                
+                // Generate random ROI between 5% and 10% with some variation
+                const baseRoi = 7 + Math.random() * 3;
+                const variation = (Math.random() - 0.5) * 2;
+                data.push((baseRoi + variation).toFixed(2));
+            }
+            
+            return { labels, data };
+        };
+
+        // Update chart based on selected period
+        const updateChart = (months) => {
+            const { labels, data } = generateRoiData(months);
+            
+            if (roiChart) {
+                roiChart.data.labels = labels;
+                roiChart.data.datasets[0].data = data;
+                roiChart.update();
+            } else {
+                roiChart = new Chart(roiChartCtx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'ROI (%)',
+                            data: data,
+                            borderColor: '#4a6bff',
+                            backgroundColor: 'rgba(74, 107, 255, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `ROI: ${context.parsed.y}%`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                ticks: {
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        };
+
+        // Period button click handlers
+        const periodButtons = document.querySelectorAll('.period-btn');
+        periodButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                periodButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                const months = parseInt(button.getAttribute('data-period'));
+                updateChart(months);
+            });
+        });
     </script>
 </body>
 </html>
