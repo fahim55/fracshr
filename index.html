@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FracShr - Fractional Real Estate Investment</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
+    <style>
+        :root {
+            --primary: #4a6bff;
+            --secondary: #6c5ce7;
+            --accent: #00cec9;
+            --text: #2d3436;
+            --bg: #f5f6fa;
+            --card-bg: #ffffff;
+            --border: #dfe6e9;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --inverse-text: #f5f6fa;
+            --inverse-bg: #2d3436;
+        }
+
+        .dark-mode {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --accent: #00cec9;
+            --text: #f5f6fa;
+            --bg: #1e272e;
+            --card-bg: #2d3436;
+            --border: #636e72;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --inverse-text: #2d3436;
+            --inverse-bg: #f5f6fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Background Animation */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(74, 107, 255, 0.2);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* Header Styles */
+        header {
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .company-name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .tagline {
+            font-size: 0.8rem;
+            color: var(--text);
+            opacity: 0.8;
+            letter-spacing: 0.5px;
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--border);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: var(--card-bg);
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 5%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(74, 107, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 107, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* Sections */
+        section {
+            padding: 5rem 5%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* How It Works */
+        .how-it-works {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 30px var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .steps-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .step {
+            flex: 1;
+            min-width: 250px;
+            padding: 2rem;
+            background-color: var(--bg);
+            border-radius: 15px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            transition: transform 0.3s ease;
+        }
+
+        .step:hover {
+            transform: translateY(-10px);
+        }
+
+        .step-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .step h3 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        /* Properties Section */
+        .properties-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .property-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .property-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px var(--shadow);
+        }
+
+        .property-image {
+            height: 250px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .property-details {
+            padding: 1.5rem;
+        }
+
+        .property-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .property-location {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text);
+            opacity: 0.8;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .price-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .token-price, .full-price {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .price-label {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .price-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .token-price .price-value {
+            color: var(--accent);
+        }
+
+        .progress-container {
+            margin: 1.5rem 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 4px;
+            width: 0;
+            transition: width 1s ease;
+        }
+
+        .invest-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .invest-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* Map Section */
+        .map-container {
+            height: 500px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px var(--shadow);
+            margin-top: 2rem;
+        }
+
+        #propertyMap {
+            height: 100%;
+            width: 100%;
+        }
+
+        /* Options Section */
+        .options-container {
+            display: flex;
+            gap: 2rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .option-card {
+            flex: 1;
+            min-width: 300px;
+            padding: 2.5rem;
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .option-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .option-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .option-card h3 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        /* Contact Form */
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background-color: var(--bg);
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .submit-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--card-bg);
+            padding: 3rem 5%;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .footer-logo .logo {
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .steps-container, .options-container {
+                flex-direction: column;
+            }
+
+            .properties-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .company-name {
+                font-size: 1.5rem;
+            }
+
+            .logo {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Scroll animations */
+        [data-aos] {
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        [data-aos="fade-up"] {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        [data-aos="fade-up"].aos-animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        [data-aos="fade-in"] {
+            opacity: 0;
+        }
+
+        [data-aos="fade-in"].aos-animate {
+            opacity: 1;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="logo-container">
+            <div class="logo">FS</div>
+            <div class="logo-text">
+                <div class="company-name">FracShr</div>
+                <div class="tagline">Fractional Sharing Of Real Estate Property Made Easy</div>
+            </div>
+        </div>
+        <div class="toggle-container">
+            <span><i class="fas fa-sun"></i></span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="theme-toggle">
+                <span class="slider"></span>
+            </label>
+            <span><i class="fas fa-moon"></i></span>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content" data-aos="fade-up">
+            <h1>Invest in UAE Real Estate with Just a Few Clicks</h1>
+            <p>FracShr makes premium real estate investments accessible to everyone through fractional ownership with guaranteed monthly returns.</p>
+            <div class="cta-buttons">
+                <button class="btn btn-primary">Browse Properties</button>
+                <button class="btn btn-secondary" id="sellPropertyBtn">Sell Your Property</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works">
+        <h2 class="section-title" data-aos="fade-up">How It Works</h2>
+        <div class="how-it-works" data-aos="fade-up">
+            <div class="steps-container">
+                <div class="step" data-aos="fade-up" data-aos-delay="100">
+                    <div class="step-icon">
+                        <i class="fas fa-search-dollar"></i>
+                    </div>
+                    <h3>1. Property Acquisition</h3>
+                    <p>Our experts identify and acquire high-potential real estate properties in prime UAE locations.</p>
+                </div>
+                <div class="step" data-aos="fade-up" data-aos-delay="200">
+                    <div class="step-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3>2. Value Enhancement</h3>
+                    <p>We upgrade and optimize the property to maximize its rental income potential and overall value.</p>
+                </div>
+                <div class="step" data-aos="fade-up" data-aos-delay="300">
+                    <div class="step-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <h3>3. Tokenization</h3>
+                    <p>The property is divided into digital tokens (not blockchain-based) that represent fractional ownership.</p>
+                </div>
+                <div class="step" data-aos="fade-up" data-aos-delay="400">
+                    <div class="step-icon">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                    <h3>4. Investor Distribution</h3>
+                    <p>Tokens are offered to investors on our platform, with FracShr retaining property rights.</p>
+                </div>
+                <div class="step" data-aos="fade-up" data-aos-delay="500">
+                    <div class="step-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>5. Profit Sharing</h3>
+                    <p>Rental income is distributed monthly to token holders based on their ownership percentage.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Properties -->
+    <section id="properties">
+        <h2 class="section-title" data-aos="fade-up">Featured Properties</h2>
+        <div class="properties-grid">
+            <!-- Property 1 -->
+            <div class="property-card" data-aos="fade-up">
+                <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Luxury Villa" class="property-image">
+                <div class="property-details">
+                    <h3 class="property-title">Luxury Villa - Palm Jumeirah</h3>
+                    <div class="property-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Palm Jumeirah, Dubai</span>
+                    </div>
+                    <div class="price-container">
+                        <div class="token-price">
+                            <span class="price-label">Token Price</span>
+                            <span class="price-value">AED 5,000</span>
+                        </div>
+                        <div class="full-price">
+                            <span class="price-label">Property Value</span>
+                            <span class="price-value">AED 8,500,000</span>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Funded</span>
+                            <span>78%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 78%"></div>
+                        </div>
+                    </div>
+                    <button class="invest-btn">Invest Now</button>
+                </div>
+            </div>
+
+            <!-- Property 2 -->
+            <div class="property-card" data-aos="fade-up" data-aos-delay="100">
+                <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Modern Apartment" class="property-image">
+                <div class="property-details">
+                    <h3 class="property-title">Modern Apartment - Downtown</h3>
+                    <div class="property-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Downtown Dubai</span>
+                    </div>
+                    <div class="price-container">
+                        <div class="token-price">
+                            <span class="price-label">Token Price</span>
+                            <span class="price-value">AED 3,500</span>
+                        </div>
+                        <div class="full-price">
+                            <span class="price-label">Property Value</span>
+                            <span class="price-value">AED 3,200,000</span>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Funded</span>
+                            <span>92%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 92%"></div>
+                        </div>
+                    </div>
+                    <button class="invest-btn">Invest Now</button>
+                </div>
+            </div>
+
+            <!-- Property 3 -->
+            <div class="property-card" data-aos="fade-up" data-aos-delay="200">
+                <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Beachfront Villa" class="property-image">
+                <div class="property-details">
+                    <h3 class="property-title">Beachfront Villa - JBR</h3>
+                    <div class="property-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Jumeirah Beach Residence</span>
+                    </div>
+                    <div class="price-container">
+                        <div class="token-price">
+                            <span class="price-label">Token Price</span>
+                            <span class="price-value">AED 7,500</span>
+                        </div>
+                        <div class="full-price">
+                            <span class="price-label">Property Value</span>
+                            <span class="price-value">AED 12,000,000</span>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Funded</span>
+                            <span>65%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 65%"></div>
+                        </div>
+                    </div>
+                    <button class="invest-btn">Invest Now</button>
+                </div>
+            </div>
+
+            <!-- Property 4 -->
+            <div class="property-card" data-aos="fade-up">
+                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Penthouse" class="property-image">
+                <div class="property-details">
+                    <h3 class="property-title">Luxury Penthouse - Marina</h3>
+                    <div class="property-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Dubai Marina</span>
+                    </div>
+                    <div class="price-container">
+                        <div class="token-price">
+                            <span class="price-label">Token Price</span>
+                            <span class="price-value">AED 6,200</span>
+                        </div>
+                        <div class="full-price">
+                            <span class="price-label">Property Value</span>
+                            <span class="price-value">AED 9,800,000</span>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Funded</span>
+                            <span>84%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 84%"></div>
+                        </div>
+                    </div>
+                    <button class="invest-btn">Invest Now</button>
+                </div>
+            </div>
+
+            <!-- Property 5 -->
+            <div class="property-card" data-aos="fade-up" data-aos-delay="100">
+                <img src="https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Townhouse" class="property-image">
+                <div class="property-details">
+                    <h3 class="property-title">Family Townhouse - Arabian Ranches</h3>
+                    <div class="property-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Arabian Ranches, Dubai</span>
+                    </div>
+                    <div class="price-container">
+                        <div class="token-price">
+                            <span class="price-label">Token Price</span>
+                            <span class="price-value">AED 4,800</span>
+                        </div>
+                        <div class="full-price">
+                            <span class="price-label">Property Value</span>
+                            <span class="price-value">AED 5,500,000</span>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Funded</span>
+                            <span>71%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 71%"></div>
+                        </div>
+                    </div>
+                    <button class="invest-btn">Invest Now</button>
+                </div>
+            </div>
+
+            <!-- Property 6 -->
+            <div class="property-card" data-aos="fade-up" data-aos-delay="200">
+                <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Commercial Space" class="property-image">
+                <div class="property-details">
+                    <h3 class="property-title">Commercial Space - Business Bay</h3>
+                    <div class="property-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Business Bay, Dubai</span>
+                    </div>
+                    <div class="price-container">
+                        <div class="token-price">
+                            <span class="price-label">Token Price</span>
+                            <span class="price-value">AED 8,500</span>
+                        </div>
+                        <div class="full-price">
+                            <span class="price-label">Property Value</span>
+                            <span class="price-value">AED 15,200,000</span>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Funded</span>
+                            <span>58%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 58%"></div>
+                        </div>
+                    </div>
+                    <button class="invest-btn">Invest Now</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Property Map -->
+    <section id="property-map">
+        <h2 class="section-title" data-aos="fade-up">Our Properties Map</h2>
+        <div class="map-container" data-aos="fade-up">
+            <div id="propertyMap"></div>
+        </div>
+    </section>
+
+    <!-- Options Section -->
+    <section id="options">
+        <h2 class="section-title" data-aos="fade-up">Choose Your Path</h2>
+        <div class="options-container">
+            <div class="option-card" data-aos="fade-up">
+                <div class="option-icon">
+                    <i class="fas fa-hand-holding-usd"></i>
+                </div>
+                <h3>For Buyers</h3>
+                <p>Invest in fractional ownership of premium UAE real estate with small amounts of capital. Enjoy guaranteed monthly rental returns without the hassle of property management. Diversify your portfolio across multiple properties with just a few clicks.</p>
+                <button class="btn btn-primary" style="margin-top: 1.5rem;">Start Investing</button>
+            </div>
+            <div class="option-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="option-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <h3>For Sellers</h3>
+                <p>Sell your property faster and safer with FracShr. We handle everything from valuation to tokenization and investor distribution. Get fair market value without the traditional selling hassles while we manage the entire process for you.</p>
+                <button class="btn btn-primary" style="margin-top: 1.5rem;" id="sellPropertyBtn2">Sell Your Property</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <h2 class="section-title" data-aos="fade-up">Get In Touch</h2>
+        <div class="contact-form" data-aos="fade-up">
+            <form id="contactForm">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" class="form-control" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo" data-aos="fade-up">
+            <div class="logo">FS</div>
+            <h2 class="company-name">FracShr</h2>
+            <p class="tagline">Fractional Sharing Of Real Estate Property Made Easy</p>
+        </div>
+        <div class="footer-links" data-aos="fade-up">
+            <a href="#how-it-works">How It Works</a>
+            <a href="#properties">Properties</a>
+            <a href="#property-map">Our Map</a>
+            <a href="#options">Options</a>
+            <a href="#contact">Contact</a>
+        </div>
+        <div class="social-links" data-aos="fade-up">
+            <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+        </div>
+        <p class="copyright" data-aos="fade-up">© 2023 FracShr. All rights reserved.</p>
+    </footer>
+
+    <!-- Sell Property Modal -->
+    <div class="modal" id="sellPropertyModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Sell Your Property With FracShr</h2>
+            <p>Fill out the form below and our team will contact you within 24 hours to discuss how we can help you sell your property quickly and safely.</p>
+            <form id="sellPropertyForm" style="margin-top: 2rem;">
+                <div class="form-group">
+                    <label for="seller-name">Name</label>
+                    <input type="text" id="seller-name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="seller-email">Email</label>
+                    <input type="email" id="seller-email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="seller-phone">Phone</label>
+                    <input type="tel" id="seller-phone" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="property-address">Property Address</label>
+                    <input type="text" id="property-address" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="property-type">Property Type</label>
+                    <select id="property-type" class="form-control" required>
+                        <option value="">Select Property Type</option>
+                        <option value="villa">Villa</option>
+                        <option value="apartment">Apartment</option>
+                        <option value="townhouse">Townhouse</option>
+                        <option value="commercial">Commercial</option>
+                        <option value="land">Land</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">Submit Property Details</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', () => {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        });
+
+        // Check for saved theme preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            themeToggle.checked = true;
+        }
+
+        // Modal Handling
+        const modal = document.getElementById('sellPropertyModal');
+        const sellBtns = document.querySelectorAll('#sellPropertyBtn, #sellPropertyBtn2');
+        const closeModal = document.querySelector('.close-modal');
+
+        sellBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        closeModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Form Submission
+        document.getElementById('contactForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+            
+            // In a real implementation, you would send this data to your server
+            console.log('Contact Form Submitted:', { name, email, message });
+            alert('Thank you for your message! We will contact you soon.');
+            e.target.reset();
+        });
+
+        document.getElementById('sellPropertyForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('seller-name').value;
+            const email = document.getElementById('seller-email').value;
+            const phone = document.getElementById('seller-phone').value;
+            const address = document.getElementById('property-address').value;
+            const type = document.getElementById('property-type').value;
+            
+            // In a real implementation, you would send this data to your server
+            console.log('Property Submission:', { name, email, phone, address, type });
+            alert('Thank you for your property details! Our team will contact you within 24 hours.');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            e.target.reset();
+        });
+
+        // Property Map
+        const map = L.map('propertyMap').setView([25.2048, 55.2708], 11); // Dubai coordinates
+
+        // Using OpenStreetMap instead of Google Maps
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Add markers for properties
+        const properties = [
+            { name: "Luxury Villa - Palm Jumeirah", lat: 25.1185, lng: 55.1388 },
+            { name: "Modern Apartment - Downtown", lat: 25.1972, lng: 55.2744 },
+            { name: "Beachfront Villa - JBR", lat: 25.0784, lng: 55.1374 },
+            { name: "Luxury Penthouse - Marina", lat: 25.0764, lng: 55.1386 },
+            { name: "Family Townhouse - Arabian Ranches", lat: 25.0392, lng: 55.2238 },
+            { name: "Commercial Space - Business Bay", lat: 25.1867, lng: 55.2649 }
+        ];
+
+        properties.forEach(property => {
+            L.marker([property.lat, property.lng]).addTo(map)
+                .bindPopup(property.name);
+        });
+
+        // Background Animation
+        const particlesContainer = document.getElementById('particles');
+        const particleCount = 30;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            
+            // Random size between 5px and 15px
+            const size = Math.random() * 10 + 5;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            
+            // Random position
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            
+            // Random opacity
+            particle.style.opacity = Math.random() * 0.5 + 0.1;
+            
+            // Random animation duration and delay
+            const duration = Math.random() * 20 + 10;
+            const delay = Math.random() * 5;
+            particle.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
+            
+            particlesContainer.appendChild(particle);
+        }
+
+        // Scroll Animation
+        const animateOnScroll = () => {
+            const elements = document.querySelectorAll('[data-aos]');
+            elements.forEach(element => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                
+                if (elementPosition < windowHeight - 100) {
+                    element.classList.add('aos-animate');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', animateOnScroll);
+        window.addEventListener('load', animateOnScroll);
+    </script>
+</body>
+</html>
