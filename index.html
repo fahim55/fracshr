@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FracShr | Fractional Real Estate Investment</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
     <style>
         :root {
             --primary: #4a6bff;
@@ -69,7 +70,7 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            opacity: 0.1;
+            opacity: 0.2;
             pointer-events: none;
         }
 
@@ -358,6 +359,19 @@
             font-size: 0.9rem;
         }
 
+        .property-roi {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .roi-icon {
+            font-size: 1.1rem;
+        }
+
         .funding-progress {
             margin-bottom: 15px;
         }
@@ -515,12 +529,37 @@
             overflow: hidden;
             box-shadow: var(--shadow);
             margin-top: 50px;
+            position: relative;
         }
 
-        .map-frame {
+        #propertyMap {
             width: 100%;
             height: 100%;
-            border: none;
+        }
+
+        .map-legend {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--card-bg);
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 8px;
         }
 
         .contact-form {
@@ -844,6 +883,10 @@
                             <span class="token-price">AED 25,000 per token</span>
                             <span class="full-price">AED 12,500,000 full price</span>
                         </div>
+                        <div class="property-roi">
+                            <i class="fas fa-chart-line roi-icon"></i>
+                            Expected ROI: 8.5% monthly
+                        </div>
                         <div class="funding-progress">
                             <div class="progress-bar">
                                 <div class="progress-fill" style="width: 78%"></div>
@@ -877,6 +920,10 @@
                         <div class="property-pricing">
                             <span class="token-price">AED 15,000 per token</span>
                             <span class="full-price">AED 3,750,000 full price</span>
+                        </div>
+                        <div class="property-roi">
+                            <i class="fas fa-chart-line roi-icon"></i>
+                            Expected ROI: 7.2% monthly
                         </div>
                         <div class="funding-progress">
                             <div class="progress-bar">
@@ -912,6 +959,10 @@
                             <span class="token-price">AED 50,000 per token</span>
                             <span class="full-price">AED 50,000,000 full price</span>
                         </div>
+                        <div class="property-roi">
+                            <i class="fas fa-chart-line roi-icon"></i>
+                            Expected ROI: 6.8% monthly
+                        </div>
                         <div class="funding-progress">
                             <div class="progress-bar">
                                 <div class="progress-fill" style="width: 65%"></div>
@@ -945,6 +996,10 @@
                         <div class="property-pricing">
                             <span class="token-price">AED 30,000 per token</span>
                             <span class="full-price">AED 9,000,000 full price</span>
+                        </div>
+                        <div class="property-roi">
+                            <i class="fas fa-chart-line roi-icon"></i>
+                            Expected ROI: 7.5% monthly
                         </div>
                         <div class="funding-progress">
                             <div class="progress-bar">
@@ -980,6 +1035,10 @@
                             <span class="token-price">AED 18,000 per token</span>
                             <span class="full-price">AED 2,700,000 full price</span>
                         </div>
+                        <div class="property-roi">
+                            <i class="fas fa-chart-line roi-icon"></i>
+                            Expected ROI: 6.5% monthly
+                        </div>
                         <div class="funding-progress">
                             <div class="progress-bar">
                                 <div class="progress-fill" style="width: 83%"></div>
@@ -1013,6 +1072,10 @@
                         <div class="property-pricing">
                             <span class="token-price">AED 75,000 per token</span>
                             <span class="full-price">AED 37,500,000 full price</span>
+                        </div>
+                        <div class="property-roi">
+                            <i class="fas fa-chart-line roi-icon"></i>
+                            Expected ROI: 9.2% monthly
                         </div>
                         <div class="funding-progress">
                             <div class="progress-bar">
@@ -1198,8 +1261,21 @@
                 <p>Explore our growing portfolio of premium real estate investments</p>
             </div>
             <div class="map-container fade-in">
-                <!-- Using OpenStreetMap as an alternative to Google Maps -->
-                <iframe class="map-frame" src="https://www.openstreetmap.org/export/embed.html?bbox=54.3000,24.3000,55.6000,25.5000&layer=mapnik&marker=25.2048,55.2708" frameborder="0"></iframe>
+                <div id="propertyMap"></div>
+                <div class="map-legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #4a6bff;"></div>
+                        <span>Residential</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #00d4ff;"></div>
+                        <span>Commercial</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #ff6b6b;"></div>
+                        <span>Luxury</span>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -1308,6 +1384,7 @@
         </div>
     </footer>
 
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
     <script>
         // Theme Toggle
         const themeToggle = document.getElementById('themeToggle');
@@ -1334,7 +1411,7 @@
 
         // Token Animation
         const tokenAnimation = document.getElementById('tokenAnimation');
-        const tokensCount = 30;
+        const tokensCount = 50; // Increased number of tokens
 
         for (let i = 0; i < tokensCount; i++) {
             const token = document.createElement('div');
@@ -1345,7 +1422,7 @@
             const top = Math.random() * 100;
             
             // Random size
-            const size = 10 + Math.random() * 20;
+            const size = 15 + Math.random() * 25; // Larger tokens
             
             // Random animation duration
             const duration = 10 + Math.random() * 20;
@@ -1364,7 +1441,7 @@
             token.style.transform = `rotate(${Math.random() * 360}deg)`;
             
             // Random opacity
-            token.style.opacity = 0.3 + Math.random() * 0.5;
+            token.style.opacity = 0.4 + Math.random() * 0.5; // More visible
             
             tokenAnimation.appendChild(token);
         }
@@ -1483,6 +1560,84 @@
                 openModal();
             });
         });
+
+        // Initialize Map
+        const propertyMap = L.map('propertyMap').setView([25.2048, 55.2708], 10);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(propertyMap);
+
+        // Add property markers
+        const properties = [
+            {
+                name: "Luxury Beachfront Villa",
+                location: [25.1185, 55.1388], // Palm Jumeirah
+                type: "luxury",
+                roi: "8.5%"
+            },
+            {
+                name: "Premium Downtown Apartment",
+                location: [25.1972, 55.2744], // Downtown Dubai
+                type: "residential",
+                roi: "7.2%"
+            },
+            {
+                name: "Commercial Office Tower",
+                location: [25.1867, 55.2650], // Business Bay
+                type: "commercial",
+                roi: "6.8%"
+            },
+            {
+                name: "Waterfront Residence",
+                location: [25.0787, 55.1420], // Dubai Marina
+                type: "luxury",
+                roi: "7.5%"
+            },
+            {
+                name: "Modern Family Townhouse",
+                location: [25.0392, 55.2191], // Arabian Ranches
+                type: "residential",
+                roi: "6.5%"
+            },
+            {
+                name: "Desert Oasis Resort",
+                location: [24.2075, 55.7448], // Al Ain
+                type: "luxury",
+                roi: "9.2%"
+            }
+        ];
+
+        // Define marker colors based on property type
+        const markerColors = {
+            residential: '#4a6bff',
+            commercial: '#00d4ff',
+            luxury: '#ff6b6b'
+        };
+
+        // Add markers to the map
+        properties.forEach(property => {
+            const marker = L.circleMarker(property.location, {
+                radius: 8,
+                fillColor: markerColors[property.type],
+                color: '#fff',
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.8
+            }).addTo(propertyMap);
+
+            // Add popup with property info
+            marker.bindPopup(`
+                <strong>${property.name}</strong><br>
+                Type: ${property.type.charAt(0).toUpperCase() + property.type.slice(1)}<br>
+                Expected ROI: ${property.roi} monthly
+            `);
+        });
+
+        // Fit map to show all markers
+        const markerGroup = new L.featureGroup(properties.map(p => L.marker(p.location)));
+        propertyMap.fitBounds(markerGroup.getBounds().pad(0.2));
     </script>
 </body>
 </html>
