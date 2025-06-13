@@ -413,6 +413,11 @@
             font-size: 0.9rem;
         }
 
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
         .favorite-btn {
             background: none;
             border: none;
@@ -634,6 +639,7 @@
             align-items: center;
             opacity: 0;
             transition: opacity 0.3s ease;
+            backdrop-filter: blur(5px);
         }
 
         .modal.show {
@@ -852,6 +858,29 @@
             color: white;
         }
 
+        /* Coming Soon Modal */
+        .coming-soon-content {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .coming-soon-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .coming-soon-title {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--text);
+        }
+
+        .coming-soon-text {
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
         @media (max-width: 1200px) {
             .nav-sidebar {
                 left: 10px;
@@ -1038,9 +1067,14 @@
                             </div>
                         </div>
                         <div class="property-actions">
-                            <button class="btn btn-primary btn-small invest-btn" data-property="Luxury Beachfront Villa">
-                                <i class="fas fa-coins"></i> Invest Now
-                            </button>
+                            <div class="action-buttons">
+                                <button class="btn btn-primary btn-small view-roi-btn" data-property="Luxury Beachfront Villa">
+                                    <i class="fas fa-chart-line"></i> View ROI
+                                </button>
+                                <button class="btn btn-primary btn-small invest-btn" data-property="Luxury Beachfront Villa">
+                                    <i class="fas fa-coins"></i> Invest
+                                </button>
+                            </div>
                             <button class="favorite-btn">
                                 <i class="far fa-heart"></i>
                             </button>
@@ -1076,9 +1110,14 @@
                             </div>
                         </div>
                         <div class="property-actions">
-                            <button class="btn btn-primary btn-small invest-btn" data-property="Premium Downtown Apartment">
-                                <i class="fas fa-coins"></i> Invest Now
-                            </button>
+                            <div class="action-buttons">
+                                <button class="btn btn-primary btn-small view-roi-btn" data-property="Premium Downtown Apartment">
+                                    <i class="fas fa-chart-line"></i> View ROI
+                                </button>
+                                <button class="btn btn-primary btn-small invest-btn" data-property="Premium Downtown Apartment">
+                                    <i class="fas fa-coins"></i> Invest
+                                </button>
+                            </div>
                             <button class="favorite-btn">
                                 <i class="far fa-heart"></i>
                             </button>
@@ -1114,9 +1153,14 @@
                             </div>
                         </div>
                         <div class="property-actions">
-                            <button class="btn btn-primary btn-small invest-btn" data-property="Commercial Office Tower">
-                                <i class="fas fa-coins"></i> Invest Now
-                            </button>
+                            <div class="action-buttons">
+                                <button class="btn btn-primary btn-small view-roi-btn" data-property="Commercial Office Tower">
+                                    <i class="fas fa-chart-line"></i> View ROI
+                                </button>
+                                <button class="btn btn-primary btn-small invest-btn" data-property="Commercial Office Tower">
+                                    <i class="fas fa-coins"></i> Invest
+                                </button>
+                            </div>
                             <button class="favorite-btn">
                                 <i class="far fa-heart"></i>
                             </button>
@@ -1152,9 +1196,14 @@
                             </div>
                         </div>
                         <div class="property-actions">
-                            <button class="btn btn-primary btn-small invest-btn" data-property="Waterfront Residence">
-                                <i class="fas fa-coins"></i> Invest Now
-                            </button>
+                            <div class="action-buttons">
+                                <button class="btn btn-primary btn-small view-roi-btn" data-property="Waterfront Residence">
+                                    <i class="fas fa-chart-line"></i> View ROI
+                                </button>
+                                <button class="btn btn-primary btn-small invest-btn" data-property="Waterfront Residence">
+                                    <i class="fas fa-coins"></i> Invest
+                                </button>
+                            </div>
                             <button class="favorite-btn">
                                 <i class="far fa-heart"></i>
                             </button>
@@ -1190,9 +1239,14 @@
                             </div>
                         </div>
                         <div class="property-actions">
-                            <button class="btn btn-primary btn-small invest-btn" data-property="Modern Family Townhouse">
-                                <i class="fas fa-coins"></i> Invest Now
-                            </button>
+                            <div class="action-buttons">
+                                <button class="btn btn-primary btn-small view-roi-btn" data-property="Modern Family Townhouse">
+                                    <i class="fas fa-chart-line"></i> View ROI
+                                </button>
+                                <button class="btn btn-primary btn-small invest-btn" data-property="Modern Family Townhouse">
+                                    <i class="fas fa-coins"></i> Invest
+                                </button>
+                            </div>
                             <button class="favorite-btn">
                                 <i class="far fa-heart"></i>
                             </button>
@@ -1228,9 +1282,14 @@
                             </div>
                         </div>
                         <div class="property-actions">
-                            <button class="btn btn-primary btn-small invest-btn" data-property="Desert Oasis Resort">
-                                <i class="fas fa-coins"></i> Invest Now
-                            </button>
+                            <div class="action-buttons">
+                                <button class="btn btn-primary btn-small view-roi-btn" data-property="Desert Oasis Resort">
+                                    <i class="fas fa-chart-line"></i> View ROI
+                                </button>
+                                <button class="btn btn-primary btn-small invest-btn" data-property="Desert Oasis Resort">
+                                    <i class="fas fa-coins"></i> Invest
+                                </button>
+                            </div>
                             <button class="favorite-btn">
                                 <i class="far fa-heart"></i>
                             </button>
@@ -1520,6 +1579,25 @@
         </div>
     </div>
 
+    <!-- Coming Soon Modal -->
+    <div class="modal" id="comingSoonModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close-btn" id="closeComingSoonModal">&times;</button>
+            </div>
+            <div class="coming-soon-content">
+                <div class="coming-soon-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h3 class="coming-soon-title">Coming Soon!</h3>
+                <p class="coming-soon-text">Our platform is launching very soon. Register your interest now and we'll keep you updated on our progress and notify you when we go live.</p>
+                <button class="btn btn-primary" id="registerInterestBtn">
+                    <i class="fas fa-envelope"></i> Register Interest
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer>
         <div class="container">
@@ -1629,11 +1707,14 @@
         // Modal Handling
         const contactModal = document.getElementById('contactModal');
         const roiModal = document.getElementById('roiModal');
+        const comingSoonModal = document.getElementById('comingSoonModal');
         const sellPropertyBtn = document.getElementById('sellPropertyBtn');
         const sellPropertyBtn2 = document.getElementById('sellPropertyBtn2');
         const investNowBtn = document.getElementById('investNowBtn');
         const closeModal = document.getElementById('closeModal');
         const closeRoiModal = document.getElementById('closeRoiModal');
+        const closeComingSoonModal = document.getElementById('closeComingSoonModal');
+        const registerInterestBtn = document.getElementById('registerInterestBtn');
 
         const openModal = () => {
             contactModal.classList.add('show');
@@ -1647,9 +1728,15 @@
             updateChart(6); // Default to 6 months
         };
 
+        const openComingSoonModal = () => {
+            comingSoonModal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        };
+
         const closeModalFunc = () => {
             contactModal.classList.remove('show');
             roiModal.classList.remove('show');
+            comingSoonModal.classList.remove('show');
             document.body.style.overflow = '';
         };
 
@@ -1665,11 +1752,18 @@
 
         investNowBtn.addEventListener('click', (e) => {
             e.preventDefault();
+            openComingSoonModal();
+        });
+
+        registerInterestBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeModalFunc();
             openModal();
         });
 
         closeModal.addEventListener('click', closeModalFunc);
         closeRoiModal.addEventListener('click', closeModalFunc);
+        closeComingSoonModal.addEventListener('click', closeModalFunc);
 
         // Close modal when clicking outside
         contactModal.addEventListener('click', (e) => {
@@ -1680,6 +1774,12 @@
 
         roiModal.addEventListener('click', (e) => {
             if (e.target === roiModal) {
+                closeModalFunc();
+            }
+        });
+
+        comingSoonModal.addEventListener('click', (e) => {
+            if (e.target === comingSoonModal) {
                 closeModalFunc();
             }
         });
@@ -1729,14 +1829,24 @@
             });
         });
 
-        // Invest Now Buttons - Open ROI Modal
+        // View ROI Buttons
+        const viewRoiButtons = document.querySelectorAll('.view-roi-btn');
+
+        viewRoiButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const propertyName = button.getAttribute('data-property');
+                openRoiModal(propertyName);
+            });
+        });
+
+        // Invest Now Buttons - Open Coming Soon Modal
         const investButtons = document.querySelectorAll('.invest-btn');
 
         investButtons.forEach(button => {
             button.addEventListener('click', (e) => {
                 e.preventDefault();
-                const propertyName = button.getAttribute('data-property');
-                openRoiModal(propertyName);
+                openComingSoonModal();
             });
         });
 
