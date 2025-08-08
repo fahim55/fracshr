@@ -2,1128 +2,1525 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>FracShr - Learn Trading, Go Pro</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-    <meta name="description" content="FracShr is a trading platform that helps users learn from beginner to pro. FracShr Pro is a zero commission trading app launching soon on iOS and Android.">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;400&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FracShr - Learn Trading Through Gamification</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@3.8.0/dist/lightweight-charts.standalone.production.js"></script>
     <style>
         :root {
-            --primary: #101522;
-            --secondary: #FFD600;
-            --accent: #00BFAE;
-            --white: #fff;
-            --gray: #1A1F2B;
-            --green: #00BFAE;
-            --red: #FF3B5C;
+            --primary: #FFD700;
+            --secondary: #000000;
+            --accent: #FFA500;
+            --light: #F5F5F5;
+            --dark: #121212;
+            --profit: #4CAF50;
+            --loss: #F44336;
         }
-        html, body {
+        
+        * {
             margin: 0;
             padding: 0;
-            font-family: 'Manrope', Arial, sans-serif;
-            background: var(--primary);
-            color: var(--white);
-            min-height: 100%;
-            width: 100%;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--secondary);
+            color: var(--light);
             overflow-x: hidden;
         }
-        a { color: var(--secondary); text-decoration: none; }
-        a:hover { text-decoration: underline; }
+        
         /* Background Animation */
-        .bg-anim {
+        .bg-animation {
             position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 0;
-            pointer-events: none;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
             overflow: hidden;
         }
-        .candlestick, .symbol-float {
+        
+        .bg-animation div {
             position: absolute;
-            opacity: 0.16;
-            animation-timing-function: linear;
+            border-radius: 50%;
+            background: rgba(255, 215, 0, 0.1);
+            animation: float 15s infinite linear;
         }
-        .candlestick {
-            width: 12px;
-            height: 38px;
-            border-radius: 3px;
-            background: var(--accent);
-            box-shadow: 0 0 6px 2px #00BFAE40;
-            animation-name: floatCandle;
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-1000px) rotate(720deg);
+                opacity: 0;
+            }
         }
-        .candlestick.red {
-            background: var(--red);
-            box-shadow: 0 0 6px 2px #FF3B5C40;
-        }
-        @keyframes floatCandle {
-            0% { transform: translateY(110vh) scaleY(1); }
-            100% { transform: translateY(-15vh) scaleY(1.1);}
-        }
-        .symbol-float {
-            font-size: 1.5rem;
-            color: var(--secondary);
-            animation-name: floatSymbol;
-        }
-        @keyframes floatSymbol {
-            0% { transform: translateY(110vh) scale(1);}
-            100% { transform: translateY(-15vh) scale(1.1);}
-        }
+        
         /* Header */
         header {
-            background: var(--primary);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            width: 100%;
-        }
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 16px;
-        }
-        nav {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 18px 0;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            border-bottom: 2px solid var(--primary);
         }
+        
         .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
-        .logo svg {
-            height: 38px;
-            width: 38px;
-            vertical-align: middle;
-        }
-        .logo-text {
-            font-size: 2rem;
-            font-weight: 800;
-            letter-spacing: 2px;
-            color: var(--secondary);
-            font-family: 'Manrope', Arial, sans-serif;
-        }
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 24px;
-            margin: 0;
-            padding: 0;
-        }
-        nav ul li a {
-            color: var(--white);
-            font-weight: 600;
-            font-size: 1rem;
-            transition: color 0.2s;
-        }
-        nav ul li a:hover {
-            color: var(--secondary);
-        }
-        .btn {
-            background: linear-gradient(90deg, var(--secondary), var(--accent));
+        
+        .logo h1 {
             color: var(--primary);
-            border: none;
-            border-radius: 24px;
-            padding: 12px 28px;
-            font-size: 1.1rem;
-            font-weight: 800;
-            cursor: pointer;
-            transition: background 0.2s, color 0.2s;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.10);
-            font-family: 'Manrope', Arial, sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
         }
-        .btn:active { background: var(--accent); }
-        /* Hamburger for mobile */
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-            gap: 4px;
-        }
-        .hamburger span {
-            width: 28px;
-            height: 4px;
-            background: var(--secondary);
-            border-radius: 2px;
-            display: block;
-        }
-        /* Hero */
-        .hero {
+        
+        nav ul {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            padding: 60px 0 40px 0;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
             position: relative;
-            z-index: 2;
         }
-        .hero h1 {
-            font-size: 2.2rem;
+        
+        nav a:hover {
+            color: var(--primary);
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--primary);
+            transition: width 0.3s;
+        }
+        
+        nav a:hover::after {
+            width: 100%;
+        }
+        
+        .cta-button {
+            background-color: var(--primary);
             color: var(--secondary);
-            margin-bottom: 14px;
-            font-weight: 800;
+            padding: 0.7rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 700;
+            text-transform: uppercase;
             letter-spacing: 1px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
         }
+        
+        .cta-button:hover {
+            background-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 10rem 2rem 5rem;
+            text-align: center;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7));
+            position: relative;
+        }
+        
+        .hero h2 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+        
         .hero p {
-            font-size: 1.15rem;
-            color: var(--white);
-            margin-bottom: 18px;
-            max-width: 500px;
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
         }
-        .hero .cta {
-            font-size: 1.1rem;
-            margin-bottom: 18px;
-            color: var(--accent);
+        
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
         }
-        /* Features */
+        
+        .secondary-button {
+            background-color: transparent;
+            color: var(--primary);
+            padding: 0.7rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            border: 2px solid var(--primary);
+            cursor: pointer;
+        }
+        
+        .secondary-button:hover {
+            background-color: var(--primary);
+            color: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        /* Features Section */
         .features {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 18px;
-            justify-content: center;
-            margin: 40px 0 0 0;
+            padding: 5rem 2rem;
+            background-color: var(--dark);
         }
-        .feature-card {
-            background: var(--gray);
-            border-radius: 14px;
-            padding: 24px 16px;
-            width: 260px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        
+        .section-title {
             text-align: center;
+            margin-bottom: 3rem;
         }
-        .feature-card h3 {
-            color: var(--secondary);
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .section-title p {
             font-size: 1.1rem;
-            margin-bottom: 8px;
-        }
-        .feature-card p {
-            color: var(--white);
-            font-size: 0.98rem;
-        }
-        /* How it works */
-        .how-it-works {
-            background: var(--gray);
-            border-radius: 14px;
-            padding: 28px 10px;
-            margin: 40px 0;
-            text-align: center;
-        }
-        .how-it-works h2 {
-            color: var(--secondary);
-            margin-bottom: 18px;
-        }
-        .steps {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 18px;
-            justify-content: center;
-        }
-        .step {
-            flex: 1 1 160px;
-            min-width: 140px;
-            max-width: 220px;
-            background: var(--primary);
-            border-radius: 10px;
-            padding: 18px 8px;
-            margin: 0 4px;
-        }
-        .step h4 {
-            color: var(--secondary);
-            margin-bottom: 6px;
-            font-size: 1rem;
-        }
-        /* Why Sign Up */
-        .why-signup {
-            margin: 40px 0;
-            text-align: center;
-        }
-        .why-signup h2 {
-            color: var(--secondary);
-            margin-bottom: 18px;
-        }
-        .why-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 18px;
-            justify-content: center;
-        }
-        .why-item {
-            background: var(--gray);
-            border-radius: 10px;
-            padding: 16px 10px;
-            min-width: 140px;
-            max-width: 220px;
-            text-align: left;
-            font-size: 0.98rem;
-        }
-        .why-item span {
-            color: var(--secondary);
-            margin-right: 8px;
-        }
-        /* Trading War */
-        .trading-war {
-            background: var(--gray);
-            border-radius: 14px;
-            padding: 28px 10px;
-            margin: 40px 0;
-            text-align: center;
-        }
-        .trading-war h2 {
-            color: var(--secondary);
-            margin-bottom: 10px;
-        }
-        /* FAQ */
-        .faq {
-            margin: 40px 0;
-        }
-        .faq h2 {
-            color: var(--secondary);
-            text-align: center;
-            margin-bottom: 18px;
-        }
-        .faq-list {
             max-width: 700px;
             margin: 0 auto;
+            line-height: 1.6;
         }
-        .faq-item {
-            background: var(--gray);
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .feature-card {
+            background-color: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
-            margin-bottom: 10px;
-            padding: 12px 14px;
+            padding: 2rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(255, 215, 0, 0.2);
         }
-        .faq-item h4 {
-            margin: 0 0 6px 0;
-            color: var(--secondary);
-            font-size: 1rem;
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.1);
+            border-color: var(--primary);
         }
-        /* Contact */
-        .contact {
-            background: var(--gray);
-            border-radius: 14px;
-            padding: 28px 10px;
-            margin: 40px 0 24px 0;
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .feature-card p {
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* Demo Section */
+        .demo {
+            padding: 5rem 2rem;
             text-align: center;
+            background: linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9));
+            position: relative;
         }
-        .contact h2 {
+        
+        .demo-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* How It Works */
+        .how-it-works {
+            padding: 5rem 2rem;
+            background-color: var(--dark);
+        }
+        
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .step {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+        
+        .step-number {
+            background-color: var(--primary);
             color: var(--secondary);
-            margin-bottom: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+            flex-shrink: 0;
         }
-        .contact p {
-            color: var(--white);
+        
+        .step-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
         }
+        
+        .step-content p {
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* Testimonials */
+        .testimonials {
+            padding: 5rem 2rem;
+            background: linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9));
+        }
+        
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .testimonial-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        
+        .testimonial-card:hover {
+            border-color: var(--primary);
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            position: relative;
+        }
+        
+        .testimonial-text::before,
+        .testimonial-text::after {
+            content: '"';
+            font-size: 2rem;
+            color: var(--primary);
+            opacity: 0.5;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--secondary);
+            font-weight: 700;
+        }
+        
+        .author-info h4 {
+            color: var(--primary);
+            margin-bottom: 0.2rem;
+        }
+        
+        .author-info p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        /* CTA Section */
+        .cta {
+            padding: 5rem 2rem;
+            text-align: center;
+            background-color: var(--dark);
+        }
+        
+        .cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .cta p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
         /* Footer */
         footer {
-            background: var(--primary);
-            color: var(--secondary);
-            text-align: center;
-            padding: 18px 0;
-            font-size: 1rem;
+            background-color: #000;
+            padding: 3rem 2rem 1rem;
+            border-top: 2px solid var(--primary);
         }
-        /* Modal */
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto 2rem;
+        }
+        
+        .footer-column h3 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-column a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column a:hover {
+            color: var(--primary);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .social-links a {
+            color: var(--light);
+            background-color: rgba(255, 255, 255, 0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .social-links a:hover {
+            background-color: var(--primary);
+            color: var(--secondary);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+        
+        /* Game Modal */
         .modal {
             display: none;
             position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
             z-index: 1000;
-            left: 0; top: 0; width: 100vw; height: 100vh;
-            background: rgba(16,21,34,0.97);
-            align-items: center;
             justify-content: center;
+            align-items: center;
             overflow-y: auto;
         }
-        .modal.active {
-            display: flex;
-        }
-        .modal-content {
-            background: var(--gray);
-            border-radius: 16px;
-            padding: 18px 8px 8px 8px;
-            width: 98vw;
-            max-width: 400px;
-            box-shadow: 0 2px 24px rgba(0,0,0,0.25);
+        
+        .game-modal-content {
+            background-color: var(--dark);
+            border-radius: 10px;
+            width: 90%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
             position: relative;
-            margin: 24px 0;
+            padding: 2rem;
         }
+        
         .close-modal {
             position: absolute;
-            top: 10px; right: 14px;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            color: var(--light);
+            cursor: pointer;
+            transition: color 0.3s;
             background: none;
             border: none;
-            color: var(--secondary);
-            font-size: 1.7rem;
-            cursor: pointer;
-            z-index: 2;
         }
-        /* Game styles */
-        .game-section {
-            margin-bottom: 10px;
+        
+        .close-modal:hover {
+            color: var(--primary);
         }
+        
+        .game-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .game-panel {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        
+        .game-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+            padding-bottom: 1rem;
+        }
+        
+        .game-title {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .level-info {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .objective {
+            background-color: rgba(255, 215, 0, 0.1);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart-container {
+            height: 300px;
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-box {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .profit {
+            color: var(--profit);
+        }
+        
+        .loss {
+            color: var(--loss);
+        }
+        
+        .stock-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        
         .stock-info {
-            background: var(--primary);
-            border-radius: 8px;
-            padding: 12px 0;
-            margin-bottom: 12px;
-            text-align: center;
-            font-size: 1.05rem;
+            flex: 1;
         }
-        .stock-info span {
-            display: inline-block;
-            min-width: 70px;
+        
+        .stock-name {
+            font-weight: bold;
         }
-        .portfolio {
-            background: var(--primary);
-            border-radius: 8px;
-            padding: 8px 0;
-            margin-bottom: 12px;
-            font-size: 1.05rem;
+        
+        .stock-symbol {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
         }
-        .portfolio div { margin-bottom: 2px; }
-        .trade-actions {
-            display: flex;
-            gap: 6px;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 8px;
-            flex-wrap: wrap;
-        }
-        .qty-btn {
-            background: var(--secondary);
-            color: var(--primary);
-            border: none;
-            border-radius: 6px;
-            width: 32px;
-            height: 32px;
-            font-size: 1.3rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            user-select: none;
-        }
-        .qty-btn:active { background: var(--accent); }
-        .qty-display {
-            width: 40px;
-            text-align: center;
+        
+        .stock-price {
+            font-weight: bold;
             font-size: 1.1rem;
-            background: var(--gray);
-            color: var(--white);
-            border: 1px solid var(--secondary);
-            border-radius: 6px;
-            margin: 0 2px;
-            height: 32px;
-            line-height: 32px;
-            display: inline-block;
+            margin-right: 1rem;
         }
-        .max-qty {
-            font-size: 0.95rem;
-            color: var(--secondary);
-            margin-left: 8px;
+        
+        .trade-controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
         }
-        .trade-actions button.buy, .trade-actions button.sell {
-            padding: 8px 14px;
-            font-size: 1rem;
-            border-radius: 6px;
-            margin-left: 4px;
-            background: var(--secondary);
+        
+        .qty-input {
+            width: 70px;
+            padding: 0.5rem;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            text-align: center;
+        }
+        
+        .trade-button {
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .buy-button {
+            background-color: var(--profit);
+            color: black;
+        }
+        
+        .sell-button {
+            background-color: var(--loss);
+            color: white;
+        }
+        
+        .trade-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .portfolio-title {
+            font-weight: bold;
+            margin-bottom: 1rem;
             color: var(--primary);
-            font-weight: 700;
         }
-        .trade-actions button.sell { background: var(--accent); color: var(--white);}
-        .trade-actions button:active { background: var(--accent); }
-        .trade-actions .limit-btn {
-            background: #888;
-            color: #222;
-            cursor: not-allowed;
-            opacity: 0.6;
-            margin-left: 4px;
+        
+        .portfolio-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .trade-actions .limit-btn:active { background: #888; }
-        .history-section {
-            margin-top: 10px;
-        }
-        .history-title {
-            color: var(--secondary);
-            font-size: 1rem;
-            margin-bottom: 4px;
-        }
-        .history-list {
-            max-height: 120px;
+        
+        .transaction-history {
+            max-height: 400px;
             overflow-y: auto;
-            background: var(--primary);
-            border-radius: 6px;
-            padding: 6px;
-            font-size: 0.97rem;
         }
-        .history-item {
-            display: flex;
-            flex-direction: column;
-            border-bottom: 1px solid #222;
-            margin-bottom: 4px;
-            padding-bottom: 2px;
+        
+        .transaction-item {
+            padding: 0.8rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: grid;
+            grid-template-columns: 80px 1fr 1fr 1fr;
+            gap: 1rem;
+            align-items: center;
+            font-size: 0.9rem;
         }
-        .history-item span {
-            display: block;
-        }
-        .history-item .trade-type {
-            font-weight: 700;
-            color: var(--secondary);
-        }
-        .history-item .trade-buy {
-            color: var(--secondary);
-        }
-        .history-item .trade-sell {
-            color: var(--accent);
-        }
-        .history-item .trade-time {
-            font-size: 0.92em;
-            color: #aaa;
-        }
-        .history-item .trade-pl.profit {
-            color: var(--green);
-        }
-        .history-item .trade-pl.loss {
-            color: var(--red);
-        }
-        .level-complete {
+        
+        .transaction-type {
+            font-weight: bold;
+            padding: 0.3rem 0.6rem;
+            border-radius: 3px;
             text-align: center;
-            margin-top: 10px;
         }
-        .register-interest input[type="email"] {
-            padding: 8px;
-            border-radius: 6px;
-            border: 1px solid var(--secondary);
-            background: var(--gray);
-            color: var(--white);
-            width: 80%;
-            margin-bottom: 8px;
-            font-size: 1rem;
+        
+        .transaction-buy {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: var(--profit);
         }
-        .register-interest button {
-            background: linear-gradient(90deg, var(--secondary), var(--accent));
-            color: var(--primary);
+        
+        .transaction-sell {
+            background-color: rgba(244, 67, 54, 0.2);
+            color: var(--loss);
+        }
+        
+        .transaction-profit {
+            text-align: right;
+            font-weight: bold;
+        }
+        
+        .complete-button {
+            background-color: var(--primary);
+            color: black;
             border: none;
-            border-radius: 6px;
-            padding: 8px 18px;
-            font-weight: 700;
+            padding: 1rem;
+            border-radius: 5px;
+            font-weight: bold;
             cursor: pointer;
-            transition: background 0.2s;
-            font-size: 1rem;
+            width: 100%;
+            margin-top: 1.5rem;
+            transition: all 0.2s;
         }
-        .register-interest button:active { background: var(--accent); }
-        .register-interest {
-            margin-top: 10px;
+        
+        .complete-button:hover {
+            background-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
         }
-        .register-msg {
-            margin-top: 8px;
-            color: var(--secondary);
-            font-size: 1rem;
+        
+        .complete-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
-        .donate-btn {
-            background: var(--accent);
-            color: var(--white);
-            border: none;
-            border-radius: 6px;
-            padding: 10px 22px;
-            font-weight: 700;
-            cursor: pointer;
-            font-size: 1.1rem;
-            margin-top: 18px;
-            margin-bottom: 8px;
-            transition: background 0.2s;
-        }
-        .donate-btn:active { background: var(--secondary); color: var(--primary);}
-        /* Donate Modal */
-        .donate-modal {
+        
+        /* Success Modal */
+        .success-modal {
             display: none;
             position: fixed;
-            z-index: 2000;
-            left: 0; top: 0; width: 100vw; height: 100vh;
-            background: rgba(16,21,34,0.97);
-            align-items: center;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1001;
             justify-content: center;
+            align-items: center;
         }
-        .donate-modal.active {
-            display: flex;
-        }
-        .donate-modal-content {
-            background: var(--gray);
-            border-radius: 16px;
-            padding: 24px 18px;
-            width: 95vw;
-            max-width: 340px;
-            box-shadow: 0 2px 24px rgba(0,0,0,0.25);
-            position: relative;
-            text-align: center;
-        }
-        .close-donate-modal {
-            position: absolute;
-            top: 10px; right: 14px;
-            background: none;
-            border: none;
-            color: var(--secondary);
-            font-size: 1.5rem;
-            cursor: pointer;
-            z-index: 2;
-        }
-        .donate-link {
-            display: inline-block;
-            background: linear-gradient(90deg, var(--secondary), var(--accent));
-            color: var(--primary);
-            font-weight: 700;
-            border-radius: 6px;
-            padding: 8px 18px;
-            margin-top: 12px;
-            text-decoration: none;
-            font-size: 1.1rem;
-        }
-        .donate-link:active { background: var(--accent); }
-        /* Tooltip for limit order */
-        .limit-tooltip {
-            position: fixed;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%,-50%);
-            background: var(--gray);
-            color: var(--secondary);
+        
+        .success-content {
+            background-color: var(--dark);
             border-radius: 10px;
-            padding: 18px 18px;
-            font-size: 1.1rem;
-            z-index: 3000;
-            box-shadow: 0 2px 24px rgba(0,0,0,0.25);
+            width: 90%;
+            max-width: 500px;
+            padding: 2rem;
             text-align: center;
-            min-width: 180px;
+            border: 2px solid var(--primary);
         }
-        .limit-tooltip button {
-            margin-top: 10px;
-            background: var(--secondary);
+        
+        .success-icon {
+            font-size: 3rem;
             color: var(--primary);
-            border: none;
-            border-radius: 6px;
-            padding: 6px 16px;
-            font-weight: 700;
-            cursor: pointer;
+            margin-bottom: 1.5rem;
+        }
+        
+        .success-content h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .success-content p {
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .email-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .email-form input {
+            padding: 0.8rem 1rem;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--light);
             font-size: 1rem;
         }
-        @media (max-width: 900px) {
-            .features, .why-list, .steps {
+        
+        .email-form input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .game-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero h2 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-buttons {
                 flex-direction: column;
                 align-items: center;
             }
-            .feature-card, .why-item, .step {
-                width: 95vw;
-                max-width: 350px;
+            
+            nav ul {
+                display: none;
             }
-        }
-        @media (max-width: 600px) {
-            .container { padding: 0 4px; }
-            .hero h1 { font-size: 1.3rem; }
-            nav ul { display: none; }
-            .hamburger { display: flex; }
-            .modal-content { max-width: 99vw; }
-        }
-        nav.open ul {
-            display: flex;
-            flex-direction: column;
-            position: absolute;
-            top: 60px;
-            left: 0;
-            width: 100vw;
-            background: var(--gray);
-            z-index: 100;
-            gap: 0;
-        }
-        nav.open ul li {
-            border-bottom: 1px solid #222;
-            padding: 12px 0;
-            text-align: center;
+            
+            .transaction-item {
+                grid-template-columns: 70px 1fr 1fr;
+            }
+            
+            .transaction-item div:nth-child(4) {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Background Animation -->
-    <div class="bg-anim" id="bgAnim"></div>
+    <div class="bg-animation">
+        <div style="left: 10%; width: 20px; height: 20px; animation-delay: 0s;"></div>
+        <div style="left: 20%; width: 30px; height: 30px; animation-delay: 2s;"></div>
+        <div style="left: 35%; width: 25px; height: 25px; animation-delay: 4s;"></div>
+        <div style="left: 50%; width: 40px; height: 40px; animation-delay: 6s;"></div>
+        <div style="left: 65%; width: 15px; height: 15px; animation-delay: 8s;"></div>
+        <div style="left: 80%; width: 35px; height: 35px; animation-delay: 10s;"></div>
+        <div style="left: 90%; width: 20px; height: 20px; animation-delay: 12s;"></div>
+    </div>
 
     <!-- Header -->
     <header>
-        <div class="container">
-            <nav id="mainNav">
-                <div class="logo">
-                    <!-- Futuristic Candlestick "F" Logo -->
-                    <svg viewBox="0 0 48 48" fill="none">
-                        <rect x="2" y="2" width="44" height="44" rx="12" fill="url(#g1)" />
-                        <!-- F as candlestick -->
-                        <rect x="14" y="12" width="6" height="24" rx="3" fill="#FFD600"/>
-                        <rect x="22" y="12" width="12" height="6" rx="3" fill="#00BFAE"/>
-                        <rect x="22" y="22" width="10" height="6" rx="3" fill="#FFD600"/>
-                        <defs>
-                            <linearGradient id="g1" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
-                                <stop stop-color="#101522"/>
-                                <stop offset="1" stop-color="#1A1F2B"/>
-                            </linearGradient>
-                        </defs>
-                    </svg>
-                    <span class="logo-text">FracShr</span>
-                </div>
-                <ul>
-                    <li><a href="#features">Features</a></li>
-                    <li><a href="#how">How It Works</a></li>
-                    <li><a href="#why">Why Sign Up</a></li>
-                    <li><a href="#tradingwar">Trading War</a></li>
-                    <li><a href="#faq">FAQ</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-                <button class="btn" id="demoBtn">Try Demo Game</button>
-                <div class="hamburger" id="hamburger" aria-label="Open menu" tabindex="0">
-                    <span></span><span></span><span></span>
-                </div>
-            </nav>
+        <div class="logo">
+            <h1>Frac<span style="color: #ffffff;">Shr</span></h1>
         </div>
+        <nav>
+            <ul>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#testimonials">Testimonials</a></li>
+                <li><a href="#demo">Demo</a></li>
+            </ul>
+        </nav>
+        <button class="cta-button" id="signup-btn">Sign Up</button>
     </header>
 
     <!-- Hero Section -->
     <section class="hero">
-        <h1>Learn Trading. Go Pro.<br>With FracShr</h1>
-        <p>
-            <b>FracShr</b> is a trading platform that helps users learn trading from beginner to pro level with interactive, level-based tutorials and real market scenarios.
-        </p>
-        <div class="cta">
-            <b>FracShr Pro</b> is a <span style="color:var(--accent)">zero commission</span> trading app launching soon on iOS and Android.<br>
-            <span style="color:var(--secondary)">Register your interest to be updated!</span>
-        </div>
-        <button class="btn" id="heroDemoBtn">Try Demo Game</button>
-    </section>
-
-    <!-- Features -->
-    <section class="container" id="features">
-        <div class="features">
-            <div class="feature-card">
-                <h3>Learn by Playing</h3>
-                <p>Step-by-step tutorials and level-based challenges teach you everything from trading basics to advanced strategies.</p>
-            </div>
-            <div class="feature-card">
-                <h3>Realistic Trading</h3>
-                <p>Trade with real-time simulated prices, advanced charts, and all the tools used by professional traders.</p>
-            </div>
-            <div class="feature-card">
-                <h3>Compete & Win</h3>
-                <p>Challenge friends or global players in Trading Wars. Climb the leaderboard and prove your trading skills.</p>
-            </div>
-            <div class="feature-card">
-                <h3>Instant Feedback</h3>
-                <p>Get instant feedback on your trades, see your profit/loss, and learn from every scenario.</p>
-            </div>
-            <div class="feature-card">
-                <h3>Mobile Ready</h3>
-                <p>Coming soon to iOS and Android. Play anywhere, anytime, and keep leveling up your trading game.</p>
-            </div>
+        <h2>Master Trading Through Gamification</h2>
+        <p>FracShr is an engaging, level-based trading game that teaches you everything from basic concepts to advanced strategies. Learn by doing in a risk-free environment with virtual cash and real market dynamics.</p>
+        <div class="hero-buttons">
+            <button class="cta-button" id="play-demo-btn">Play Demo</button>
+            <button class="secondary-button">Learn More</button>
         </div>
     </section>
 
-    <!-- How It Works -->
-    <section class="container how-it-works" id="how">
-        <h2>How It Works</h2>
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="section-title">
+            <h2>Why Choose FracShr?</h2>
+            <p>Our platform combines education with entertainment to create the most effective way to learn trading.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h3>Structured Learning</h3>
+                <p>Progress through carefully designed levels that build your trading knowledge from the ground up. Each level introduces new concepts and challenges.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Real Market Data</h3>
+                <p>Trade with real-time market data and advanced charting tools. Experience market dynamics without risking real money.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h3>Trading Wars</h3>
+                <p>Challenge friends or other players in timed trading competitions. Prove your skills and climb the leaderboards.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <h3>Gamified Experience</h3>
+                <p>Earn badges, unlock achievements, and complete challenges that make learning trading fun and rewarding.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <h3>Advanced Features</h3>
+                <p>Access advanced trading features like options, futures, and technical indicators as you progress through levels.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3>Mobile Friendly</h3>
+                <p>Coming soon to iOS and Android. Trade and learn on the go with our mobile-optimized platform.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section class="demo" id="demo">
+        <div class="demo-content">
+            <h2>Try Our Interactive Demo</h2>
+            <p>Experience a taste of what FracShr has to offer with our interactive demo. Get $10,000 in virtual cash and try to grow your portfolio to $11,000 to complete the challenge.</p>
+            <button class="cta-button" id="demo-btn">Launch Demo</button>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="section-title">
+            <h2>How FracShr Works</h2>
+            <p>Our step-by-step approach ensures you build trading skills progressively and confidently.</p>
+        </div>
         <div class="steps">
             <div class="step">
-                <h4>1. Sign Up</h4>
-                <p>Create your free account and start your trading journey.</p>
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Sign Up & Start Learning</h3>
+                    <p>Create your free account and begin with our introductory tutorials. Learn the basics of markets, orders, and portfolio management.</p>
+                </div>
             </div>
             <div class="step">
-                <h4>2. Learn & Play</h4>
-                <p>Follow interactive tutorials, complete levels, and master trading concepts.</p>
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Complete Guided Levels</h3>
+                    <p>Progress through levels that teach specific trading concepts. Each level has clear objectives and immediate feedback on your performance.</p>
+                </div>
             </div>
             <div class="step">
-                <h4>3. Practice & Compete</h4>
-                <p>Test your skills in real scenarios and challenge others in Trading Wars.</p>
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Practice With Virtual Cash</h3>
+                    <p>Apply what you've learned with virtual funds in simulated market conditions. Test strategies without financial risk.</p>
+                </div>
             </div>
             <div class="step">
-                <h4>4. Track Progress</h4>
-                <p>Monitor your growth, unlock achievements, and climb the leaderboard.</p>
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>Challenge Others</h3>
+                    <p>Participate in trading wars against other players. Compete in timed challenges to see who can generate the highest returns.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h3>Become a Pro</h3>
+                    <p>Master advanced trading techniques and graduate to our pro levels. Gain the confidence to trade in real markets.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Why Sign Up -->
-    <section class="container why-signup" id="why">
-        <h2>Why Sign Up for FracShr?</h2>
-        <div class="why-list">
-            <div class="why-item"><span>✔</span> Gamified learning makes trading fun and easy to understand.</div>
-            <div class="why-item"><span>✔</span> No risk – trade with virtual cash and real market scenarios.</div>
-            <div class="why-item"><span>✔</span> Compete with friends and global players for rewards.</div>
-            <div class="why-item"><span>✔</span> Unlock advanced trading tools and analytics as you level up.</div>
-            <div class="why-item"><span>✔</span> Prepare for real-world trading with confidence and skill.</div>
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <div class="section-title">
+            <h2>What Our Players Say</h2>
+            <p>Join thousands of users who have transformed their trading knowledge with FracShr.</p>
+        </div>
+        <div class="testimonial-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-text">
+                    FracShr made learning trading concepts so much easier than reading textbooks. The gamification elements kept me engaged and motivated to progress through the levels.
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">JS</div>
+                    <div class="author-info">
+                        <h4>Jamie S.</h4>
+                        <p>Beginner Trader</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-text">
+                    The trading wars feature is brilliant! Competing against friends helped me learn faster and think more strategically about my trades. I've improved my returns significantly.
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">MR</div>
+                    <div class="author-info">
+                        <h4>Marcus R.</h4>
+                        <p>Intermediate Trader</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-text">
+                    As someone who was intimidated by charts and technical analysis, FracShr's tutorial levels broke everything down into digestible pieces. Now I can analyze stocks with confidence.
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">TL</div>
+                    <div class="author-info">
+                        <h4>Tina L.</h4>
+                        <p>Former Novice</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- Trading War -->
-    <section class="container trading-war" id="tradingwar">
-        <h2>🔥 Trading War Mode</h2>
-        <p>
-            Invite friends or challenge global players in a time-based trading war. Each player starts with the same virtual cash and a set time. The trader with the highest profit at the end wins! <br>
-            <b>Are you ready to prove your trading skills?</b>
-        </p>
-    </section>
-
-    <!-- FAQ -->
-    <section class="container faq" id="faq">
-        <h2>Frequently Asked Questions</h2>
-        <div class="faq-list">
-            <div class="faq-item">
-                <h4>Is FracShr free to play?</h4>
-                <p>Yes! FracShr is free to play. You can learn and compete without any risk.</p>
-            </div>
-            <div class="faq-item">
-                <h4>Do I need trading experience?</h4>
-                <p>No prior experience needed. FracShr is designed for everyone, from beginners to pros.</p>
-            </div>
-            <div class="faq-item">
-                <h4>How realistic is the trading simulation?</h4>
-                <p>We use real market data and advanced trading features to make the experience as close to real trading as possible.</p>
-            </div>
-            <div class="faq-item">
-                <h4>When will the mobile app launch?</h4>
-                <p>FracShr Pro for iOS and Android is launching soon! Register your interest to be the first to know.</p>
-            </div>
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="cta-content">
+            <h2>Ready to Start Your Trading Journey?</h2>
+            <p>Join FracShr today and transform how you learn trading. Whether you're a complete beginner or looking to sharpen your skills, our gamified platform makes mastering the markets fun and rewarding.</p>
+            <button class="cta-button" id="final-signup-btn">Sign Up Now</button>
         </div>
-    </section>
-
-    <!-- Contact -->
-    <section class="container contact" id="contact">
-        <h2>Contact Us</h2>
-        <p>Have questions or want to partner with us? Email <a href="mailto:info@fracshr.com">info@fracshr.com</a></p>
     </section>
 
     <!-- Footer -->
     <footer>
-        &copy; 2025 FracShr. All rights reserved.
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>FracShr</h3>
+                <p>Learn trading through gamification. Master the markets with our engaging, level-based platform.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#testimonials">Testimonials</a></li>
+                    <li><a href="#demo">Demo</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Cookie Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2023 FracShr. All rights reserved.
+        </div>
     </footer>
 
-    <!-- Demo Game Modal -->
-    <div class="modal" id="demoModal" aria-modal="true" role="dialog">
-        <div class="modal-content">
-            <button class="close-modal" id="closeModalBtn" title="Close" aria-label="Close">&times;</button>
-            <div class="game-section" id="gameSection">
-                <!-- Game will be rendered here -->
+    <!-- Game Modal -->
+    <div class="modal" id="game-modal">
+        <div class="game-modal-content">
+            <button class="close-modal">&times;</button>
+            <div class="game-container">
+                <div class="game-panel">
+                    <div class="game-header">
+                        <h1 class="game-title">FracShr Trading Game</h1>
+                        <div class="level-info">Level 1: Buying and Selling</div>
+                        <div class="objective">
+                            <strong>Objective:</strong> Buy FracShr shares and sell at a profit. Grow your portfolio to $11,000 to complete the level.
+                        </div>
+                    </div>
+                    
+                    <div class="stats">
+                        <div class="stat-box">
+                            <div class="stat-label">Virtual Cash</div>
+                            <div class="stat-value" id="cash">$10,000.00</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Portfolio Value</div>
+                            <div class="stat-value" id="portfolio-value">$10,000.00</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">P&L</div>
+                            <div class="stat-value" id="pnl">$0.00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container" id="chart-container"></div>
+                    
+                    <div class="stock-item">
+                        <div class="stock-info">
+                            <span class="stock-name">FracShr Inc.</span>
+                            <span class="stock-symbol">FRAC</span>
+                        </div>
+                        <div class="stock-price" id="stock-price">$500.00</div>
+                        <div class="trade-controls">
+                            <input type="number" class="qty-input" id="frac-qty" min="1" value="1">
+                            <button class="trade-button buy-button" data-symbol="FRAC">Buy</button>
+                            <button class="trade-button sell-button" data-symbol="FRAC">Sell</button>
+                        </div>
+                    </div>
+                    
+                    <div class="portfolio">
+                        <div class="portfolio-title">Your Portfolio</div>
+                        <div id="portfolio-items">
+                            <div class="portfolio-item">
+                                <span>Cash</span>
+                                <span>$10,000.00</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="complete-button" id="complete-button" disabled>Complete Level</button>
+                </div>
+                
+                <div class="game-panel">
+                    <div class="portfolio-title">Transaction History</div>
+                    <div class="transaction-history" id="transactions">
+                        <!-- Transactions will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success Modal -->
+    <div class="success-modal" id="success-modal">
+        <div class="success-content">
+            <div class="success-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <h2>Congratulations!</h2>
+            <p>You've successfully completed the FracShr demo by growing your portfolio to $11,000!</p>
+            <p>Want to be notified when we launch on iOS and Android?</p>
+            <div class="email-form">
+                <input type="email" placeholder="Enter your email address" id="success-email">
+                <button class="cta-button" id="notify-success">Notify Me</button>
             </div>
         </div>
     </div>
 
-    <!-- Donate Modal -->
-    <div class="donate-modal" id="donateModal">
-        <div class="donate-modal-content">
-            <button class="close-donate-modal" id="closeDonateBtn" title="Close" aria-label="Close">&times;</button>
-            <h2 style="color:var(--secondary);margin-bottom:10px;">Support FracShr</h2>
-            <p>Your donation helps us build a better, more accessible trading education platform for everyone.<br>Thank you for supporting our mission!</p>
-            <a class="donate-link" href="https://www.buymeacoffee.com/" target="_blank" rel="noopener">Donate Now</a>
-        </div>
-    </div>
-
-    <!-- Limit Tooltip -->
-    <div id="limitTooltip" class="limit-tooltip" style="display:none;">
-        <div>This feature unlocks in the next level!</div>
-        <button onclick="closeLimitTooltip()">OK</button>
-    </div>
-
     <script>
-        // Hamburger menu for mobile
-        const nav = document.getElementById('mainNav');
-        const hamburger = document.getElementById('hamburger');
-        hamburger.addEventListener('click', function() {
-            nav.classList.toggle('open');
-        });
-        hamburger.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' || e.key === ' ') nav.classList.toggle('open');
-        });
-        nav.querySelectorAll('ul li a').forEach(link => {
-            link.addEventListener('click', () => nav.classList.remove('open'));
-        });
-
-        // Modal logic
-        const demoModal = document.getElementById('demoModal');
-        const demoBtn = document.getElementById('demoBtn');
-        const heroDemoBtn = document.getElementById('heroDemoBtn');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        [demoBtn, heroDemoBtn].forEach(btn => btn.addEventListener('click', () => {
-            demoModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            startDemoGame();
-        }));
-        closeModalBtn.addEventListener('click', () => {
-            demoModal.classList.remove('active');
-            document.body.style.overflow = '';
-            stopDemoGame();
-        });
-        window.addEventListener('click', (e) => {
-            if (e.target === demoModal) {
-                demoModal.classList.remove('active');
-                document.body.style.overflow = '';
-                stopDemoGame();
-            }
-        });
-
-        // Donate modal logic
-        const donateModal = document.getElementById('donateModal');
-        const closeDonateBtn = document.getElementById('closeDonateBtn');
-        closeDonateBtn.addEventListener('click', () => {
-            donateModal.classList.remove('active');
-            document.body.style.overflow = '';
-        });
-        window.addEventListener('click', (e) => {
-            if (e.target === donateModal) {
-                donateModal.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-        });
-
-        // Limit tooltip logic
-        function showLimitTooltip() {
-            document.getElementById('limitTooltip').style.display = 'block';
-        }
-        function closeLimitTooltip() {
-            document.getElementById('limitTooltip').style.display = 'none';
-        }
-        window.closeLimitTooltip = closeLimitTooltip;
-
         // Game state
-        let cash, shares, price, history, lastTradePrice, levelComplete, intervalId, qty, buyHistory;
-
-        function startDemoGame() {
-            cash = 10000;
-            shares = 0;
-            price = 500;
-            history = [];
-            buyHistory = [];
-            lastTradePrice = null;
-            levelComplete = false;
-            qty = 1;
-            renderGame();
-            intervalId = setInterval(updatePrice, 7000);
+        const gameState = {
+            cash: 10000,
+            shares: 0,
+            sharePrice: 500,
+            portfolioValue: 10000,
+            transactions: [],
+            priceHistory: [],
+            chart: null,
+            candleSeries: null,
+            lastUpdateTime: Date.now()
+        };
+        
+        // Initialize chart
+        function initChart() {
+            const chartContainer = document.getElementById('chart-container');
+            gameState.chart = LightweightCharts.createChart(chartContainer, {
+                width: chartContainer.clientWidth,
+                height: 300,
+                layout: {
+                    backgroundColor: '#121212',
+                    textColor: 'rgba(255, 255, 255, 0.9)',
+                },
+                grid: {
+                    vertLines: {
+                        color: 'rgba(255, 255, 255, 0.1)',
+                    },
+                    horzLines: {
+                        color: 'rgba(255, 255, 255, 0.1)',
+                    },
+                },
+                crosshair: {
+                    mode: LightweightCharts.CrosshairMode.Normal,
+                },
+                rightPriceScale: {
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                },
+                timeScale: {
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                },
+            });
+            
+            gameState.candleSeries = gameState.chart.addCandlestickSeries({
+                upColor: '#4CAF50',
+                downColor: '#F44336',
+                borderDownColor: '#F44336',
+                borderUpColor: '#4CAF50',
+                wickDownColor: '#F44336',
+                wickUpColor: '#4CAF50',
+            });
+            
+            // Generate initial price history (last 30 minutes)
+            const now = Date.now();
+            for (let i = 30; i >= 0; i--) {
+                const time = now - i * 60 * 1000;
+                const basePrice = 500 + (Math.random() * 20 - 10);
+                gameState.priceHistory.push({
+                    time: Math.floor(time / 1000),
+                    open: basePrice,
+                    high: basePrice + Math.random() * 5,
+                    low: basePrice - Math.random() * 5,
+                    close: basePrice + (Math.random() * 10 - 5),
+                    value: basePrice
+                });
+            }
+            
+            gameState.candleSeries.setData(gameState.priceHistory);
+            gameState.chart.timeScale().fitContent();
         }
-        function stopDemoGame() {
-            clearInterval(intervalId);
-            document.getElementById('gameSection').innerHTML = '';
+        
+        // Update chart with new price
+        function updateChart() {
+            const now = Math.floor(Date.now() / 1000);
+            const lastCandle = gameState.priceHistory[gameState.priceHistory.length - 1];
+            
+            if (now - lastCandle.time >= 60) {
+                // New candle (1 minute)
+                gameState.priceHistory.push({
+                    time: now,
+                    open: gameState.sharePrice,
+                    high: gameState.sharePrice,
+                    low: gameState.sharePrice,
+                    close: gameState.sharePrice,
+                    value: gameState.sharePrice
+                });
+            } else {
+                // Update current candle
+                lastCandle.high = Math.max(lastCandle.high, gameState.sharePrice);
+                lastCandle.low = Math.min(lastCandle.low, gameState.sharePrice);
+                lastCandle.close = gameState.sharePrice;
+                lastCandle.value = gameState.sharePrice;
+            }
+            
+            // Keep only the last 100 candles
+            if (gameState.priceHistory.length > 100) {
+                gameState.priceHistory.shift();
+            }
+            
+            gameState.candleSeries.update(lastCandle);
         }
-
-        function getPortfolioValue() {
-            return cash + shares * price;
+        
+        // DOM elements
+        const gameModal = document.getElementById('game-modal');
+        const successModal = document.getElementById('success-modal');
+        const playDemoBtn = document.getElementById('play-demo-btn');
+        const demoBtn = document.getElementById('demo-btn');
+        const signupBtn = document.getElementById('signup-btn');
+        const finalSignupBtn = document.getElementById('final-signup-btn');
+        const closeModals = document.querySelectorAll('.close-modal');
+        const notifySuccessBtn = document.getElementById('notify-success');
+        const completeButton = document.getElementById('complete-button');
+        const cashElement = document.getElementById('cash');
+        const portfolioValueElement = document.getElementById('portfolio-value');
+        const pnlElement = document.getElementById('pnl');
+        const portfolioItemsElement = document.getElementById('portfolio-items');
+        const transactionsElement = document.getElementById('transactions');
+        const stockPriceElement = document.getElementById('stock-price');
+        const fracQtyInput = document.getElementById('frac-qty');
+        
+        // Initialize game when modal opens
+        function initGame() {
+            // Reset game state
+            gameState.cash = 10000;
+            gameState.shares = 0;
+            gameState.sharePrice = 500;
+            gameState.portfolioValue = 10000;
+            gameState.transactions = [];
+            gameState.priceHistory = [];
+            
+            // Clear transactions
+            transactionsElement.innerHTML = '';
+            
+            // Initialize chart
+            initChart();
+            
+            // Update display
+            updateDisplay();
+            
+            // Start price updates
+            if (gameState.priceInterval) {
+                clearInterval(gameState.priceInterval);
+            }
+            gameState.priceInterval = setInterval(updateStockPrice, 7000);
         }
-
-        function getMaxBuyQty() {
-            return Math.floor(cash / price);
+        
+        // Event listeners
+        playDemoBtn.addEventListener('click', () => {
+            gameModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            initGame();
+        });
+        
+        demoBtn.addEventListener('click', () => {
+            gameModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            initGame();
+        });
+        
+        closeModals.forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.closest('.modal').style.display = 'none';
+                document.body.style.overflow = 'auto';
+                if (gameState.priceInterval) {
+                    clearInterval(gameState.priceInterval);
+                }
+            });
+        });
+        
+        signupBtn.addEventListener('click', () => {
+            alert('Sign up feature coming soon! Please play the demo and register your interest when you complete the level.');
+        });
+        
+        finalSignupBtn.addEventListener('click', () => {
+            alert('Sign up feature coming soon! Please play the demo and register your interest when you complete the level.');
+        });
+        
+        // Trade Buttons
+        document.querySelectorAll('.buy-button').forEach(button => {
+            button.addEventListener('click', () => executeTrade(button.dataset.symbol, 'buy'));
+        });
+        
+        document.querySelectorAll('.sell-button').forEach(button => {
+            button.addEventListener('click', () => executeTrade(button.dataset.symbol, 'sell'));
+        });
+        
+        // Complete level button
+        completeButton.addEventListener('click', () => {
+            gameModal.style.display = 'none';
+            successModal.style.display = 'flex';
+            if (gameState.priceInterval) {
+                clearInterval(gameState.priceInterval);
+            }
+        });
+        
+        // Notify success button
+        notifySuccessBtn.addEventListener('click', () => {
+            const email = document.getElementById('success-email').value;
+            if (email && email.includes('@')) {
+                alert(`Thank you! We'll notify you at ${email} when FracShr launches on iOS and Android.`);
+                successModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            } else {
+                alert('Please enter a valid email address.');
+            }
+        });
+        
+        // Update stock price every 7 seconds
+        function updateStockPrice() {
+            // Random price change between -5% and +5%
+            const changePercent = (Math.random() * 0.1 - 0.05);
+            const changeAmount = gameState.sharePrice * changePercent;
+            gameState.sharePrice += changeAmount;
+            
+            // Keep price reasonable
+            gameState.sharePrice = Math.max(300, Math.min(700, gameState.sharePrice));
+            gameState.sharePrice = parseFloat(gameState.sharePrice.toFixed(2));
+            
+            // Update price display
+            stockPriceElement.textContent = `$${gameState.sharePrice.toFixed(2)}`;
+            
+            // Update chart
+            updateChart();
+            
+            updatePortfolioValue();
+            updateDisplay();
         }
-
-        function renderGame() {
-            const section = document.getElementById('gameSection');
-            if (levelComplete) {
-                section.innerHTML = `
-                    <div class="level-complete">
-                        <h2>🎉 Congratulations!</h2>
-                        <p>You grew your portfolio to $11,000 or more.<br>
-                        <b>Register your interest to keep playing as soon as the app launches on iOS and Android!</b></p>
-                        <div class="register-interest">
-                            <input type="email" id="registerEmail" placeholder="Enter your email" required>
-                            <br>
-                            <button onclick="registerInterest()">Register Interest</button>
-                            <div class="register-msg" id="registerMsg"></div>
-                        </div>
-                        <button class="donate-btn" onclick="openDonateModal()">Donate</button>
-                    </div>
-                `;
-                clearInterval(intervalId);
+        
+        // Execute trade
+        function executeTrade(symbol, action) {
+            const qty = parseInt(fracQtyInput.value);
+            
+            if (isNaN(qty) || qty < 1) {
+                alert('Please enter a valid quantity (at least 1)');
                 return;
             }
-            const maxBuyQty = getMaxBuyQty();
-            if (qty > maxBuyQty && maxBuyQty > 0) qty = maxBuyQty;
-            if (qty < 1) qty = 1;
-            section.innerHTML = `
-                <div class="stock-info">
-                    <div><span><b>Stock:</b></span> FRACSHR</div>
-                    <div><span><b>Price:</b></span> $${price.toFixed(2)}</div>
-                </div>
-                <div class="portfolio">
-                    <div><b>Cash:</b> $${cash.toFixed(2)}</div>
-                    <div><b>Shares Owned:</b> ${shares}</div>
-                    <div><b>Portfolio Value:</b> $${getPortfolioValue().toFixed(2)}</div>
-                    <div><b>Profit/Loss:</b> <span style="color:${getPortfolioValue()-10000>=0?'#00BFAE':'#FF3B5C'};">
-                        $${(getPortfolioValue()-10000).toFixed(2)}
-                    </span></div>
-                </div>
-                <div class="trade-actions">
-                    <button class="qty-btn" onclick="changeQty(-1)" aria-label="Decrease quantity">-</button>
-                    <span class="qty-display" id="qtyDisplay">${qty}</span>
-                    <button class="qty-btn" onclick="changeQty(1)" aria-label="Increase quantity">+</button>
-                    <span class="max-qty">Max: ${maxBuyQty}</span>
-                </div>
-                <div class="trade-actions">
-                    <button class="buy" onclick="buyShares()">Buy</button>
-                    <button class="sell" onclick="sellShares()">Sell</button>
-                    <button class="limit-btn" onclick="showLimitTooltip()" disabled>Limit Buy</button>
-                    <button class="limit-btn" onclick="showLimitTooltip()" disabled>Limit Sell</button>
-                </div>
-                <div style="text-align:center;font-size:0.97rem;color:var(--secondary);margin-bottom:6px;">
-                    Buy shares and sell at a higher price.<br>
-                    Price updates every 7 seconds.<br>
-                    Take your portfolio to $11,000 to proceed!
-                </div>
-                <div class="history-section">
-                    <div class="history-title">Trade History</div>
-                    <div class="history-list" id="historyList">
-                        ${history.length === 0 ? '<div style="color:#888;">No trades yet.</div>' : history.map(item => `
-                            <div class="history-item">
-                                <span class="trade-type ${item.type === 'Buy' ? 'trade-buy' : 'trade-sell'}">${item.type} ${item.qty} @ $${item.price.toFixed(2)}</span>
-                                <span>Time: <span class="trade-time">${item.time}</span></span>
-                                ${item.type === 'Sell' ? `<span>Purchased @ $${item.purchasePrice.toFixed(2)}</span>
-                                <span class="trade-pl ${item.result}">${item.result === 'profit' ? 'Profit' : 'Loss'}: $${item.pl.toFixed(2)}</span>` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
+            
+            if (action === 'buy') {
+                const cost = qty * gameState.sharePrice;
+                if (cost > gameState.cash) {
+                    alert('Not enough cash for this purchase');
+                    return;
+                }
+                
+                gameState.cash -= cost;
+                gameState.shares += qty;
+                
+                // Record transaction
+                const transaction = {
+                    type: 'buy',
+                    symbol: symbol,
+                    shares: qty,
+                    price: gameState.sharePrice,
+                    value: cost,
+                    timestamp: new Date()
+                };
+                gameState.transactions.push(transaction);
+                addTransactionToHistory(transaction);
+                
+            } else if (action === 'sell') {
+                if (qty > gameState.shares) {
+                    alert("You don't have enough shares to sell");
+                    return;
+                }
+                
+                const proceeds = qty * gameState.sharePrice;
+                gameState.cash += proceeds;
+                gameState.shares -= qty;
+                
+                // Calculate profit/loss (based on $500 base price)
+                const profit = (gameState.sharePrice - 500) * qty;
+                
+                // Record transaction
+                const transaction = {
+                    type: 'sell',
+                    symbol: symbol,
+                    shares: qty,
+                    price: gameState.sharePrice,
+                    value: proceeds,
+                    profit: profit,
+                    timestamp: new Date()
+                };
+                gameState.transactions.push(transaction);
+                addTransactionToHistory(transaction);
+            }
+            
+            updatePortfolioValue();
+            updateDisplay();
+        }
+        
+        // Update portfolio value
+        function updatePortfolioValue() {
+            gameState.portfolioValue = gameState.cash + (gameState.shares * gameState.sharePrice);
+            
+            // Enable/disable complete button based on objective
+            completeButton.disabled = gameState.portfolioValue < 11000;
+        }
+        
+        // Update display
+        function updateDisplay() {
+            // Update cash and portfolio value
+            cashElement.textContent = `$${gameState.cash.toFixed(2)}`;
+            portfolioValueElement.textContent = `$${gameState.portfolioValue.toFixed(2)}`;
+            
+            // Update P&L
+            const pnl = gameState.portfolioValue - 10000;
+            pnlElement.textContent = `$${pnl.toFixed(2)}`;
+            pnlElement.className = `stat-value ${pnl >= 0 ? 'profit' : 'loss'}`;
+            
+            // Update portfolio items
+            let portfolioHTML = `
+                <div class="portfolio-item">
+                    <span>Cash</span>
+                    <span>$${gameState.cash.toFixed(2)}</span>
                 </div>
             `;
-        }
-
-        // Quantity change
-        window.changeQty = function(delta) {
-            const maxBuyQty = getMaxBuyQty();
-            qty += delta;
-            if (qty < 1) qty = 1;
-            if (qty > 999) qty = 999;
-            if (qty > maxBuyQty && maxBuyQty > 0) qty = maxBuyQty;
-            document.getElementById('qtyDisplay').textContent = qty;
-        };
-
-        // Buy shares
-        window.buyShares = function() {
-            if (levelComplete) return;
-            const maxBuyQty = getMaxBuyQty();
-            if (qty > maxBuyQty) return alert('Not enough cash!');
-            const cost = qty * price;
-            if (cost > cash) return alert('Not enough cash!');
-            cash -= cost;
-            shares += qty;
-            // Save buy for history
-            const now = new Date();
-            const time = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
-            buyHistory.push({qty: qty, price: price, time: time});
-            history.unshift({
-                type: 'Buy',
-                qty: qty,
-                price: price,
-                time: time
-            });
-            lastTradePrice = price;
-            renderGame();
-            checkLevel();
-        };
-
-        // Sell shares
-        window.sellShares = function() {
-            if (levelComplete) return;
-            if (qty > shares) return alert('Not enough shares!');
-            const revenue = qty * price;
-            cash += revenue;
-            shares -= qty;
-            // Find the most recent buy for this qty
-            let purchasePrice = lastTradePrice || price;
-            let buyQtyLeft = qty;
-            let avgPurchasePrice = 0;
-            let totalCost = 0;
-            let usedBuys = [];
-            // FIFO: use buyHistory to get average purchase price for qty sold
-            for (let i = buyHistory.length - 1; i >= 0 && buyQtyLeft > 0; i--) {
-                let b = buyHistory[i];
-                if (b.qty <= buyQtyLeft) {
-                    totalCost += b.qty * b.price;
-                    buyQtyLeft -= b.qty;
-                    usedBuys.push(i);
-                } else {
-                    totalCost += buyQtyLeft * b.price;
-                    buyHistory[i].qty -= buyQtyLeft;
-                    buyQtyLeft = 0;
-                }
+            
+            if (gameState.shares > 0) {
+                portfolioHTML += `
+                    <div class="portfolio-item">
+                        <span>FRAC Shares</span>
+                        <span>${gameState.shares} @ $${gameState.sharePrice.toFixed(2)}</span>
+                    </div>
+                    <div class="portfolio-item">
+                        <span>FRAC Value</span>
+                        <span>$${(gameState.shares * gameState.sharePrice).toFixed(2)}</span>
+                    </div>
+                `;
             }
-            avgPurchasePrice = totalCost / qty || price;
-            // Remove used buys
-            for (let idx of usedBuys) buyHistory.splice(idx, 1);
-            const now = new Date();
-            const time = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
-            let pl = (price - avgPurchasePrice) * qty;
-            let result = pl >= 0 ? 'profit' : 'loss';
-            history.unshift({
-                type: 'Sell',
-                qty: qty,
-                price: price,
-                purchasePrice: avgPurchasePrice,
-                pl: pl,
-                result: result,
-                time: time
-            });
-            lastTradePrice = price;
-            renderGame();
-            checkLevel();
-        };
-
-        // Price update every 7 seconds
-        function updatePrice() {
-            // Simulate price change: -2% to +2%
-            const change = (Math.random() - 0.5) * 4;
-            price = Math.max(100, price * (1 + change / 100));
-            renderGame();
-            checkLevel();
+            
+            portfolioItemsElement.innerHTML = portfolioHTML;
         }
-
-        function checkLevel() {
-            if (getPortfolioValue() >= 11000 && !levelComplete) {
-                levelComplete = true;
-                renderGame();
+        
+        // Add transaction to history
+        function addTransactionToHistory(transaction) {
+            const transactionElement = document.createElement('div');
+            transactionElement.className = 'transaction-item';
+            
+            const timeString = transaction.timestamp.toLocaleTimeString();
+            const dateString = transaction.timestamp.toLocaleDateString();
+            
+            if (transaction.type === 'buy') {
+                transactionElement.innerHTML = `
+                    <div class="transaction-type transaction-buy">BUY</div>
+                    <div>${transaction.shares} FRAC @ $${transaction.price.toFixed(2)}</div>
+                    <div>$${transaction.value.toFixed(2)}</div>
+                    <div>${dateString} ${timeString}</div>
+                `;
+            } else {
+                const profitClass = transaction.profit >= 0 ? 'profit' : 'loss';
+                const profitSign = transaction.profit >= 0 ? '+' : '';
+                
+                transactionElement.innerHTML = `
+                    <div class="transaction-type transaction-sell">SELL</div>
+                    <div>${transaction.shares} FRAC @ $${transaction.price.toFixed(2)}</div>
+                    <div class="transaction-profit ${profitClass}">${profitSign}$${Math.abs(transaction.profit).toFixed(2)}</div>
+                    <div>${dateString} ${timeString}</div>
+                `;
             }
+            
+            transactionsElement.prepend(transactionElement);
+            
+            // Scroll to top of transaction history
+            transactionsElement.scrollTop = 0;
         }
-
-        // Register interest
-        window.registerInterest = function() {
-            const email = document.getElementById('registerEmail').value.trim();
-            const msgDiv = document.getElementById('registerMsg');
-            if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
-                msgDiv.textContent = "Please enter a valid email.";
-                return;
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (gameState.chart) {
+                const chartContainer = document.getElementById('chart-container');
+                gameState.chart.applyOptions({ width: chartContainer.clientWidth });
             }
-            msgDiv.textContent = "Thank you! We'll notify you at launch.";
-            document.getElementById('registerEmail').disabled = true;
-        };
-
-        // Donate modal
-        window.openDonateModal = function() {
-            document.getElementById('donateModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        };
-
-        // Background animation: candlesticks and symbols
-        function randomBetween(a, b) {
-            return a + Math.random() * (b - a);
-        }
-        function createBgAnim() {
-            const bg = document.getElementById('bgAnim');
-            const symbols = ['AAPL', 'TSLA', 'GOOGL', 'MSFT', 'AMZN', '💹', '📈', '📉', '💲'];
-            for (let i = 0; i < 16; i++) {
-                // Candlestick
-                const c = document.createElement('div');
-                c.className = 'candlestick' + (Math.random() > 0.5 ? ' red' : '');
-                c.style.left = randomBetween(0, 98) + 'vw';
-                c.style.animationDuration = randomBetween(8, 18) + 's';
-                c.style.animationDelay = (-1 * randomBetween(0, 18)) + 's';
-                bg.appendChild(c);
-            }
-            for (let i = 0; i < 12; i++) {
-                // Symbol
-                const s = document.createElement('div');
-                s.className = 'symbol-float';
-                s.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-                s.style.left = randomBetween(0, 96) + 'vw';
-                s.style.fontSize = randomBetween(1.1, 2.1) + 'rem';
-                s.style.animationDuration = randomBetween(10, 22) + 's';
-                s.style.animationDelay = (-1 * randomBetween(0, 22)) + 's';
-                bg.appendChild(s);
-            }
-        }
-        createBgAnim();
+        });
     </script>
 </body>
 </html>
