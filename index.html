@@ -2,999 +2,863 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>fracshr — Trading for everyone, anywhere, everywhere</title>
-  <meta name="description" content="fracshr is a level-based trading game that teaches you trading from zero to pro. Learn by doing, compete in Trade Wars, and master advanced tools. 150+ levels. Coming soon to iOS and Android." />
-  <meta name="theme-color" content="#11131f" />
+  <title>FracShr — Trading For Everyone, Anywhere, Everywhere</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="FracShr is a level-based, tutorial-first trading game with 150+ levels, pro-grade tools, and competitive Trade Wars." />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#0b1020;
-      --card:#121735cc;
-      --card-solid:#121735;
-      --text:#eef2ff;
-      --muted:#c8d0ff;
-      --primary:#7c5cff; /* purple */
-      --primary-2:#00e5a8; /* mint */
-      --accent:#ffb300; /* amber */
-      --danger:#ff5d7a;
-      --success:#27e39b;
-      --glow: 0 0 40px rgba(124,92,255,.35), 0 0 80px rgba(0,229,168,.2);
+      --bg0:#0a0f18; --bg1:#0f1625; --bg2:#101a2b;
+      --border:rgba(255,255,255,.12);
+      --text:#e7f1ff; --muted:#9bb0c9;
+      --green:#00e676; --greener:#39ffb1;
+      --red:#ff1744; --red2:#ff4d6d;
+      --accent:#7c4dff;
+      --shadow: 0 16px 40px rgba(0,0,0,.35);
+      --r-lg: 18px; --r-md:12px;
     }
     *{box-sizing:border-box}
-    html,body{height:100%;scroll-behavior:smooth;background:var(--bg);color:var(--text);font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";}
-    body{margin:0;overflow-x:hidden}
+    html, body {min-height:100%}
+    html, body {overflow-x:hidden}
+    body{
+      margin:0;
+      background: radial-gradient(1200px 800px at 15% 10%, #0f1d33 0%, var(--bg0) 30%, var(--bg1) 60%, var(--bg2) 100%);
+      color:var(--text);
+      font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      line-height:1.45;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
     a{color:inherit;text-decoration:none}
-    .container{max-width:1200px;margin:0 auto;padding:0 20px}
-    /* Background animation layer */
-    #bg-anim{
-      position:fixed;inset:0;overflow:hidden;z-index:-1;pointer-events:none;
-      background:
-        radial-gradient(1200px 600px at -10% -10%, rgba(124,92,255,.20), transparent 60%),
-        radial-gradient(1000px 500px at 110% 0%, rgba(0,229,168,.15), transparent 60%),
-        radial-gradient(800px 600px at 50% 110%, rgba(255,179,0,.12), transparent 65%),
-        linear-gradient(180deg, #0b1020 0%, #0a0d1a 100%);
-      filter:saturate(1.05);
+    img, svg, canvas{max-width:100%; height:auto; display:block}
+    .container{width:min(1120px, 100%); padding:0 16px; margin:0 auto}
+    .space{padding:56px 0}
+    .grid{display:grid; gap:20px; grid-template-columns: repeat(12, minmax(0,1fr))}
+    section .grid > *{grid-column:1 / -1}
+    @media(min-width:900px){
+      .col-3{grid-column: span 3}
+      .col-4{grid-column: span 4}
+      .col-6{grid-column: span 6}
+      .col-8{grid-column: span 8}
     }
-    .float-thing{
-      position:absolute;opacity:.18;will-change:transform,opacity;filter:drop-shadow(0 8px 12px rgba(0,0,0,.35));
-    }
-    .candle{width:14px;height:34px;border-radius:3px;background:linear-gradient(180deg,#1ef1b7 0%,#01cf96 100%);position:absolute}
-    .candle::before{content:"";position:absolute;left:6px;top:-14px;width:2px;height:14px;background:#22f0b2;border-radius:2px}
-    .red .candle{background:linear-gradient(180deg,#ff6a88 0%,#ff3d65 100%)}
-    .red .candle::before{background:#ff6a88}
-    .bubble{width:10px;height:10px;border-radius:50%;background:linear-gradient(180deg,#7c5cff, #00e5a8);opacity:.25}
-    @keyframes floatUp{
-      0%{transform:translateY(20vh) scale(.6);opacity:.0}
-      8%{opacity:.25}
-      100%{transform:translateY(-120vh) scale(1);opacity:.0}
-    }
-    @media (prefers-reduced-motion: reduce){
-      #bg-anim{background:#0b1020}
-      .float-thing{animation:none;display:none}
-    }
-
-    /* Header */
-    header{
-      position:sticky;top:0;backdrop-filter:saturate(1.2) blur(8px);
-      background:linear-gradient(180deg, rgba(10,13,26,.75), rgba(10,13,26,.35) 60%, transparent);
-      z-index:50;border-bottom:1px solid rgba(124,92,255,.2)
-    }
-    .nav{
-      display:flex;align-items:center;justify-content:space-between;padding:14px 0;gap:16px;
-    }
-    .logo{
-      font-weight:900;font-size:28px;letter-spacing:.5px;text-transform:lowercase;
-      background:linear-gradient(90deg,var(--primary), #4c9aff 35%, #00e5a8 70%, #ffb300 100%);
-      -webkit-background-clip:text;background-clip:text;color:transparent;
-      text-shadow:0 0 0 rgba(0,0,0,0);
-    }
-    .badge-beta{
-      font-size:12px;padding:4px 8px;border-radius:999px;background:rgba(124,92,255,.15);color:var(--muted);margin-left:10px;border:1px solid rgba(124,92,255,.35)
-    }
-    nav a{color:var(--muted);opacity:.9;font-weight:600;margin:0 10px}
-    .cta-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg, rgba(124,92,255,.25), rgba(0,229,168,.25));color:var(--text);font-weight:800;box-shadow:var(--glow)}
-    .cta-secondary{padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(18,23,53,.55);color:var(--text);font-weight:700}
-    .cta-btn:hover{transform:translateY(-1px);box-shadow:0 0 0 rgba(0,0,0,0), 0 0 60px rgba(124,92,255,.25)}
-    .nav-right{display:flex;align-items:center;gap:10px}
-    .mobile-hide{display:block}
-    @media (max-width:900px){
-      nav .mobile-hide{display:none}
-      .logo{font-size:24px}
-    }
-
-    /* Hero */
-    .hero{position:relative;padding:70px 0 40px}
-    .hero h1{
-      font-size: clamp(28px, 6vw, 68px);
-      line-height:1.05;margin:0 0 18px;
-      letter-spacing:-.02em;
-      background:linear-gradient(180deg,#fff, #c9d2ff 60%, #9cb6ff 100%);
-      -webkit-background-clip:text;background-clip:text;color:transparent;
-      text-shadow:0 10px 40px rgba(124,92,255,.15);
-    }
-    .tagline{
-      font-size: clamp(16px, 2.6vw, 22px); color:var(--muted); max-width:880px;margin:0 0 26px
-    }
-    .hero-ctas{display:flex;flex-wrap:wrap;gap:12px;margin:22px 0 0}
-    .stat-band{
-      display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:36px
-    }
-    .stat{
-      background:linear-gradient(180deg, rgba(18,23,53,.9), rgba(18,23,53,.55));
-      border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:16px 18px;text-align:center
-    }
-    .stat .big{font-size:28px;font-weight:900;color:#a6b7ff}
-    .stat .small{font-size:13px;color:var(--muted)}
-    @media (max-width:820px){
-      .stat-band{grid-template-columns:1fr}
-      .hero{padding-top:40px}
-    }
-
-    /* Feature grid */
-    .section{padding:64px 0}
-    .section h2{
-      font-size: clamp(22px, 4.8vw, 40px); margin:0 0 16px; letter-spacing:-.02em
-    }
+    .card{background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)); border:1px solid var(--border); border-radius:var(--r-lg); box-shadow:var(--shadow)}
+    .btn{appearance:none; border:0; cursor:pointer; border-radius:12px; padding:12px 16px; font-weight:800; letter-spacing:.2px; display:inline-flex; align-items:center; gap:10px; transition:.2s transform,.25s box-shadow; box-shadow:0 10px 24px rgba(0,0,0,.25); touch-action:manipulation}
+    .btn:hover{transform:translateY(-1px)} .btn:active{transform:translateY(0)}
+    .btn-primary{background:linear-gradient(135deg, var(--green), var(--greener)); color:#041f14}
+    .btn-danger{background:linear-gradient(135deg, var(--red), var(--red2)); color:#fff}
+    .btn-ghost{background:rgba(255,255,255,.08); color:var(--text); border:1px solid var(--border)}
+    .btn-xl{padding:16px 22px; font-size:18px; border-radius:14px}
     .muted{color:var(--muted)}
-    .grid{
-      display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:22px
-    }
-    .card{
-      background:linear-gradient(180deg, rgba(18,23,53,.85), rgba(18,23,53,.6));
-      border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:18px
-    }
-    .card h3{margin:0 0 8px;font-size:20px}
-    .card p{margin:0;color:var(--muted)}
-    .icon{
-      width:32px;height:32px;border-radius:9px;display:inline-grid;place-items:center;margin-bottom:10px;
-      background:linear-gradient(180deg, rgba(124,92,255,.25), rgba(0,229,168,.25));
-      border:1px solid rgba(255,255,255,.1)
-    }
-    @media (max-width:980px){.grid{grid-template-columns:1fr 1fr}}
-    @media (max-width:680px){.grid{grid-template-columns:1fr}}
+    .chip{font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.06);color:#b8c8e6}
+    .h1{font:800 clamp(32px, 6vw, 48px)/1.08 "Space Grotesk"} .h2{font:800 clamp(24px, 4.5vw, 34px)/1.12 "Space Grotesk"} .h3{font:800 20px/1.2 "Space Grotesk"} .lead{font-size:16px;color:#cfe3ff}
 
-    /* Preview chart card */
-    .preview{
-      display:grid;grid-template-columns:1.2fr .8fr;gap:18px;margin-top:22px
-    }
-    .panel{
-      background:linear-gradient(180deg, rgba(18,23,53,.9), rgba(18,23,53,.6));
-      border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:18px
-    }
-    .preview canvas{width:100%;height:260px;background:rgba(255,255,255,.03);border-radius:10px;border:1px dashed rgba(255,255,255,.08)}
-    @media (max-width:900px){.preview{grid-template-columns:1fr}}
+    header{position:sticky; top:0; z-index:30; backdrop-filter: blur(10px); background:linear-gradient(180deg, rgba(10,14,24,.75), rgba(10,14,24,.45)); border-bottom:1px solid var(--border)}
+    .nav{display:flex; align-items:center; justify-content:space-between; height:64px}
+    .nav-left, .nav-right{display:flex; align-items:center; gap:12px}
+    .nav-center{display:flex; gap:6px}
+    .nav a{padding:8px 10px;border-radius:10px;color:#dce9ff}
+    .nav a:hover{background:rgba(255,255,255,.06)}
+    @media(max-width:860px){ .nav-center{display:none} }
+    .brand{display:flex;align-items:center;gap:10px; font:800 22px "Space Grotesk"; letter-spacing:.4px}
+    .brand svg{filter:drop-shadow(0 8px 20px rgba(0,230,118,.25))}
+    .tagline{font-weight:800;color:#bcd2ff; letter-spacing:.6px; white-space:nowrap}
+    @media(max-width:620px){ .tagline{display:none} }
 
-    /* Waitlist forms & sticky */
-    .waitlist{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
-    input[type="email"], input[type="text"], input[type="tel"]{
-      background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);color:var(--text);
-      padding:12px 12px;border-radius:12px;outline:none;min-width:240px;flex:1
-    }
-    .btn{
-      background:linear-gradient(90deg,var(--primary), #4c9aff 40%, #00e5a8);
-      border:none;border-radius:12px;color:#fff;font-weight:900;padding:12px 16px;cursor:pointer;box-shadow:var(--glow)
-    }
-    .btn:disabled{opacity:.6;cursor:not-allowed}
-    .btn-outline{background:transparent;border:1px solid rgba(255,255,255,.18);color:var(--text)}
-    .sticky-waitlist{
-      position:fixed;right:18px;bottom:18px;z-index:40;
-      background:linear-gradient(180deg, rgba(18,23,53,.95), rgba(18,23,53,.8));
-      border:1px solid rgba(124,92,255,.45);border-radius:14px;padding:12px 14px;box-shadow:var(--glow)
-    }
-    .pulse{animation:pulse 2.4s infinite}
-    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(124,92,255,.45)}70%{box-shadow:0 0 0 16px rgba(124,92,255,0)}100%{box-shadow:0 0 0 0 rgba(124,92,255,0)}}
+    .hero{position:relative;overflow:hidden;padding:32px 0 18px}
+    .hero-wrap{display:grid; gap:18px; grid-template-columns: 1fr}
+    @media(min-width:980px){ .hero-wrap{grid-template-columns: 1.2fr .8fr} }
+    .hero .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .hero .stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .hero .stats .item{padding:8px 10px;border-radius:10px;border:1px dashed var(--border);background:rgba(255,255,255,.05);font-weight:700;color:#cfe3ff}
+    .mock{padding:16px; border-radius:var(--r-lg); background:linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.04)); border:1px solid var(--border); box-shadow: var(--shadow)}
 
-    /* Demo modal */
-    .modal{position:fixed;inset:0;background:rgba(5,8,20,.72);backdrop-filter: blur(10px);display:none;align-items:center;justify-content:center;z-index:100}
-    .modal[aria-hidden="false"]{display:flex}
-    .modal-card{
-      width:min(960px, 95vw);max-height:92vh;overflow:hidden;border-radius:18px;border:1px solid rgba(255,255,255,.1);
-      background:linear-gradient(180deg, rgba(18,23,53,.98), rgba(18,23,53,.9));
-      box-shadow:0 20px 80px rgba(0,0,0,.6);display:flex;flex-direction:column
-    }
-    .modal-header{
-      padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:10px;justify-content:space-between
-    }
-    .modal-title{font-weight:900;display:flex;align-items:center;gap:8px}
-    .level-pill{font-size:12px;padding:4px 8px;border-radius:999px;background:rgba(124,92,255,.15);border:1px solid rgba(124,92,255,.35);color:#cbd6ff}
-    .close-x{background:transparent;border:none;color:#cbd6ff;font-size:20px;cursor:pointer}
-    .modal-body{display:grid;grid-template-columns: 1.1fr .9fr;gap:0;min-height:460px}
-    .board{padding:14px;border-right:1px solid rgba(255,255,255,.06)}
-    .trade{padding:14px}
-    @media (max-width:820px){
-      .modal-body{grid-template-columns:1fr;max-height:72vh;overflow:auto}
-      .board{border-right:none;border-bottom:1px solid rgba(255,255,255,.06)}
-    }
-    .statbar{
-      display:grid;grid-template-columns: repeat(3,1fr);gap:8px;margin:8px 0 12px
-    }
-    .mini{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px}
-    .mini .k{font-size:12px;color:#b8c4ff}
-    .mini .v{font-weight:900;font-size:18px}
-    .green{color:#00e5a8}
-    .red{color:#ff6a88}
-    .price-tape{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.08);border-radius:12px;
-      padding:10px 12px;margin:8px 0 12px;display:flex;align-items:center;justify-content:space-between
-    }
-    .goal{
-      background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px;margin-top:8px
-    }
-    .goalbar{background:#1a2040;border-radius:8px;height:10px;overflow:hidden;margin-top:8px}
-    .goalbar > span{display:block;height:100%;width:0;background:linear-gradient(90deg,#7c5cff,#00e5a8);box-shadow:var(--glow)}
-    .hint{color:#b6c2ff;font-size:14px;margin-top:6px}
-    .trade .card{margin-bottom:10px}
-    .row{display:flex;gap:10px;align-items:center}
-    .row input[type="number"]{flex:1;min-width:100px}
-    .actions{display:flex;gap:10px;margin-top:8px}
-    .buy{background:linear-gradient(90deg,#01cf96,#27e39b 60%, #6af2c8);font-weight:900}
-    .sell{background:linear-gradient(90deg,#ff3d65,#ff6a88 60%, #ffa7b8);font-weight:900}
-    .next-wrap{display:flex;justify-content:flex-end;border-top:1px solid rgba(255,255,255,.06);padding:10px 14px}
-    .next{font-weight:900;padding:10px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(90deg,#7c5cff,#00e5a8);color:#fff}
-    .next:disabled{opacity:.6}
-    .ghost{opacity:.55}
-    .progress-line{height:4px;background:linear-gradient(90deg,#7c5cff,#00e5a8);width:0;border-radius:4px;transition:width .35s ease}
-    .top-progress{height:4px;background:rgba(255,255,255,.06)}
-    .modal-footer-note{font-size:12px;color:#9cadff;padding:6px 14px 12px}
-    /* Stars celebration */
-    .celebrate{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.6);backdrop-filter: blur(4px);z-index:110}
-    .celebrate[aria-hidden="false"]{display:flex}
-    .star-card{
-      background:linear-gradient(180deg, rgba(18,23,53,.98), rgba(18,23,53,.92));
-      border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:24px 22px;text-align:center;max-width:520px;width:92%;
-      box-shadow:0 30px 120px rgba(0,0,0,.75)
-    }
-    .stars{font-size:44px;letter-spacing:6px;margin-bottom:10px}
-    .stars .s{filter:drop-shadow(0 6px 14px rgba(255,179,0,.35))}
-    .confetti{position:absolute;inset:0;pointer-events:none}
-    /* Register Interest Modal */
-    .wait-modal .modal-card{max-width:560px}
-    .platform-badges{display:flex;gap:10px;justify-content:center;margin-top:8px;flex-wrap:wrap}
-    .platform-badge{
-      display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.03);color:#cbd6ff;font-weight:700
-    }
+    .feature{padding:14px; display:flex; gap:12px; align-items:flex-start}
+    .icon{width:38px;height:38px; display:inline-grid; place-items:center; border-radius:10px; background:linear-gradient(135deg, rgba(0,230,118,.15), rgba(255,23,68,.15)); border:1px solid var(--border)}
+    .icon svg{width:20px;height:20px}
+    .list{display:grid;gap:8px;margin:10px 0 0;padding:0}
+    .list li{list-style:none; display:flex; gap:10px; align-items:flex-start}
+    .list .bullet{width:8px;height:8px; border-radius:50%; background:linear-gradient(135deg, var(--green), var(--red)); margin-top:8px}
 
-    /* FAQ */
-    details{
-      background:linear-gradient(180deg, rgba(18,23,53,.9), rgba(18,23,53,.65));
-      border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 14px
-    }
-    details + details{margin-top:10px}
-    summary{cursor:pointer;font-weight:800}
-    summary::-webkit-details-marker{display:none}
+    /* Background effect */
+    #fx{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden}
+    .candleFx{position:absolute; bottom:-120px; width:8px; border-radius:6px; opacity:.16; filter: blur(.2px); box-shadow:0 8px 20px rgba(0,0,0,.35); animation: rise linear infinite}
+    .candleFx::after{content:""; position:absolute; left:50%; transform:translateX(-50%); width:2px; height:140%; background:currentColor; opacity:.6; top:-20%; border-radius:1px}
+    .candleFx.up{ background:linear-gradient(180deg, #39ffb1, #00e676); color:#00e676 }
+    .candleFx.down{ background:linear-gradient(180deg, #ff4d6d, #ff1744); color:#ff1744 }
+    @keyframes rise{ from{ transform: translateY(0) } to{ transform: translateY(-140vh) } }
+    @media (prefers-reduced-motion: reduce){ .candleFx{animation:none} }
+
+    /* Modal base */
+    .modal{position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center}
+    .hidden{display:none !important}
+    .backdrop{position:absolute; inset:0; background:rgba(6,10,18,.65); backdrop-filter: blur(6px)}
+    .popup{position:relative; z-index:1; width:min(96vw, 900px); border-radius:22px; border:1px solid var(--border); background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.04)); box-shadow:var(--shadow); padding:14px}
+    .close-x{position:absolute; right:10px; top:10px; width:36px; height:36px; border-radius:10px; border:1px solid var(--border); background:rgba(255,255,255,.06); color:#fff; cursor:pointer}
+    body.modal-open{overflow:hidden}
+
+    /* Phone-like demo */
+    .phone{margin:0 auto; background:linear-gradient(165deg, #0b1322, #0f1b31); border:1px solid var(--border); border-radius:30px; padding:10px; width:min(380px, 94vw); box-shadow: var(--shadow); position:relative}
+    .notch{position:absolute; top:8px; left:50%; transform:translateX(-50%); width:150px; height:24px; background:#091221; border-radius:14px; border:1px solid rgba(255,255,255,.06)}
+    .status{display:flex; justify-content:space-between; align-items:center; padding:8px 14px 0; font-size:12px; color:#b9c8e1}
+    .app{margin-top:14px; border-radius:22px; overflow:hidden; border:1px solid var(--border); background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03))}
+    .appbar{display:flex; align-items:center; justify-content:space-between; padding:8px 10px; border-bottom:1px solid var(--border); background:rgba(255,255,255,.04)}
+    .ticker{display:flex; align-items:center; gap:8px; font-weight:800}
+    .pill{font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid var(--border); background:rgba(255,255,255,.06)}
+    .chart{position:relative; height: clamp(200px, 38vh, 260px); display:grid; place-items:center; overflow:hidden}
+    .chart canvas{width:100%; height:100%}
+    .price-tag{position:absolute; top:8px; right:8px; font-weight:800; font-size:13px; padding:6px 8px; border-radius:10px; background:linear-gradient(135deg, rgba(0,230,118,.2), rgba(255,23,68,.18)); border:1px solid var(--border); color:#eafff7}
+    .portfolio{display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:10px; border-top:1px solid var(--border)}
+    .stat{background:rgba(255,255,255,.05); border:1px solid var(--border); border-radius:12px; padding:9px}
+    .stat .label{font-size:12px; color:#a8bad6}
+    .stat .val{font:800 16px "Space Grotesk"; margin-top:4px}
+    .stat.total{grid-column: span 2; background:linear-gradient(135deg, rgba(0,230,118,.08), rgba(255,23,68,.08))}
+    .coach{padding:12px 10px; border-top:1px solid var(--border); background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03)); font-size:14px}
+    .coach .title{font-weight:800; color:#d5e8ff; margin-bottom:4px}
+    .coach .tip{color:#c9daf4}
+
+    /* Actions */
+    .actions{border-top:1px solid var(--border); background:rgba(255,255,255,.03)}
+    .actions-grid{display:grid; grid-template-columns: 1fr 1fr; gap:8px; padding:10px}
+    .stepper{grid-column: span 2; display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:8px}
+    .qtyBtn{min-width:44px; justify-content:center}
+    .qtyField{background:rgba(255,255,255,.06); border:1px solid var(--border); border-radius:10px; padding:10px 12px; font-weight:800; text-align:center; color:#eaf1ff}
+    .pulse{animation:pulse 1.2s ease-out 1}
+    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(0,230,118,.45)}70%{box-shadow:0 0 0 14px rgba(0,230,118,0)}100%{box-shadow:0 0 0 0 rgba(0,230,118,0)}}
+
+    /* History */
+    .history{border-top:1px solid var(--border); background:rgba(255,255,255,.03)}
+    .history-head{display:flex; align-items:center; justify-content:space-between; padding:8px 10px}
+    .history-list{max-height:140px; overflow:auto; padding:0 10px 10px 10px}
+    .history-item{display:flex; justify-content:space-between; gap:10px; padding:8px 0; border-bottom:1px dashed rgba(255,255,255,.08); font-size:13px}
+    .tag{font-size:11px; padding:2px 6px; border-radius:999px; border:1px solid var(--border)}
+    .buy{color:#b7ffe0} .sell{color:#ffc3cc} .gain{color:var(--green)} .loss{color:var(--red)}
+
+    /* Demo CTA section styling */
+    .demo-cta{background: radial-gradient(600px 300px at 10% 0%, rgba(0,230,118,.12), transparent 60%), radial-gradient(600px 300px at 90% 0%, rgba(255,23,68,.12), transparent 60%); border:1px solid var(--border); border-radius:22px; padding:18px}
+
+    /* Stars */
+    .celebrate{position:fixed; inset:0; z-index:120; display:flex; align-items:center; justify-content:center}
+    .stars-card{text-align:center; padding:22px; border-radius:22px; border:1px solid var(--border); background:linear-gradient(160deg, rgba(255,255,255,.12), rgba(255,255,255,.06)); box-shadow:var(--shadow); width:min(520px, 92vw)}
+    .stars{display:flex; gap:8px; align-items:center; justify-content:center; margin-bottom:10px}
+    .star{width:48px; height:48px; background: radial-gradient(60% 60% at 50% 40%, #fff, #ffd54f 60%, #ffb300 100%); -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.789 1.528 8.28L12 18.896l-7.464 4.479 1.528-8.28L0 9.306l8.332-1.151z"/></svg>') center/contain no-repeat; mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.789 1.528 8.28L12 18.896l-7.464 4.479 1.528-8.28L0 9.306l8.332-1.151z"/></svg>') center/contain no-repeat; animation: pop .6s ease-out both; box-shadow:0 0 40px rgba(255,213,79,.35), 0 0 70px rgba(255,179,0,.25)}
+    .star:nth-child(2){transform:scale(1.1); animation-delay:.08s}
+    .star:nth-child(3){animation-delay:.16s}
+    @keyframes pop{0%{transform:scale(0); opacity:0} 60%{transform:scale(1.2); opacity:1} 100%{transform:scale(1)}}
 
     /* Footer */
-    footer{padding:28px 0;color:#a9b6ff;border-top:1px solid rgba(255,255,255,.08)}
-    .foot-grid{display:grid;grid-template-columns:1fr auto;gap:10px}
-    @media (max-width:720px){.foot-grid{grid-template-columns:1fr}}
-
-    /* Tiny helpers */
-    .chip{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:6px 10px;color:#cbd6ff;font-weight:700}
-    .check{color:#27e39b}
-    .x{color:#ff6a88}
+    footer{border-top:1px solid var(--border); padding:22px 0; margin-top:28px; color:#a4bad5; font-size:13px}
+    footer .container{display:grid; justify-items:center; text-align:center; gap:6px}
   </style>
 </head>
 <body>
-  <!-- Animated background -->
-  <div id="bg-anim" aria-hidden="true"></div>
+  <!-- Background effect -->
+  <div id="fx" aria-hidden="true"></div>
 
+  <!-- HEADER -->
   <header>
     <div class="container nav">
-      <div style="display:flex;align-items:center;gap:8px">
-        <div class="logo" aria-label="fracshr logo">fracshr</div>
-        <span class="badge-beta">Beta Preview</span>
+      <div class="nav-left">
+        <a href="#" class="brand" aria-label="FracShr home">
+          <!-- Logo -->
+          <svg width="30" height="30" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#00e676"/><stop offset=".7" stop-color="#00c3ff"/><stop offset="1" stop-color="#7c4dff"/></linearGradient>
+              <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff1744"/><stop offset="1" stop-color="#ff6b81"/></linearGradient>
+            </defs>
+            <rect x="4" y="4" rx="12" ry="12" width="56" height="56" fill="url(#g1)" opacity=".18" />
+            <path d="M10 44 L26 28 L36 36 L54 18" stroke="url(#g1)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M49 18 h8 v8" stroke="url(#g1)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="12" y="46" width="6" height="8" rx="2" fill="url(#g2)"/>
+            <rect x="22" y="42" width="6" height="12" rx="2" fill="url(#g2)"/>
+            <rect x="32" y="38" width="6" height="16" rx="2" fill="url(#g2)"/>
+          </svg>
+          FracShr
+        </a>
+        <span class="chip tagline">TRADING FOR EVERYONE, ANYWHERE,EVERYWHERE</span>
       </div>
-      <nav>
-        <a class="mobile-hide" href="#features">Features</a>
-        <a class="mobile-hide" href="#levels">Levels</a>
-        <a class="mobile-hide" href="#wars">Trade Wars</a>
-        <a class="mobile-hide" href="#tools">Tools</a>
-        <a class="mobile-hide" href="#faq">FAQ</a>
+      <nav class="nav-center">
+        <a href="#why">Why FracShr</a>
+        <a href="#how">How it works</a>
+        <a href="#levels">Levels</a>
+        <a href="#war">Trade War</a>
+        <a href="#demo">Demo</a>
       </nav>
       <div class="nav-right">
-        <button class="cta-secondary" onclick="openModal('demoModal')" aria-label="Open demo">Play Demo</button>
-        <button class="cta-btn" onclick="openModal('waitlistModal')" aria-label="Join waitlist">Join the Waitlist</button>
+        <button class="btn btn-primary" id="openDemoNav">Try Demo</button>
+        <button class="btn btn-ghost" id="openAccess">Early Access</button>
       </div>
     </div>
   </header>
 
-  <main>
-    <section class="hero container">
-      <div class="top-progress" aria-hidden="true"><div id="scrollProgress" class="progress-line"></div></div>
-      <h1>Trading for everyone — anywhere, everywhere</h1>
-      <p class="tagline">fracshr is a level‑based, tutorial‑first trading game. Learn the basics, master pro features, compete in Trade Wars, and design your own challenges. 150+ levels packed with scenarios, smart hints, and advanced charts. No real money. All real skills.</p>
-      <div class="hero-ctas">
-        <button class="cta-btn" onclick="openModal('demoModal')">Play 60‑second Demo</button>
-        <button class="cta-secondary" onclick="document.getElementById('levels').scrollIntoView({behavior:'smooth'})">Explore Levels</button>
-        <button class="cta-secondary mobile-hide" onclick="openModal('waitlistModal')">Get Early Access</button>
-      </div>
-      <div class="stat-band">
-        <div class="stat">
-          <div class="big">150+ Levels</div>
-          <div class="small">Beginner to Pro with bite‑sized missions</div>
-        </div>
-        <div class="stat">
-          <div class="big">Live‑feel Data</div>
-          <div class="small">Charts, indicators, and risk tools you’ll actually use</div>
-        </div>
-        <div class="stat">
-          <div class="big">Trade Wars</div>
-          <div class="small">Invite friends. Timed duels. Most profit wins.</div>
-        </div>
-      </div>
-    </section>
-
-    <section id="features" class="section container">
-      <h2>Why sign up for fracshr?</h2>
-      <p class="muted">Built for absolute beginners and aspiring pros. Learn by doing with a game that rewards smart decisions.</p>
-      <div class="grid">
-        <div class="card">
-          <div class="icon">🎯</div>
-          <h3>Level‑based mastery</h3>
-          <p>Structured curriculum with 150+ levels that teach everything from order types to risk management and strategy.</p>
-        </div>
-        <div class="card">
-          <div class="icon">🧭</div>
-          <h3>Tutorial‑first design</h3>
-          <p>Every action is explained with prompts and hints. Learn concepts exactly when you need them.</p>
-        </div>
-        <div class="card">
-          <div class="icon">📈</div>
-          <h3>Advanced charts</h3>
-          <p>Candlesticks, indicators, and interactive overlays to understand price action and volatility.</p>
-        </div>
-        <div class="card">
-          <div class="icon">⚔️</div>
-          <h3>Trade Wars</h3>
-          <p>Invite friends to timed profit battles. Same rules. Same clock. Highest return takes the crown.</p>
-        </div>
-        <div class="card">
-          <div class="icon">🛠️</div>
-          <h3>Design challenges</h3>
-          <p>Build your own scenarios, set goals, and broadcast them to the community leaderboard.</p>
-        </div>
-        <div class="card">
-          <div class="icon">🏆</div>
-          <h3>Progress that matters</h3>
-          <p>Stars, streaks, and badges keep you motivated. Unlock pro tools as you advance.</p>
-        </div>
-      </div>
-      <div class="preview">
-        <div class="panel">
-          <h3 style="margin-top:0">See the flow: learn ➜ practice ➜ compete</h3>
-          <canvas id="miniChart" aria-label="Sample chart preview"></canvas>
-          <p class="muted" style="margin-top:10px">Real‑feel price moves, simulated P&L, and actionable feedback help you turn concepts into muscle memory.</p>
-        </div>
-        <div class="panel">
-          <h3 style="margin-top:0">What you’ll master</h3>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-            <div class="chip"><span class="check">✔</span> Order types</div>
-            <div class="chip"><span class="check">✔</span> Risk & sizing</div>
-            <div class="chip"><span class="check">✔</span> Chart reading</div>
-            <div class="chip"><span class="check">✔</span> Momentum</div>
-            <div class="chip"><span class="check">✔</span> Swing & day</div>
-            <div class="chip"><span class="check">✔</span> Psychology</div>
-          </div>
-          <div class="waitlist">
-            <input id="wlEmailTop" type="email" placeholder="you@email.com" aria-label="Email" />
-            <button class="btn" onclick="joinWaitlist('wlEmailTop')">Join the waitlist</button>
-          </div>
-          <p class="muted" style="font-size:12px;margin-top:8px">Coming soon on iOS & Android. Educational simulation only.</p>
-        </div>
-      </div>
-    </section>
-
-    <section id="levels" class="section container">
-      <h2>150+ levels. Clear goals. Instant feedback.</h2>
-      <p class="muted">From your first market buy to multi‑asset portfolio challenges—every level is a hands‑on mission with a target and a time box.</p>
-      <div class="grid">
-        <div class="card">
-          <h3>Foundation (Lv 1–20)</h3>
-          <p>Market vs. limit, bid/ask, spreads, and reading candles. Get comfortable with the basics.</p>
-        </div>
-        <div class="card">
-          <h3>Strategy (Lv 21–80)</h3>
-          <p>Trend following, breakouts, pullbacks, and risk‑reward. Learn when to hold and when to fold.</p>
-        </div>
-        <div class="card">
-          <h3>Pro Toolkit (Lv 81–150+)</h3>
-          <p>Multi‑timeframe confluence, indicators, sizing, and scenario planning under time pressure.</p>
-        </div>
-      </div>
-    </section>
-
-    <section id="wars" class="section container">
-      <h2>Trade Wars: bring your A‑game</h2>
-      <p class="muted">Invite friends or match automatically. 5–15 minute duels with identical assets. Highest profit wins. Anti‑stall rules keep it fast.</p>
-      <div class="grid">
-        <div class="card">
-          <div class="icon">⏱️</div>
-          <h3>Timed rounds</h3>
-          <p>Short, intense, and fair. Make decisions under a real clock.</p>
-        </div>
-        <div class="card">
-          <div class="icon">📣</div>
-          <h3>Broadcast your challenges</h3>
-          <p>Design a scenario, set the rules, and share a code to invite the world.</p>
-        </div>
-        <div class="card">
-          <div class="icon">🥇</div>
-          <h3>Leaderboards</h3>
-          <p>Climb weekly and all‑time ranks. Earn badges and seasonal rewards.</p>
-        </div>
-      </div>
-      <div class="hero-ctas" style="margin-top:18px">
-        <button class="cta-btn" onclick="openModal('demoModal')">Try the demo</button>
-        <button class="cta-secondary" onclick="openModal('waitlistModal')">Register interest</button>
-      </div>
-    </section>
-
-    <section id="tools" class="section container">
-      <h2>Pro‑grade tools made playful</h2>
-      <p class="muted">Explore risk calculators, position sizing helpers, multi‑chart layouts, and session replays—without the learning cliff.</p>
-      <div class="grid">
-        <div class="card"><h3>Replay Levels</h3><p>Rewatch trades with event markers and coach tips.</p></div>
-        <div class="card"><h3>Risk Assistant</h3><p>Position sizing with real‑time R:R and drawdown hints.</p></div>
-        <div class="card"><h3>Multi‑asset Sandbox</h3><p>Practice across equities, crypto, and forex simulations.</p></div>
-      </div>
-    </section>
-
-    <section id="faq" class="section container">
-      <h2>FAQ</h2>
-      <details>
-        <summary>Is fracshr real money trading?</summary>
-        <p class="muted">No. fracshr is an educational simulation. You’ll practice with virtual cash to build real‑world skills.</p>
-      </details>
-      <details>
-        <summary>When will the app be available?</summary>
-        <p class="muted">We’re launching on iOS and Android soon. Join the waitlist to be first in line.</p>
-      </details>
-      <details>
-        <summary>Can I create my own challenges?</summary>
-        <p class="muted">Yes! Design scenarios and broadcast them to friends or the community. Great for classrooms and clubs.</p>
-      </details>
-      <details>
-        <summary>What’s a Trade War?</summary>
-        <p class="muted">A time‑boxed head‑to‑head with identical inputs. Most profit at the buzzer wins. Simple rules, deep strategy.</p>
-      </details>
-    </section>
-  </main>
-
-  <footer>
-    <div class="container foot-grid">
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container hero-wrap">
       <div>
-        <div class="logo">fracshr</div>
-        <div style="font-size:12px;margin-top:6px">© <span id="yr"></span> fracshr. All rights reserved. Educational purposes only.</div>
+        <div class="chip">Mobile-first trading game</div>
+        <h1 class="h1" style="margin:10px 0 8px">Master trading through play. 150+ levels, real tools, real skills.</h1>
+        <p class="lead">FracShr turns complex markets into an engaging, goal-based journey. Learn fundamentals, unlock advanced techniques, and compete in time-based Trade Wars.</p>
+        <div class="hero stats">
+          <div class="item">150+ progression levels</div>
+          <div class="item">Goal-based scenarios</div>
+          <div class="item">Pro-grade charts</div>
+          <div class="item">Create & share challenges</div>
+        </div>
       </div>
-      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
-        <a href="#" class="chip">Privacy</a>
-        <a href="#" class="chip">Terms</a>
-        <a href="#" class="chip">Contact</a>
+      <div class="mock card">
+        <div style="display:grid;gap:12px">
+          <div class="feature">
+            <div class="icon"><svg viewBox="0 0 24 24"><path d="M3 3v18h18" stroke="#83FFD1" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+            <div><div class="h3">Learn by doing</div><div class="muted">Guided scenarios with clear objectives and instant feedback.</div></div>
+          </div>
+          <div class="feature">
+            <div class="icon"><svg viewBox="0 0 24 24"><path d="M4 12h16M4 6h8M4 18h12" stroke="#FF8FA1" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+            <div><div class="h3">Level-based mastery</div><div class="muted">From basics to advanced strategies across 150+ levels.</div></div>
+          </div>
+          <div class="feature">
+            <div class="icon"><svg viewBox="0 0 24 24"><path d="M4 17l6-6 4 4 6-6" stroke="#c1b3ff" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+            <div><div class="h3">Compete</div><div class="muted">Invite friends to Trade Wars. Highest profit in time wins.</div></div>
+          </div>
+        </div>
       </div>
+    </div>
+  </section>
+
+  <!-- WHY -->
+  <section id="why" class="space">
+    <div class="container grid">
+      <div class="col-6">
+        <h2 class="h2">Why FracShr?</h2>
+        <p class="lead">Learn safely by trading simulated markets that feel real. Clear goals, paced guidance, and pro-style tools help you build skills that stick.</p>
+        <div class="card" style="padding:16px;margin-top:12px">
+          <ul class="list">
+            <li><span class="bullet"></span><span>Structured progression that’s actually fun.</span></li>
+            <li><span class="bullet"></span><span>Replay, indicators, and scenarios with feedback.</span></li>
+            <li><span class="bullet"></span><span>Compete in Trade Wars or build your own challenges.</span></li>
+            <li><span class="bullet"></span><span>Mobile-first. iOS & Android apps coming soon.</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="card" style="padding:16px">
+          <div class="h3">What you’ll master</div>
+          <ul class="list">
+            <li><span class="bullet"></span><span>Risk basics: sizing, stops, reward/risk.</span></li>
+            <li><span class="bullet"></span><span>Trends & momentum: MA, RSI, MACD.</span></li>
+            <li><span class="bullet"></span><span>Playbooks: breakouts, pullbacks, events.</span></li>
+            <li><span class="bullet"></span><span>Advanced: options basics, optimization.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW -->
+  <section id="how" class="space">
+    <div class="container">
+      <h2 class="h2" style="margin-bottom:10px">How it works</h2>
+      <div class="grid">
+        <div class="col-3 card" style="padding:16px"><div class="h3">Learn</div><div class="muted">Short, focused levels with crystal-clear objectives.</div></div>
+        <div class="col-3 card" style="padding:16px"><div class="h3">Practice</div><div class="muted">Pro-style charts and tools you’ll use in real trading.</div></div>
+        <div class="col-3 card" style="padding:16px"><div class="h3">Compete</div><div class="muted">Time-based Trade Wars with fair rules.</div></div>
+        <div class="col-3 card" style="padding:16px"><div class="h3">Create</div><div class="muted">Design and share your own challenges.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEVELS -->
+  <section id="levels" class="space">
+    <div class="container grid">
+      <div class="col-8">
+        <h2 class="h2">150+ Levels from Zero to Pro</h2>
+        <div class="card" style="padding:16px;margin-top:8px">
+          <ul class="list">
+            <li><span class="bullet"></span><span>1–10: Foundations — orders, spreads, candlesticks.</span></li>
+            <li><span class="bullet"></span><span>11–30: Risk — sizing, stops, reward/risk.</span></li>
+            <li><span class="bullet"></span><span>31–60: Trends — MA, breakouts, pullbacks.</span></li>
+            <li><span class="bullet"></span><span>61–90: Momentum — RSI, MACD, volume.</span></li>
+            <li><span class="bullet"></span><span>91–120: Playbooks — news, events, multi-timeframe.</span></li>
+            <li><span class="bullet"></span><span>121–150+: Advanced — options basics, optimization.</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="card" style="padding:16px; display:grid;gap:8px">
+          <div class="h3">Your challenges, your way</div>
+          <div class="muted">Craft scenarios with timers, rules, and scoring. Share with friends or broadcast to everyone.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRADE WAR -->
+  <section id="war" class="space">
+    <div class="container grid">
+      <div class="col-6">
+        <h2 class="h2">Trade War: Battle mode</h2>
+        <p class="lead">Invite friends or auto-match. Choose a timer, starting cash, and risk rules. Highest portfolio at the buzzer wins.</p>
+        <div class="card" style="padding:16px; margin-top:8px">
+          <ul class="list">
+            <li><span class="bullet"></span><span>Fair-play engine and anti-cheat.</span></li>
+            <li><span class="bullet"></span><span>Live leaderboards and replays.</span></li>
+            <li><span class="bullet"></span><span>Party codes for instant matches.</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="card" style="padding:16px">
+          <div class="h3">Arena preview</div>
+          <div class="muted">Timed progress, opponent P/L, pro-style charts.</div>
+          <div style="margin-top:12px; height:220px; border:1px dashed var(--border); border-radius:14px; display:grid; place-items:center; color:#b8c7de">Coming soon</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEMO SECTION (bold, single prominent CTA) -->
+  <section id="demo" class="space">
+    <div class="container">
+      <div class="demo-cta">
+        <div class="grid" style="align-items:center">
+          <div class="col-6">
+            <h2 class="h2">Try our demo game</h2>
+            <p class="lead">A guided, mobile-style preview with professional candlestick charts. Learn to buy, take partial profits, add to position, and lock gains. Goal: grow $10,000 to $11,000.</p>
+            <button class="btn btn-danger btn-xl" id="openDemoSection">Launch Demo</button>
+          </div>
+          <div class="col-6">
+            <div class="card" style="padding:16px">
+              <div class="h3">What’s inside</div>
+              <ul class="list">
+                <li><span class="bullet"></span><span>Candlestick chart with wicks (green up, red down) + trade markers.</span></li>
+                <li><span class="bullet"></span><span>Quantity stepper and Buy/Sell controls.</span></li>
+                <li><span class="bullet"></span><span>Transaction history with realized P/L.</span></li>
+                <li><span class="bullet"></span><span>Longer flow: Buy 80 → Sell 20 → Buy 20 → Sell All.</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div>© <span id="year"></span> FracShr. All rights reserved.</div>
+      <div class="muted">TRADING FOR EVERYONE, ANYWHERE,EVERYWHERE</div>
     </div>
   </footer>
 
-  <!-- Sticky Waitlist -->
-  <div class="sticky-waitlist pulse" role="dialog" aria-label="Join the fracshr waitlist">
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <div style="font-weight:900">Get early access</div>
-      <input id="wlEmailSticky" type="email" placeholder="you@email.com" aria-label="Email" />
-      <button class="btn" onclick="joinWaitlist('wlEmailSticky')">Notify me</button>
-      <button class="btn btn-outline" onclick="openModal('demoModal')">Play Demo</button>
-    </div>
-    <div style="font-size:11px;color:#9cadff;margin-top:6px">Coming soon to iOS & Android</div>
-  </div>
+  <!-- DEMO MODAL -->
+  <div class="modal hidden" id="demoModal" aria-hidden="true" aria-label="FracShr Guided Demo">
+    <div class="backdrop"></div>
+    <div class="popup" role="dialog" aria-modal="true">
+      <button class="close-x" id="closeDemo" aria-label="Close demo">✕</button>
+      <div class="phone" role="region" aria-label="Demo phone">
+        <div class="notch"></div>
+        <div class="status"><span>Demo</span><span>LTE • 100%</span></div>
+        <div class="app">
+          <div class="appbar">
+            <div class="ticker">
+              <span class="pill">FSR DEMO</span>
+              <span class="muted">Goal: $11,000</span>
+            </div>
+            <div class="pill">Level 1</div>
+          </div>
+          <div class="chart">
+            <canvas id="demoChart" aria-label="Candlestick chart"></canvas>
+            <div class="price-tag" id="priceTag">$100.00</div>
+          </div>
+          <div class="portfolio">
+            <div class="stat"><div class="label">Cash</div><div class="val" id="cashVal">$10,000.00</div></div>
+            <div class="stat"><div class="label">Holdings</div><div class="val" id="holdVal">0 sh</div></div>
+            <div class="stat"><div class="label">Avg Cost</div><div class="val" id="avgVal">$0.00</div></div>
+            <div class="stat"><div class="label">Price</div><div class="val" id="priceVal">$100.00</div></div>
+            <div class="stat total"><div class="label">Portfolio Value</div><div class="val" id="portVal">$10,000.00</div></div>
+            <div class="stat total"><div class="label">Realized P/L</div><div class="val" id="realVal">$0.00</div></div>
+            <div class="stat total"><div class="label">Unrealized P/L</div><div class="val" id="unrealVal">$0.00</div></div>
+          </div>
+          <div class="coach">
+            <div class="title">Coach</div>
+            <div class="tip" id="coachText">Welcome! You have $10,000. Tap Next to watch the market open.</div>
+          </div>
 
-  <!-- Demo Game Modal -->
-  <div id="demoModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="demoTitle">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div class="modal-title">
-          <span class="logo" style="font-size:20px">fracshr</span>
-          <span class="level-pill">Demo Level • Goal: $11,000</span>
-        </div>
-        <button class="close-x" onclick="closeModal('demoModal')" aria-label="Close demo">✕</button>
-      </div>
-      <div class="modal-body">
-        <div class="board">
-          <div class="price-tape">
-            <div><strong>Ticker:</strong> FRX</div>
-            <div><strong>Price:</strong> $<span id="dmPrice">100.00</span></div>
-          </div>
-          <div class="statbar">
-            <div class="mini">
-              <div class="k">Cash</div>
-              <div class="v">$<span id="dmCash">10,000.00</span></div>
-            </div>
-            <div class="mini">
-              <div class="k">Holdings</div>
-              <div class="v"><span id="dmShares">0</span> sh @ $<span id="dmAvg">0.00</span></div>
-            </div>
-            <div class="mini">
-              <div class="k">Unrealized P/L</div>
-              <div class="v"><span id="dmPL" class="ghost">$0.00</span></div>
+          <div class="actions">
+            <div class="actions-grid">
+              <div class="stepper">
+                <button class="btn btn-ghost qtyBtn" id="qtyMinus">−</button>
+                <input class="qtyField" id="qtyField" type="number" value="80" min="10" max="200" step="10" />
+                <button class="btn btn-ghost qtyBtn" id="qtyPlus">+</button>
+              </div>
+              <button class="btn btn-primary" id="buyQtyBtn">Buy Qty</button>
+              <button class="btn btn-ghost" id="sellQtyBtn">Sell Qty</button>
+              <button class="btn btn-danger" id="sellAllBtn">Sell All</button>
+              <button class="btn btn-ghost" id="nextBtn">Next</button>
             </div>
           </div>
-          <div class="goal">
-            <div><strong>Portfolio value:</strong> $<span id="dmPV">10,000.00</span> <span id="dmGoalHit" class="level-pill" style="display:none;margin-left:8px;background:rgba(0,229,168,.18);border-color:rgba(0,229,168,.5);color:#9dffe5">Goal reached!</span></div>
-            <div class="goalbar"><span id="dmGoalBar"></span></div>
-            <div class="hint" id="dmHint">Welcome! You have $10,000 virtual cash. Your mission: reach $11,000. Tap Next to begin.</div>
-          </div>
-          <div id="demoChart" style="height:220px;background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.08);border-radius:12px;margin-top:12px;position:relative;overflow:hidden">
-            <!-- lightweight line drawn via JS -->
-            <canvas id="dmCanvas" style="width:100%;height:100%"></canvas>
-          </div>
-        </div>
-        <div class="trade">
-          <div class="card">
-            <h3 style="margin:0 0 4px">Place a trade</h3>
-            <p class="muted" id="dmStepText" style="margin:0 0 10px">We’ll guide you. Start when ready.</p>
-            <div class="row">
-              <label for="dmQty" style="font-weight:700">Quantity</label>
-              <input id="dmQty" type="number" min="1" step="1" value="100" />
-            </div>
-            <div class="actions">
-              <button id="buyBtn" class="btn buy" onclick="demoBuy()">Buy</button>
-              <button id="sellBtn" class="btn sell" onclick="demoSell()" disabled>Sell</button>
-              <button class="btn btn-outline" onclick="demoReset()">Reset</button>
-            </div>
-            <p class="hint" id="dmNote">Tip: Buying uses cash to acquire shares. Your portfolio value = cash + shares × price.</p>
-          </div>
-          <div class="card">
-            <h3 style="margin-top:0">Step progress</h3>
-            <div style="height:8px;background:rgba(255,255,255,.06);border-radius:6px;overflow:hidden">
-              <div id="dmStepProgress" class="progress-line" style="height:8px"></div>
-            </div>
-            <p class="muted" style="font-size:12px;margin-top:8px">Tap Next after each event to move at a comfortable pace.</p>
-          </div>
-        </div>
-      </div>
-      <div class="next-wrap">
-        <button id="dmNext" class="next" onclick="demoNext()">Next</button>
-      </div>
-      <div class="modal-footer-note">Educational simulation. Prices are illustrative for the demo.</div>
-    </div>
-  </div>
 
-  <!-- Celebration -->
-  <div id="celebrate" class="celebrate" aria-hidden="true" role="dialog" aria-modal="true">
-    <div class="star-card">
-      <div class="stars">
-        <span class="s">⭐️</span><span class="s">⭐️</span><span class="s">⭐️</span>
-      </div>
-      <h2 style="margin:8px 0 6px">Congratulations — Level Completed!</h2>
-      <p class="muted">You reached $11,000. Nice work! Ready to keep the streak alive?</p>
-      <div style="display:flex;gap:10px;justify-content:center;margin-top:12px">
-        <button class="btn" onclick="closeCelebrateThenOpenWaitlist()">Register interest</button>
-        <button class="btn btn-outline" onclick="closeCelebrate()">Close</button>
-      </div>
-    </div>
-    <div id="confetti" class="confetti"></div>
-  </div>
+          <div class="history">
+            <div class="history-head">
+              <div class="h3" style="font-size:14px">Transactions</div>
+              <span class="muted" style="font-size:12px">Track buys, sells, and P/L</span>
+            </div>
+            <div class="history-list" id="historyList" aria-live="polite"></div>
+          </div>
 
-  <!-- Waitlist Modal -->
-  <div id="waitlistModal" class="modal wait-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="waitTitle">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div class="modal-title">
-          <span id="waitTitle" style="font-weight:900">Register your interest</span>
-          <span class="level-pill">Launch: iOS & Android</span>
+          <div class="home-indicator"></div>
         </div>
-        <button class="close-x" onclick="closeModal('waitlistModal')" aria-label="Close">✕</button>
-      </div>
-      <div class="board" style="border-right:none">
-        <p class="muted">Be first to play the full game with 150+ levels, Trade Wars, and creator tools.</p>
-        <div class="waitlist">
-          <input id="wlName" type="text" placeholder="Your name (optional)" />
-          <input id="wlEmail" type="email" placeholder="Email" />
-          <input id="wlPhone" type="tel" placeholder="Phone (optional)" />
-          <button class="btn" onclick="joinWaitlist('wlEmail','wlName','wlPhone')">Join waitlist</button>
-        </div>
-        <div class="platform-badges">
-          <div class="platform-badge">📱 iOS • Coming soon</div>
-          <div class="platform-badge">🤖 Android • Coming soon</div>
-        </div>
-        <p class="muted" style="font-size:12px;margin-top:8px">We’ll only use your info to notify you about launch and early access.</p>
       </div>
     </div>
   </div>
 
-  <script>
-    // Year
-    document.getElementById('yr').textContent = new Date().getFullYear();
+  <!-- EARLY ACCESS MODAL (has a close button) -->
+  <div class="modal hidden" id="accessModal" aria-hidden="true" aria-label="Register for Early Access">
+    <div class="backdrop"></div>
+    <div class="popup" role="dialog" aria-modal="true" style="max-width:640px">
+      <button class="close-x" id="closeAccess" aria-label="Close">✕</button>
+      <div class="grid" style="gap:12px">
+        <div class="col-12">
+          <h2 class="h2">Early Access</h2>
+          <p class="lead">We’ll notify you when FracShr launches on iOS & Android.</p>
+        </div>
+        <div class="col-12">
+          <form id="accessForm" class="form" style="display:grid;gap:10px;grid-template-columns:1fr 1fr">
+            <div class="input" style="display:flex;flex-direction:column;gap:6px">
+              <label for="accName">Name</label>
+              <input id="accName" placeholder="Your name" style="background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:12px;padding:11px 12px;color:#eaf1ff"/>
+            </div>
+            <div class="input" style="display:flex;flex-direction:column;gap:6px">
+              <label for="accEmail">Email</label>
+              <input id="accEmail" type="email" placeholder="you@example.com" required style="background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:12px;padding:11px 12px;color:#eaf1ff"/>
+            </div>
+            <div class="input" style="grid-column: span 2; display:flex; flex-direction:column; gap:6px">
+              <label for="accPlatform">Preferred platform</label>
+              <select id="accPlatform" style="background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:12px;padding:11px 12px;color:#eaf1ff">
+                <option>iOS</option>
+                <option>Android</option>
+                <option>Both</option>
+              </select>
+            </div>
+            <div class="full" style="grid-column: span 2; display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+              <button class="btn btn-danger" type="submit">Register</button>
+              <span class="muted" id="accThanks"></span>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    // Scroll progress
-    const sp = document.getElementById('scrollProgress');
-    document.addEventListener('scroll', () => {
-      const h = document.documentElement;
-      const scrolled = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
-      sp.style.width = scrolled + '%';
-    });
+  <!-- 3-STAR CELEBRATION -->
+  <div class="celebrate hidden" id="starsModal" aria-hidden="true">
+    <div class="backdrop"></div>
+    <div class="stars-card">
+      <div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div></div>
+      <div class="h2">Congratulations — Level Completed!</div>
+      <p class="lead">You reached your goal! Great job navigating the trade.</p>
+      <button class="btn btn-danger" id="openAccessFromStars">Register for Early Access</button>
+    </div>
+  </div>
 
-    // Background animated bits
-    (function bg(){
-      const root = document.getElementById('bg-anim');
-      const count = 20;
-      const bCount = 16;
-      for(let i=0;i<count;i++){
-        const wrap = document.createElement('div');
-        wrap.className = 'float-thing';
-        wrap.style.left = Math.random()*100 + 'vw';
-        wrap.style.top = (60 + Math.random()*40) + 'vh';
-        wrap.style.animation = `floatUp ${16 + Math.random()*14}s linear ${Math.random()*-20}s infinite`;
-        wrap.style.transform = `translateY(${Math.random()*40}vh)`;
-        const candleWrap = document.createElement('div');
-        if(Math.random()>.5) candleWrap.classList.add('red');
-        const c = document.createElement('div'); c.className='candle';
-        candleWrap.appendChild(c);
-        wrap.appendChild(candleWrap);
-        root.appendChild(wrap);
-      }
-      for(let i=0;i<bCount;i++){
-        const bub = document.createElement('div');
-        bub.className = 'float-thing bubble';
-        bub.style.left = Math.random()*100 + 'vw';
-        bub.style.top = (70 + Math.random()*35) + 'vh';
-        bub.style.animation = `floatUp ${20 + Math.random()*18}s linear ${Math.random()*-25}s infinite`;
-        bub.style.width = bub.style.height = (8 + Math.random()*14) + 'px';
-        root.appendChild(bub);
-      }
-    })();
+<script>
+/* Helpers */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const fmtMoney = n => (n<0? "-$" : "$") + Math.abs(n).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+const clamp = (n,min,max)=>Math.max(min,Math.min(max,n));
 
-    // Mini chart in features
-    (function mini(){
-      const c = document.getElementById('miniChart');
-      const ctx = c.getContext ? c.getContext('2d') : null;
-      if(!ctx) return;
-      // Fit canvas to size
-      function size(){ c.width = c.clientWidth; c.height = c.clientHeight; draw(); }
-      window.addEventListener('resize', size);
-      const pts = [];
-      let v=50;
-      for(let i=0;i<90;i++){
-        v += (Math.random()-.3)*4;
-        v = Math.max(8, Math.min(92, v));
-        pts.push(v);
-      }
-      function draw(){
-        ctx.clearRect(0,0,c.width,c.height);
-        // grid
-        ctx.strokeStyle = 'rgba(255,255,255,.06)';
-        ctx.lineWidth = 1;
-        for(let i=0;i<6;i++){
-          const y = (i/5)*c.height;
-          ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke();
-        }
-        // line glow
-        ctx.beginPath();
-        for(let i=0;i<pts.length;i++){
-          const x = (i/(pts.length-1))*c.width;
-          const y = c.height - (pts[i]/100)*c.height;
-          if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-        }
-        const grad = ctx.createLinearGradient(0,0,c.width,0);
-        grad.addColorStop(0,'#7c5cff'); grad.addColorStop(.5,'#4c9aff'); grad.addColorStop(1,'#00e5a8');
-        ctx.strokeStyle = grad; ctx.lineWidth = 2;
-        ctx.shadowColor = 'rgba(124,92,255,.4)'; ctx.shadowBlur = 8; ctx.stroke();
-        // fill
-        const g2 = ctx.createLinearGradient(0,0,0,c.height);
-        g2.addColorStop(0,'rgba(124,92,255,.25)');
-        g2.addColorStop(1,'rgba(0,0,0,0)');
-        ctx.lineTo(c.width,c.height); ctx.lineTo(0,c.height); ctx.closePath();
-        ctx.fillStyle = g2; ctx.fill();
-        ctx.shadowBlur = 0;
-      }
-      size();
-    })();
+/* Year + background fx */
+$('#year').textContent = new Date().getFullYear();
+(function bgCandles(){
+  const root = document.getElementById('fx');
+  const isMobile = window.matchMedia('(max-width: 640px)').matches;
+  const count = isMobile ? 10 : 18;
+  for(let i=0;i<count;i++){
+    const d = document.createElement('div');
+    d.className = 'candleFx ' + (Math.random()>.5?'up':'down');
+    d.style.left = Math.round(Math.random()*100)+'%';
+    const w = 5 + Math.random()*7; d.style.width = w+'px';
+    d.style.height = (40 + Math.random()*160)+'px';
+    d.style.animationDuration = (8 + Math.random()*12)+'s';
+    d.style.animationDelay = (-Math.random()*12)+'s';
+    root.appendChild(d);
+  }
+})();
 
-    // Utility: currency formatting
-    const fmt = new Intl.NumberFormat('en-US', {style:'currency', currency:'USD', maximumFractionDigits:2});
+/* Header CTAs */
+$('#openDemoNav').addEventListener('click', openDemo);
+$('#openAccess').addEventListener('click', openAccess);
 
-    // Demo game state
-    const demoState = {
-      step: 0,
-      price: 100,
-      cash: 10000,
-      shares: 0,
-      avgCost: 0,
-      goal: 11000,
-      history: [100],
-      animating: false,
-      completed: false,
-    };
+/* DEMO CTA (section) */
+$('#openDemoSection').addEventListener('click', openDemo);
 
-    const el = {
-      price: document.getElementById('dmPrice'),
-      cash: document.getElementById('dmCash'),
-      shares: document.getElementById('dmShares'),
-      avg: document.getElementById('dmAvg'),
-      pl: document.getElementById('dmPL'),
-      pv: document.getElementById('dmPV'),
-      goalbar: document.getElementById('dmGoalBar'),
-      hint: document.getElementById('dmHint'),
-      stepText: document.getElementById('dmStepText'),
-      stepProgress: document.getElementById('dmStepProgress'),
-      next: document.getElementById('dmNext'),
-      qty: document.getElementById('dmQty'),
-      buy: document.getElementById('buyBtn'),
-      sell: document.getElementById('sellBtn'),
-      goalHit: document.getElementById('dmGoalHit'),
-      canvas: document.getElementById('dmCanvas'),
-    };
+/* Access modal controls */
+function openAccess(){
+  $('#accessModal').classList.remove('hidden');
+  document.body.classList.add('modal-open');
+}
+function closeAccess(){
+  $('#accessModal').classList.add('hidden');
+  document.body.classList.remove('modal-open');
+}
+$('#closeAccess').addEventListener('click', closeAccess);
+$('#accessForm').addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const name = $('#accName').value.trim();
+  const email = $('#accEmail').value.trim();
+  const platform = $('#accPlatform').value;
+  const entries = JSON.parse(localStorage.getItem('fracshr_access')||'[]');
+  entries.push({name,email,platform, ts: Date.now()});
+  localStorage.setItem('fracshr_access', JSON.stringify(entries));
+  $('#accThanks').textContent = "Thanks! You’re on the list ✔";
+  setTimeout(closeAccess, 900);
+});
 
-    // Demo chart canvas setup
-    function sizeDmCanvas(){
-      const p = el.canvas.parentElement.getBoundingClientRect();
-      el.canvas.width = p.width; el.canvas.height = p.height;
-      drawDmChart();
+/* Close modals by clicking backdrop */
+$$('.modal').forEach(modal=>{
+  const backdrop = modal.querySelector('.backdrop');
+  backdrop?.addEventListener('click', ()=>{
+    modal.classList.add('hidden');
+    document.body.classList.remove('modal-open');
+  });
+});
+
+/* DEMO: state */
+const game = {
+  cash: 10000, shares: 0, avg: 0, realized: 0, goal: 11000,
+  candles: [],    // [{o,h,l,c}]
+  trades: [],     // [{type, qty, price, idx, pl}]
+  step: 0,
+  busy: false,
+  lock: null      // {action:'buy'|'sell'|'sellAll', qty?:number}
+};
+
+let canvas, ctx, priceTag, coachText, btnNext, qtyField, btnMinus, btnPlus, btnBuyQty, btnSellQty, btnSellAll;
+let cashVal, holdVal, avgVal, priceVal, portVal, realVal, unrealVal, histList;
+let resizeObs;
+
+/* DEMO open/close */
+function openDemo(){
+  resetGame();
+  $('#demoModal').classList.remove('hidden'); document.body.classList.add('modal-open');
+  setupRefs(); initChart(); seedInitialCandles(); updateUI();
+  setCoach("Welcome! You have $10,000. Tap Next to watch the market open.");
+}
+$('#closeDemo').addEventListener('click', closeDemo);
+function closeDemo(){ $('#demoModal').classList.add('hidden'); document.body.classList.remove('modal-open') }
+
+/* Refs & bindings */
+function setupRefs(){
+  canvas = $('#demoChart'); ctx = canvas.getContext('2d');
+  priceTag = $('#priceTag'); coachText = $('#coachText'); btnNext = $('#nextBtn');
+  qtyField = $('#qtyField'); btnMinus = $('#qtyMinus'); btnPlus = $('#qtyPlus');
+  btnBuyQty = $('#buyQtyBtn'); btnSellQty = $('#sellQtyBtn'); btnSellAll = $('#sellAllBtn');
+  cashVal = $('#cashVal'); holdVal = $('#holdVal'); avgVal = $('#avgVal'); priceVal = $('#priceVal');
+  portVal = $('#portVal'); realVal = $('#realVal'); unrealVal = $('#unrealVal');
+  histList = $('#historyList');
+
+  btnNext.onclick = nextStep;
+  btnMinus.onclick = ()=> setQty(parseInt(qtyField.value||10)-10);
+  btnPlus.onclick  = ()=> setQty(parseInt(qtyField.value||10)+10);
+  qtyField.oninput = ()=> setQty(parseInt(qtyField.value||10));
+
+  btnBuyQty.onclick = ()=> {
+    const q = validQty();
+    if(game.lock?.action==='buy' && q!==game.lock.qty){ nudgeQty(`Set quantity to ${game.lock.qty} and tap Buy Qty.`); return; }
+    if(doBuy(q)){
+      addHistory('BUY', q, lastPrice(), null);
+      if(game.lock?.action==='buy'){ completeLock("Great entry! Tap Next to advance the market."); }
     }
-    window.addEventListener('resize', sizeDmCanvas);
+  };
 
-    function drawDmChart(){
-      const c = el.canvas; const ctx = c.getContext('2d');
-      ctx.clearRect(0,0,c.width,c.height);
-      // grid
-      ctx.strokeStyle = 'rgba(255,255,255,.06)';
-      ctx.lineWidth = 1;
-      for(let i=0;i<5;i++){
-        const y = (i/4)*c.height; ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(c.width,y); ctx.stroke();
-      }
-      // path
-      ctx.beginPath();
-      const arr = demoState.history;
-      for(let i=0;i<arr.length;i++){
-        const x = (i/(Math.max(1,arr.length-1)))*c.width;
-        const min = 95, max = 112;
-        const yVal = (arr[i]-min)/(max-min); // normalize
-        const y = c.height - (yVal)*c.height;
-        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-      }
-      const grad = ctx.createLinearGradient(0,0,c.width,0);
-      grad.addColorStop(0,'#7c5cff'); grad.addColorStop(.6,'#4c9aff'); grad.addColorStop(1,'#00e5a8');
-      ctx.strokeStyle = grad; ctx.lineWidth = 2;
-      ctx.shadowColor = 'rgba(124,92,255,.4)'; ctx.shadowBlur = 8; ctx.stroke();
-      // fill
-      const g2 = ctx.createLinearGradient(0,0,0,c.height);
-      g2.addColorStop(0,'rgba(124,92,255,.2)'); g2.addColorStop(1,'rgba(0,0,0,0)');
-      ctx.lineTo(c.width,c.height); ctx.lineTo(0,c.height); ctx.closePath();
-      ctx.fillStyle = g2; ctx.fill();
-      ctx.shadowBlur = 0;
+  btnSellQty.onclick = ()=> {
+    const q = validQty();
+    if(q > game.shares){ nudgeQty(`You only hold ${game.shares} shares.`); return; }
+    if(game.lock?.action==='sell' && q!==game.lock.qty){ nudgeQty(`Set quantity to ${game.lock.qty} and tap Sell Qty.`); return; }
+    if(doSell(q)){
+      addHistory('SELL', q, lastPrice(), lastSellPL(q));
+      if(game.lock?.action==='sell'){ completeLock("Nice partial! Tap Next to continue."); }
     }
+  };
 
-    // Update UI
-    function updateDmUI(){
-      el.price.textContent = demoState.price.toFixed(2);
-      el.cash.textContent = demoState.cash.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
-      el.shares.textContent = demoState.shares;
-      el.avg.textContent = demoState.avgCost.toFixed(2);
-      const uPnL = (demoState.price - demoState.avgCost) * demoState.shares;
-      el.pl.textContent = (uPnL>=0?'+':'') + fmt.format(uPnL).replace('$','');
-      el.pl.className = uPnL>=0 ? 'green' : 'red';
-      const pv = demoState.cash + demoState.shares * demoState.price;
-      el.pv.textContent = pv.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
-      const pct = Math.min(100, ((pv - 10000)/ (demoState.goal - 10000))*100);
-      el.goalbar.style.width = Math.max(0,pct) + '%';
-      el.goalHit.style.display = pv >= demoState.goal ? 'inline-flex' : 'none';
-      const maxStep = 6;
-      el.stepProgress.style.width = ((demoState.step)/(maxStep))*100 + '%';
-      drawDmChart();
-    }
-
-    // Step machine
-    function setStep(step){
-      demoState.step = step;
-      switch(step){
-        case 0:
-          el.hint.textContent = "Welcome! You have $10,000 virtual cash. Your mission: reach $11,000. Tap Next to begin.";
-          el.stepText.textContent = "We’ll guide you. Start when ready.";
-          el.next.disabled = false;
-          el.buy.disabled = true; el.sell.disabled = true; el.qty.disabled = true;
-          break;
-        case 1:
-          el.hint.textContent = "FRX is trading at $100. Let’s start simple: buy 100 shares.";
-          el.stepText.textContent = "Enter 100 and press Buy. We’ll invest your cash.";
-          el.qty.value = 100;
-          el.buy.disabled = false; el.sell.disabled = true; el.qty.disabled = false;
-          el.next.disabled = true;
-          break;
-        case 2:
-          el.hint.textContent = "Great! You’re in. Now we’ll step through a price move. Tap Next to see it.";
-          el.stepText.textContent = "Watch how portfolio value and P/L change as price moves.";
-          el.buy.disabled = true; el.sell.disabled = true; el.qty.disabled = true;
-          el.next.disabled = false;
-          break;
-        case 3:
-          el.hint.textContent = "Price ticked up. Notice your unrealized profit increased.";
-          el.stepText.textContent = "Ready for the next move? Tap Next.";
-          el.next.disabled = false;
-          break;
-        case 4:
-          el.hint.textContent = "Momentum continues. One last push to hit the goal.";
-          el.stepText.textContent = "Tap Next for the final tick.";
-          el.next.disabled = false;
-          break;
-        case 5:
-          el.hint.textContent = "Goal! Your portfolio reached $11,000. You could sell to lock in profit.";
-          el.stepText.textContent = "Tap Next to wrap up this demo.";
-          el.sell.disabled = false; // allow them to explore selling if they want
-          el.next.disabled = false;
-          break;
-        case 6:
-          el.hint.textContent = "Nice work! Let’s celebrate your first clear win.";
-          el.stepText.textContent = "Opening celebration…";
-          el.next.disabled = true;
-          setTimeout(openCelebrate, 600);
-          break;
-      }
-      updateDmUI();
-    }
-
-    // Animate price to target with small steps
-    function animatePriceTo(target, after){
-      if(demoState.animating) return;
-      demoState.animating = true;
-      const steps = 14; // smooth & a bit slower
-      const start = demoState.price;
-      const diff = target - start;
-      let i = 0;
-      const iv = setInterval(()=>{
-        i++;
-        const p = start + diff * (i/steps);
-        demoState.price = +p.toFixed(2);
-        demoState.history.push(demoState.price);
-        updateDmUI();
-        if(i>=steps){
-          clearInterval(iv);
-          demoState.animating = false;
-          after && after();
-        }
-      }, 120); // ~1.7s
-    }
-
-    // Buy/Sell
-    function demoBuy(){
-      if(demoState.step !== 1) return;
-      const qty = Math.max(1, Math.floor(+el.qty.value||0));
-      const cost = qty * demoState.price;
-      if(cost > demoState.cash){
-        el.hint.textContent = "Not enough cash for that size. Try 100 shares to invest $10,000.";
-        return;
-      }
-      // execute
-      demoState.cash -= cost;
-      const totalCost = demoState.avgCost*demoState.shares + cost;
-      demoState.shares += qty;
-      demoState.avgCost = totalCost / demoState.shares;
-      demoState.history.push(demoState.price);
-      updateDmUI();
-      el.hint.textContent = "Bought! You invested $" + (qty*demoState.price).toFixed(2) + ". Tap Next to see price action.";
-      el.buy.disabled = true; el.sell.disabled = true; el.qty.disabled = true;
-      el.next.disabled = false;
-      setStep(2);
-    }
-    function demoSell(){
-      if(demoState.shares<=0) return;
-      const qty = demoState.shares; // sell all for simplicity
-      const proceeds = qty * demoState.price;
-      demoState.cash += proceeds;
-      demoState.shares = 0;
-      demoState.avgCost = 0;
-      demoState.history.push(demoState.price);
-      updateDmUI();
-      el.hint.textContent = "You closed your position and locked in your profit.";
-      el.sell.disabled = true;
-    }
-
-    function demoNext(){
-      if(demoState.animating) return;
-      switch(demoState.step){
-        case 0: setStep(1); break;
-        case 2:
-          animatePriceTo(103, ()=> setStep(3));
-          break;
-        case 3:
-          animatePriceTo(106, ()=> setStep(4));
-          break;
-        case 4:
-          animatePriceTo(110, ()=>{
-            // Check goal
-            const pv = demoState.cash + demoState.shares * demoState.price;
-            if(pv >= demoState.goal) setStep(5);
-            else setStep(4);
-          });
-          break;
-        case 5:
-          setStep(6);
-          break;
-        default:
-          break;
+  btnSellAll.onclick = ()=> {
+    if(game.shares<=0){ setCoach("No shares to sell. Try Buy Qty first."); return; }
+    if(game.lock?.action==='sellAll' || true){
+      const qty = game.shares;
+      if(doSell(qty)){
+        addHistory('SELL', qty, lastPrice(), lastSellPL(qty));
+        if(game.lock?.action==='sellAll'){ completeLock("Locked in! Tap Next to finish."); }
       }
     }
+  };
+}
 
-    function demoReset(){
-      demoState.step = 0; demoState.price = 100; demoState.cash = 10000; demoState.shares = 0; demoState.avgCost=0; demoState.history=[100]; demoState.completed=false;
-      el.buy.disabled = true; el.sell.disabled = true; el.qty.disabled = true; el.qty.value = 100;
-      sizeDmCanvas();
-      setStep(0);
-    }
+/* Quantity helpers */
+function setQty(v){ v = clamp(isNaN(v)?10:v, 10, 200); qtyField.value = v; }
+function validQty(){ return clamp(parseInt(qtyField.value||10), 10, 200); }
+function nudgeQty(msg){ setCoach(msg); qtyField.classList.add('pulse'); setTimeout(()=> qtyField.classList.remove('pulse'), 900); }
+function completeLock(msg){ game.lock = null; setCoach(msg); }
 
-    // Modal controls
-    function openModal(id){
-      const m = document.getElementById(id);
-      m.setAttribute('aria-hidden','false');
-      if(id==='demoModal'){
-        demoReset();
-        setTimeout(sizeDmCanvas,10);
+/* Reset */
+function resetGame(){
+  game.cash=10000; game.shares=0; game.avg=0; game.realized=0;
+  game.candles=[]; game.trades=[]; game.step=0; game.busy=false; game.lock=null;
+  setQty(80);
+}
+
+/* Chart init and responsive */
+function initChart(){
+  const dpr = window.devicePixelRatio || 1;
+  function size(){
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    ctx.setTransform(1,0,0,1,0,0); ctx.scale(dpr, dpr);
+    drawChart();
+  }
+  size();
+  if(resizeObs) resizeObs.disconnect();
+  resizeObs = new ResizeObserver(size);
+  resizeObs.observe(canvas.parentElement);
+}
+
+/* Seed starting candles */
+function seedInitialCandles(){
+  let c = 100;
+  for(let i=0;i<8;i++){
+    const k = genCandle(c, 0.15); game.candles.push(k); c = k.c;
+  }
+}
+
+/* Candle generator */
+function genCandle(prevClose, biasPct=0){
+  const baseRange = 0.8; // ~0.8%
+  const rnd = (Math.random()-0.5)*2;
+  const body = prevClose * ((biasPct/100) + rnd * (baseRange/100));
+  const open = prevClose;
+  const close = Math.max(0.01, open + body);
+  const high = Math.max(open, close) + Math.abs(prevClose * (Math.random()*0.004));
+  const low  = Math.min(open, close) - Math.abs(prevClose * (Math.random()*0.004));
+  return {o:round2(open), h:round2(high), l:round2(low), c:round2(close)};
+}
+function round2(n){ return Math.round(n*100)/100 }
+
+/* Drawing */
+function drawChart(){
+  const w = canvas.width / (window.devicePixelRatio || 1), h = canvas.height / (window.devicePixelRatio || 1);
+  ctx.clearRect(0,0,w,h);
+
+  const padL=40, padR=10, padT=10, padB=18;
+  const N = game.candles.length;
+  if(!N){ return; }
+
+  const lows = game.candles.map(k=>k.l), highs = game.candles.map(k=>k.h);
+  const min = Math.min(...lows), max = Math.max(...highs);
+  const span = Math.max(max-min, 0.0001);
+  const toX = (i)=> padL + (w-padL-padR) * (i/(N-1||1));
+  const toY = (p)=> h-padB - (h-padT-padB) * ((p-min)/span);
+
+  // Grid
+  ctx.globalAlpha = .25; ctx.strokeStyle = '#1b2940'; ctx.lineWidth = 1;
+  for(let i=0;i<5;i++){ const y = toY(min + span*i/4); ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w-padR, y); ctx.stroke(); }
+  ctx.globalAlpha = 1;
+
+  // Candles
+  const maxCandles = Math.max(20, Math.min(48, Math.floor((w-padL-padR)/10)));
+  const first = Math.max(0, N - maxCandles);
+  const visible = game.candles.slice(first);
+  const cw = Math.max(4, (w-padL-padR) / visible.length * 0.7);
+
+  visible.forEach((k, idx)=>{
+    const i = first + idx;
+    const x = toX(i);
+    const o = toY(k.o), c = toY(k.c), hi = toY(k.h), lo = toY(k.l);
+    const up = k.c >= k.o;
+    // wick
+    ctx.strokeStyle = up ? '#39ffb1' : '#ff6b81';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(x, hi); ctx.lineTo(x, lo); ctx.stroke();
+    // body
+    const top = Math.min(o,c), bottom = Math.max(o,c);
+    const height = Math.max(1, bottom - top);
+    ctx.fillStyle = up ? '#39ffb1' : '#ff6b81';
+    ctx.fillRect(x - cw/2, top, cw, height);
+  });
+
+  // Trade markers
+  game.trades.forEach(tr=>{
+    const i = tr.idx;
+    if(i < first) return;
+    const x = toX(i), y = toY(tr.price);
+    ctx.fillStyle = tr.type==='BUY' ? '#00e676' : '#ff1744';
+    ctx.strokeStyle = 'rgba(0,0,0,.35)';
+    ctx.lineWidth = .8;
+    ctx.beginPath();
+    if(tr.type==='BUY'){ ctx.moveTo(x, y-7); ctx.lineTo(x-6, y+5); ctx.lineTo(x+6, y+5); }
+    else { ctx.moveTo(x, y+7); ctx.lineTo(x-6, y-5); ctx.lineTo(x+6, y-5); }
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+  });
+
+  // Last price tag
+  $('#priceTag').textContent = "$" + lastPrice().toFixed(2);
+}
+
+/* UI updates */
+function updateUI(){
+  const price = lastPrice();
+  const pv = game.cash + game.shares * price;
+  $('#cashVal').textContent = fmtMoney(game.cash);
+  $('#holdVal').textContent = game.shares + " sh";
+  $('#avgVal').textContent = fmtMoney(game.avg || 0);
+  $('#priceVal').textContent = "$" + price.toFixed(2);
+  $('#portVal').textContent = fmtMoney(pv);
+  $('#realVal').textContent = fmtMoney(game.realized);
+  const unreal = game.shares * (price - (game.avg||price));
+  $('#unrealVal').textContent = (unreal>=0?"+":"") + fmtMoney(unreal).replace("$","$");
+  $('#priceTag').textContent = "$" + price.toFixed(2);
+}
+
+/* History rendering */
+function addHistory(type, qty, price, pl){
+  const list = $('#historyList');
+  const item = document.createElement('div');
+  item.className = 'history-item';
+  const left = document.createElement('div');
+  const right = document.createElement('div'); right.style.textAlign='right';
+
+  const tag = document.createElement('span'); tag.className = 'tag ' + (type==='BUY'? 'buy':'sell'); tag.textContent = type;
+  left.appendChild(tag);
+  const txt = document.createElement('span'); txt.style.marginLeft='8px'; txt.textContent = ` ${qty} @ $${price.toFixed(2)}`;
+  left.appendChild(txt);
+
+  if(type==='BUY'){ right.innerHTML = `<span class="muted">Cost</span> ${fmtMoney(qty*price)}`; }
+  else{
+    const pnl = typeof pl==='number'? pl : (price - (game.avg||price))*qty;
+    const cls = pnl>=0?'gain':'loss';
+    right.innerHTML = `<span class="${cls}">${pnl>=0?'+':''}${fmtMoney(pnl)}</span>`;
+  }
+
+  item.appendChild(left); item.appendChild(right);
+  list.prepend(item);
+}
+function lastSellPL(qty){ return Math.round(((lastPrice() - (game.avg||lastPrice())) * qty)*100)/100; }
+
+/* Trade actions */
+function doBuy(qty){
+  const price = lastPrice();
+  const cost = qty * price;
+  if(cost > game.cash){ setCoach("Not enough cash for that size. Reduce quantity."); return false; }
+  const totalCost = (game.avg*game.shares) + cost;
+  game.shares += qty;
+  game.avg = totalCost / game.shares;
+  game.cash -= cost;
+  game.trades.push({type:'BUY', qty, price, idx: game.candles.length-1});
+  updateUI(); drawChart();
+  return true;
+}
+function doSell(qty){
+  if(qty<=0 || qty>game.shares){ setCoach(`You only hold ${game.shares} shares.`); return false; }
+  const price = lastPrice();
+  const proceeds = qty * price;
+  const pl = (price - (game.avg||price)) * qty;
+  game.realized += pl;
+  game.shares -= qty;
+  if(game.shares===0) game.avg = 0;
+  game.cash += proceeds;
+  game.trades.push({type:'SELL', qty, price, idx: game.candles.length-1, pl});
+  updateUI(); drawChart();
+  return true;
+}
+
+/* Steps & pacing — Next always responds (only locked during brief animations) */
+async function nextStep(){
+  if(game.busy){ setCoach("Advancing… please wait."); return; }
+
+  // If an action is required, nudge but do not block responsiveness
+  if(game.lock){
+    if(game.lock.action==='buy'){ nudgeQty(`Set quantity to ${game.lock.qty} and tap Buy Qty.`); }
+    else if(game.lock.action==='sell'){ nudgeQty(`Set quantity to ${game.lock.qty} and tap Sell Qty.`); }
+    else if(game.lock.action==='sellAll'){ setCoach("Tap Sell All to lock gains."); }
+    return;
+  }
+
+  switch(game.step){
+    case 0: // Open and trend a bit
+      await animateToPrice(101.5, 5, 320);
+      game.lock = {action:'buy', qty:80}; setQty(80);
+      setCoach("Set quantity to 80 and tap Buy Qty to enter.");
+      break;
+
+    case 1: // After buy -> move up -> partial sell
+      await animateToPrice(106.0, 6, 340);
+      game.lock = {action:'sell', qty:20}; setQty(20);
+      setCoach("Take partial profit: set quantity to 20 and tap Sell Qty.");
+      break;
+
+    case 2: // After partial -> small pullback -> add to position
+      await animateToPrice(104.8, 3, 360); // tiny pullback
+      game.lock = {action:'buy', qty:20}; setQty(20);
+      setCoach("Add to your position: set quantity to 20 and tap Buy Qty.");
+      break;
+
+    case 3: // After add -> strong push -> sell all
+      await animateToPrice(112.5, 5, 360);
+      game.lock = {action:'sellAll'};
+      setCoach("Great push. Tap Sell All to lock gains.");
+      break;
+
+    case 4: // Completion
+      openStars();
+      break;
+
+    default:
+      openStars();
+      break;
+  }
+  game.step++;
+}
+
+/* Coach helper */
+function setCoach(t){ $('#coachText').textContent = t }
+
+/* Animate market toward a target close price */
+function animateToPrice(target, steps=6, per=320){
+  game.busy = true;
+  $('#nextBtn').disabled = true; $('#nextBtn').classList.add('disabled');
+  return new Promise(resolve=>{
+    let i=0;
+    const timer = setInterval(()=>{
+      const prev = lastPrice();
+      const remain = steps - i;
+      const delta = (target - prev) / remain;
+      const nextClose = prev + delta + (Math.random()-0.5)*0.12;
+      const k = genCandle(prev, 0); k.c = round2(nextClose);
+      k.h = round2(Math.max(k.o, k.c) + Math.abs(prev*0.0035) * Math.random());
+      k.l = round2(Math.min(k.o, k.c) - Math.abs(prev*0.0035) * Math.random());
+      game.candles.push(k);
+      drawChart(); updateUI();
+      i++;
+      if(i>=steps){
+        clearInterval(timer);
+        game.busy = false;
+        $('#nextBtn').disabled = false; $('#nextBtn').classList.remove('disabled');
+        resolve();
       }
-    }
-    function closeModal(id){
-      const m = document.getElementById(id);
-      m.setAttribute('aria-hidden','true');
-    }
+    }, per);
+  });
+}
 
-    // Celebrate controls
-    function openCelebrate(){
-      const cel = document.getElementById('celebrate');
-      cel.setAttribute('aria-hidden','false');
-      spawnConfetti();
-      demoState.completed = true;
-      // after 2 seconds, auto open waitlist modal as aggressive interest prompt
-      setTimeout(()=>{ if(!document.hidden) closeCelebrateThenOpenWaitlist(); }, 2400);
-    }
-    function closeCelebrate(){
-      document.getElementById('celebrate').setAttribute('aria-hidden','true');
-    }
-    function closeCelebrateThenOpenWaitlist(){
-      closeCelebrate();
-      openModal('waitlistModal');
-    }
+/* Portfolio helpers */
+function lastPrice(){ const n=game.candles.length; return n? game.candles[n-1].c : 100; }
 
-    // Confetti
-    function spawnConfetti(){
-      const holder = document.getElementById('confetti');
-      holder.innerHTML = '';
-      for(let i=0;i<80;i++){
-        const p = document.createElement('div');
-        p.style.position='absolute';
-        p.style.left = Math.random()*100 + '%';
-        p.style.top = '-10px';
-        const size = 6 + Math.random()*6;
-        p.style.width = size+'px'; p.style.height=size+'px';
-        p.style.background = ['#7c5cff','#00e5a8','#ffb300','#4c9aff','#ff6a88'][Math.floor(Math.random()*5)];
-        p.style.transform = `rotate(${Math.random()*360}deg)`;
-        p.style.borderRadius = Math.random()>.5 ? '2px' : '50%';
-        p.style.opacity = .9;
-        p.style.transition = `transform ${2+Math.random()*1.2}s cubic-bezier(.2,.8,.2,1), top ${2+Math.random()*1.2}s linear, opacity .4s ease`;
-        holder.appendChild(p);
-        requestAnimationFrame(()=>{
-          p.style.top = (90 + Math.random()*15) + '%';
-          p.style.transform = `translate(${(-40+Math.random()*80)}px,0) rotate(${90+Math.random()*360}deg)`;
-        });
-        setTimeout(()=>{ p.style.opacity = 0; }, 2200);
-      }
-      setTimeout(()=> holder.innerHTML='', 3200);
-    }
-
-    // Waitlist handler (stores locally for this demo)
-    function joinWaitlist(emailId, nameId, phoneId){
-      const emailEl = document.getElementById(emailId);
-      const email = emailEl && emailEl.value ? emailEl.value.trim() : (typeof emailId==='string' ? emailId : '');
-      const name = nameId ? (document.getElementById(nameId)?.value || '').trim() : '';
-      const phone = phoneId ? (document.getElementById(phoneId)?.value || '').trim() : '';
-      if(!/^\S+@\S+\.\S+$/.test(email)){
-        alert('Please enter a valid email to join the waitlist.');
-        return;
-      }
-      const item = {email,name,phone,ts: Date.now()};
-      const key = 'fracshr_waitlist';
-      const prev = JSON.parse(localStorage.getItem(key) || '[]');
-      if(prev.some(x=>x.email===email)){
-        alert('You’re already on the list. Thank you!');
-      }else{
-        prev.push(item);
-        localStorage.setItem(key, JSON.stringify(prev));
-        alert('🎉 You’re in! We’ll notify you when we launch.');
-      }
-      // subtle UX: close modal if open
-      closeModal('waitlistModal');
-    }
-
-    // Open demo on query ?demo=1
-    (function autoDemo(){
-      const url = new URL(window.location.href);
-      if(url.searchParams.get('demo')==='1'){ openModal('demoModal'); }
-    })();
-
-    // Accessibility: ESC closes modals
-    document.addEventListener('keydown', (e)=>{
-      if(e.key==='Escape'){
-        closeModal('demoModal');
-        closeModal('waitlistModal');
-        closeCelebrate();
-      }
-    });
-  </script>
+/* Stars + access */
+function openStars(){
+  $('#starsModal').classList.remove('hidden');
+  $('#demoModal').classList.add('hidden');
+  document.body.classList.remove('modal-open');
+}
+$('#openAccessFromStars').addEventListener('click', ()=>{
+  $('#starsModal').classList.add('hidden');
+  openAccess();
+});
+</script>
 </body>
 </html>
