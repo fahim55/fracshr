@@ -4,38 +4,24 @@
   <meta charset="utf-8" />
   <title>FracShr — Trading For Everyone, Anywhere, Everywhere</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="description" content="FracShr is a level-based trading game. Learn trading with interactive tutorials, pro charts (Candles + SMA + RSI), goal-based levels, and Trading Wars. iOS & Android coming soon." />
+  <meta name="description" content="FracShr is a level-based trading game. Learn trading with interactive tutorials, pro charts, goal-based levels, and Trading Wars. iOS & Android coming soon." />
   <meta name="theme-color" content="#0a0d12" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family:Poppins:wght@800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Poppins:wght@800;900&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      /* Fresh Futuristic Palette */
-      --bg:#0a0d12;       /* deep carbon */
-      --bg2:#0c121a;      /* night blue */
-      --panel:#0f1624;    /* panels */
-      --card:#0f1726;
-      --line:#152640;
-
-      --text:#ecf5ff;
-      --muted:#96a8c0;
-
-      --accent1:#2DE2E6;  /* turquoise */
-      --accent2:#8A2BE2;  /* electric violet */
-      --accent3:#FF4D8D;  /* magenta */
-      --accent4:#00FFA3;  /* neon mint */
-      --accent5:#FFC857;  /* amber */
-
-      --up:#20e3b2;
-      --down:#ff6b88;
-
+      --bg:#0a0d12; --bg2:#0c121a;
+      --panel:#0f1624; --card:#0f1726; --line:#152640;
+      --text:#ecf5ff; --muted:#96a8c0;
+      --accent1:#2DE2E6; --accent2:#8A2BE2; --accent3:#FF4D8D; --accent4:#00FFA3; --accent5:#FFC857;
+      --up:#20e3b2; --down:#ff6b88;
       --shadow: 0 18px 60px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.06);
-      --vh: 1vh; /* will be set from JS for safe mobile height */
+      --vh: 1vh;
     }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0;scroll-behavior:smooth;background:var(--bg);color:var(--text)}
     body{
-      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
       line-height:1.55;
       background:
         radial-gradient(900px 600px at -10% -20%, #1b2b8a22 0%, transparent 60%),
@@ -43,8 +29,9 @@
         linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
       overflow-x:hidden;
     }
+    .no-scroll{overflow:hidden}
 
-    /* Background animated sparks + candlesticks */
+    /* Background visuals */
     .bg-candles{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.35;mask-image:radial-gradient(ellipse at center,#000 60%,transparent 100%)}
     .candle{
       position:absolute;width:8px;height:24px;border-radius:2px;
@@ -57,28 +44,30 @@
     .candle::before{top:-16px;height:16px}.candle::after{bottom:-16px;height:16px}
     @keyframes rise{0%{transform:translateY(110vh) scale(.9)}100%{transform:translateY(-20vh) scale(1);opacity:0}}
 
-    /* Header / Nav (centered) */
+    /* Header / Nav */
     header{position:sticky;top:0;z-index:40;background:rgba(10,14,26,.7);backdrop-filter:saturate(120%) blur(10px);border-bottom:1px solid rgba(255,255,255,.08)}
-    .nav{max-width:1200px;margin:0 auto;padding:12px 18px;display:flex;justify-content:center;align-items:center;gap:14px;flex-wrap:wrap}
+    .nav{max-width:1200px;margin:0 auto;padding:10px 18px;display:flex;justify-content:center;align-items:center;gap:14px;flex-wrap:wrap}
     .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text)}
 
-    /* Futuristic Professional Logo */
     .logo{
       width:56px;height:56px;border-radius:14px;display:grid;place-items:center;
       background:radial-gradient(100% 100% at 30% 30%, #1b2333 0%, #0f1624 60%, #0c121a 100%);
       box-shadow:0 10px 26px rgba(45,226,230,.18), 0 0 0 3px rgba(255,255,255,.06) inset;
       position:relative;overflow:hidden;
     }
-    .logo svg{display:block}
-    .logo .halo{
-      position:absolute;inset:-30%;background:conic-gradient(from 0deg,var(--accent1),var(--accent2),var(--accent3),var(--accent1));
-      filter:blur(24px);opacity:.18;animation:spin 18s linear infinite;
-    }
+    .logo .halo{position:absolute;inset:-30%;background:conic-gradient(from 0deg,var(--accent1),var(--accent2),var(--accent3),var(--accent1));filter:blur(24px);opacity:.18;animation:spin 18s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
-    .wordmark{font-family:Poppins,sans-serif;font-weight:900;letter-spacing:.6px;font-size:1.5rem;display:flex;gap:6px;align-items:baseline}
-    .wordmark span{background:linear-gradient(90deg,#fff,#b7f7ff 60%,#fff);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .wordmark{
+      font-family:Poppins,sans-serif;font-weight:900;letter-spacing:.6px;font-size:1.5rem;
+      background:linear-gradient(90deg,#fff,#b7f7ff 60%,#fff);-webkit-background-clip:text;background-clip:text;color:transparent;
+      display:inline-block;
+    }
 
-    .menu-btn{display:none;background:transparent;border:2px solid rgba(255,255,255,.18);color:var(--text);border-radius:12px;padding:8px 10px;font-weight:800}
+    .menu-btn{
+      display:none;min-width:44px;min-height:44px;line-height:1;background:transparent;
+      border:2px solid rgba(255,255,255,.18);color:var(--text);border-radius:12px;padding:8px 12px;font-weight:800;font-size:20px
+    }
+
     .nav-links{display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:center}
     .nav-links a{color:var(--muted);text-decoration:none;font-weight:700}
     .nav-links a:hover{color:var(--text)}
@@ -90,11 +79,29 @@
     .cta-pulse::after{content:"";position:absolute;inset:-8px;border-radius:18px;border:2px solid rgba(45,226,230,.25);animation:pulse 2.2s infinite ease-out}
     @keyframes pulse{0%{transform:scale(1);opacity:.9}70%{transform:scale(1.12);opacity:0}100%{transform:scale(1.12);opacity:0}}
 
+    @media (max-width:760px){
+      .nav{justify-content:space-between}
+      .menu-btn{display:block}
+      .nav-links{
+        position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top,0) + 56px);
+        background:linear-gradient(180deg,#101a33,#0b1426);
+        border-top:1px solid rgba(255,255,255,.08);
+        display:block;transform:translateY(-8px);opacity:0;pointer-events:none;
+        max-height:70vh;overflow:auto;padding:12px;
+        transition:transform .25s ease, opacity .25s ease;
+        z-index:55;
+      }
+      .nav-links.open{transform:translateY(0);opacity:1;pointer-events:auto}
+      .nav-links a, .nav-links .btn, .nav-links .btn-outline{
+        display:block;width:100%;text-align:center;margin:6px 0;font-size:clamp(1rem, 4.2vw, 1.1rem);padding:14px 16px;border-radius:14px
+      }
+      body.menu-open{overflow:hidden}
+    }
+
     /* Hero */
     .hero{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:60px 18px 20px;display:grid;gap:22px;justify-items:center;text-align:center}
     .tagline{display:inline-block;padding:8px 14px;border-radius:999px;font-weight:900;font-size:.8rem;color:#07131a;background:linear-gradient(90deg,var(--accent4),var(--accent1));box-shadow:var(--shadow)}
-    h1.big{font-family:Poppins,sans-serif;font-weight:900;line-height:1.06;margin:16px 0 10px;font-size:clamp(2rem,4.2vw,3.6rem)}
-    h1.big{background:linear-gradient(90deg,#fff,#b7f7ff 60%,#fff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 10px 40px rgba(138,43,226,.16)}
+    h1.big{font-family:Poppins,sans-serif;font-weight:900;line-height:1.06;margin:16px 0 10px;font-size:clamp(2rem,4.2vw,3.6rem);background:linear-gradient(90deg,#fff,#b7f7ff 60%,#fff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 10px 40px rgba(138,43,226,.16)}
     .lead{color:var(--muted);max-width:760px}
     .hero-ctas{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
 
@@ -105,7 +112,7 @@
     .chip.up{color:var(--up);border-color:#20e3b233}.chip.down{color:var(--down);border-color:#ff6b8833}
     @keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-    /* Sections (centered) */
+    /* Sections */
     section{position:relative;z-index:1;padding:60px 18px}
     .container{max-width:1200px;margin:0 auto;text-align:center}
     .section-title{font-family:Poppins,sans-serif;font-weight:900;font-size:clamp(1.4rem,3vw,2.2rem);margin-bottom:10px}
@@ -119,12 +126,12 @@
     .check{display:inline-flex;align-items:center;gap:8px;font-weight:700;color:#d9f1ff}
     .check i{width:20px;height:20px;border-radius:6px;display:inline-grid;place-items:center;background:linear-gradient(135deg,var(--accent4),var(--accent1));color:#0b0f1a;font-size:14px;font-weight:900}
 
-    /* Demo modal (phone) — fully responsive for mobile heights */
+    /* Demo modal (phone) */
     .demo-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(5,7,18,.76);backdrop-filter:blur(10px);z-index:60;padding:18px}
     .demo-modal.active{display:flex}
 
     .phone{
-      width:min(420px,94vw);
+      width:min(430px,94vw);
       height:min(780px, calc(var(--vh) * 92));
       border-radius:28px;overflow:hidden;
       background:linear-gradient(180deg,#111b33,#0b1426);
@@ -138,17 +145,23 @@
     .demo-close{background:transparent;border:none;color:var(--muted);font-weight:800;cursor:pointer}
     .demo-body{
       padding:10px;display:grid;gap:10px;
-      grid-template-rows:auto auto 1fr auto auto;
-      min-height:0; /* allow children to shrink */
-      overflow:auto; /* graceful scroll on ultra-small screens */
+      grid-template-rows:auto auto 1fr auto auto auto;
+      min-height:0;overflow:auto;
     }
-    .asset-card{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;background:#121f3d;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:12px}
-    .asset-name{font-weight:900}
-    .asset-price{font-weight:900;font-size:1.1rem;color:var(--up)}
+    .asset-card{
+      display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;
+      background:#121f3d;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:12px
+    }
+    .asset-name{font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .asset-price{font-weight:900;font-size:1.1rem;color:var(--up); text-align:right; font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "lnum" 1;}
+    .badge{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:999px;background:rgba(45,226,230,.16);color:#bfeff3;font-size:.75rem;font-weight:800;border:1px solid rgba(45,226,230,.35)}
+    .hidden{display:none !important;}
 
     .statbar{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     @media (max-width:420px){ .statbar{grid-template-columns:1fr} }
     .stat{background:#121f3d;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px;font-size:.92rem}
+    .stat .row{display:flex;justify-content:space-between;align-items:baseline}
+    .stat .row strong{font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "lnum" 1;}
 
     .chartWrap{display:grid;gap:8px;min-height:0}
     .chartCard{background:#0e1b38;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:8px;min-height:0}
@@ -158,27 +171,54 @@
     .legend{display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:.85rem;color:var(--muted)}
     @media (max-height:650px){ .legend{display:none} }
 
+    .coach{
+      display:grid;gap:6px;background:#0c1a34;border:1px solid rgba(255,255,255,.18);
+      border-radius:14px;padding:10px;color:#e9f7ff;box-shadow:var(--shadow)
+    }
+    .coach-title{font-size:.8rem;font-weight:900;letter-spacing:.5px;color:#9fd0ff;text-transform:uppercase}
+    .coach-msg{font-size:.95rem;line-height:1.35}
+
     .qty{display:grid;grid-template-columns:1fr auto;gap:8px;background:#121f3d;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:8px;align-items:center}
     .qty input{width:100%;background:transparent;border:none;color:#fff;font-weight:900;font-size:1.1rem;outline:none}
-    .trade-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center}
+
+    .trade-controls{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center}
+    .action-wrap{position:relative}
     .btn-buy{background:linear-gradient(90deg,var(--up),var(--accent4));color:#07121f}
     .btn-sell{background:linear-gradient(90deg,#ff8aa6,var(--accent3));color:#07121f}
     .btn-disabled{opacity:.65;pointer-events:none}
     .pnl{font-weight:900}
 
-    .helper{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01));border:1px dashed rgba(255,255,255,.12);border-radius:14px;padding:10px;font-size:.95rem;color:#d8efff}
-    .next-btn{grid-column:1 / -1;width:100%;padding:12px;border-radius:14px;border:2px solid rgba(255,255,255,.12);background:linear-gradient(90deg,var(--accent5),var(--accent3));color:#07121f;font-weight:900;letter-spacing:.3px;cursor:pointer;animation:pop 1.1s infinite ease-in-out;box-shadow:0 12px 26px rgba(255,77,141,.25)}
+    .next-wrap{grid-column:1 / -1;position:relative}
+    .next-btn{width:100%;padding:12px;border-radius:14px;border:2px solid rgba(255,255,255,.12);background:linear-gradient(90deg,var(--accent5),var(--accent3));color:#07121f;font-weight:900;letter-spacing:.3px;cursor:pointer;animation:pop 1.1s infinite ease-in-out;box-shadow:0 12px 26px rgba(255,77,141,.25)}
     .next-btn.hidden{display:none}
     @keyframes pop{0%{transform:translateY(0) scale(1)}50%{transform:translateY(-1px) scale(1.03)}100%{transform:translateY(0) scale(1)}}
+    .suggested{animation:pop 1.1s ease-in-out infinite}
 
-    .level-complete{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(6,10,28,.7);backdrop-filter:blur(8px);text-align:center;padding:20px;z-index:5}
+    /* Opaque hints */
+    .hint{
+      position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);
+      background:rgba(12,26,52,.98);color:#e9f7ff;border:2px solid rgba(45,226,230,.5);
+      border-radius:12px;padding:6px 10px;font-size:.85rem;white-space:nowrap;box-shadow:var(--shadow);
+      display:none;z-index:5;pointer-events:none
+    }
+    .hint::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:8px solid transparent;border-top-color:rgba(45,226,230,.5)}
+    .hint.show{display:block}
+
+    .level-complete{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(6,10,28,.7);backdrop-filter:blur(8px);text-align:center;padding:20px;z-index:6}
     .level-complete.active{display:flex}
     .stars{display:flex;gap:14px;margin-bottom:10px}
     .star{width:48px;height:48px;background:radial-gradient(circle at 30% 30%,#fff,#ffe600 60%,#ff8a00);clip-path:polygon(50% 0%, 61% 35%, 98% 35%, 67% 57%, 79% 91%, 50% 70%, 21% 91%, 33% 57%, 2% 35%, 39% 35%);filter:drop-shadow(0 10px 22px rgba(255,204,0,.45));animation:twinkle 1.2s ease-in-out infinite}
     .star:nth-child(2){animation-delay:.15s;transform:scale(1.05)}.star:nth-child(3){animation-delay:.3s;transform:scale(1.1)}
     @keyframes twinkle{0%{transform:translateY(0) scale(1);opacity:.9}50%{transform:translateY(-3px) scale(1.06);opacity:1}100%{transform:translateY(0) scale(1);opacity:.9}}
 
-    /* Waitlist modal */
+    .summary{
+      width:min(420px, 96%); text-align:left; background:#101c38; border:1px solid rgba(255,255,255,.08);
+      border-radius:12px; padding:12px; margin-top:10px; color:var(--text)
+    }
+    .summary .row{display:flex;justify-content:space-between;margin:6px 0;font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "lnum" 1;}
+    .summary small{color:var(--muted)}
+
+    /* Waitlist modal (email capture) */
     .waitlist-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(5,7,18,.72);backdrop-filter:blur(8px);z-index:70;padding:18px}
     .waitlist-modal.active{display:flex}
     .waitlist-card{width:min(560px,96vw);background:linear-gradient(180deg,#101a33,#0b1426);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:20px;box-shadow:var(--shadow);text-align:center}
@@ -187,7 +227,12 @@
     .btn-big{padding:14px 18px;border-radius:14px;font-weight:900}
     .close-x{background:transparent;border:none;color:var(--muted);font-weight:900;cursor:pointer;float:right}
 
-    /* Sticky CTA (centered bottom, with close) */
+    /* OTP modal (verification) */
+    .otp-card{width:min(520px,96vw);background:linear-gradient(180deg,#101a33,#0b1426);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:18px;box-shadow:var(--shadow);text-align:center}
+    .otp-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;margin-top:10px}
+    .otp-input{letter-spacing:.3em;text-align:center;font-weight:900;font-size:1.2rem}
+
+    /* Sticky CTA */
     .sticky-cta{position:fixed;left:50%;transform:translateX(-50%);bottom:20px;z-index:50;display:grid;gap:8px;width:min(560px,92vw);background:linear-gradient(180deg,#101a33,#0b1426);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:12px;box-shadow:var(--shadow);animation:slideUp .5s ease-out}
     .sticky-cta.hidden{display:none}
     .sticky-top{display:flex;align-items:center;justify-content:space-between}
@@ -195,20 +240,11 @@
     .sticky-close{background:transparent;border:2px solid rgba(255,255,255,.18);color:var(--muted);border-radius:10px;padding:4px 8px;font-weight:900;cursor:pointer}
     @keyframes slideUp{from{transform:translate(-50%,20px);opacity:0}to{transform:translate(-50%,0);opacity:1}}
 
-    /* Reveal on scroll */
+    /* Reveal */
     .reveal{opacity:0;transform:translateY(20px)}
     .reveal.visible{opacity:1;transform:translateY(0);transition:opacity .6s ease, transform .6s ease}
 
     footer{padding:40px 18px;text-align:center;color:var(--muted);border-top:1px solid rgba(255,255,255,.06)}
-
-    /* Mobile nav */
-    .menu-btn{display:none}
-    @media (max-width:760px){
-      .nav{justify-content:space-between}
-      .menu-btn{display:block}
-      .nav-links{position:fixed;inset:auto 12px 12px 12px;display:none;flex-direction:column;background:linear-gradient(180deg,#101a33,#0b1426);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:12px;z-index:55}
-      .nav-links.open{display:flex}
-    }
   </style>
 </head>
 <body>
@@ -219,7 +255,6 @@
       <a class="brand" href="#" aria-label="FracShr home">
         <div class="logo" aria-hidden="true">
           <div class="halo"></div>
-          <!-- Futuristic FS Monogram Logo -->
           <svg width="34" height="34" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs>
               <linearGradient id="gStroke" x1="0" y1="0" x2="1" y2="1">
@@ -229,21 +264,17 @@
                 <stop offset="0" stop-color="#2DE2E6"/><stop offset="1" stop-color="#8A2BE2"/>
               </linearGradient>
             </defs>
-            <!-- Hex ring -->
             <path d="M55 6 L96 30 L96 80 L55 104 L14 80 L14 30 Z" fill="none" stroke="url(#gStroke)" stroke-width="6" stroke-linejoin="round"/>
-            <!-- Stylized F -->
             <path d="M34 34 H68 M34 54 H58 M34 34 V78" stroke="url(#gStroke)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-            <!-- Stylized S (continuous curve) -->
             <path d="M72 38 C60 30, 48 38, 48 46 C48 54, 76 54, 76 64 C76 74, 60 78, 48 70" fill="none" stroke="url(#gStroke)" stroke-width="6" stroke-linecap="round"/>
-            <!-- Up arrow/candle accent -->
             <rect x="50" y="24" width="6" height="16" rx="3" fill="url(#gFill)"/>
             <rect x="50" y="72" width="6" height="14" rx="3" fill="url(#gFill)"/>
           </svg>
         </div>
-        <div class="wordmark"><span>Frac</span><span>Shr</span></div>
+        <div class="wordmark">FracShr</div>
       </a>
 
-      <button class="menu-btn" id="menuBtn">☰</button>
+      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="navLinks" aria-label="Open menu">☰</button>
       <div class="nav-links" id="navLinks">
         <a href="#features">Features</a>
         <a href="#levels">150+ Levels</a>
@@ -443,17 +474,17 @@
             <div class="asset-name">FRA • FracShr Index</div>
             <div class="muted" style="font-size:.85rem">Goal: Grow $10,000 to $11,000</div>
           </div>
-          <div class="asset-price" id="priceLabel">$100.00</div>
+          <div class="asset-price"><span id="priceLabel">$100.00</span><span id="priceNote" class="badge hidden">Locked</span></div>
         </div>
 
         <div class="statbar">
           <div class="stat">
-            <div style="display:flex;justify-content:space-between"><span>Cash</span><strong id="cashLabel">$10,000.00</strong></div>
-            <div style="display:flex;justify-content:space-between"><span>Holdings</span><strong id="holdingsLabel">0</strong></div>
+            <div class="row"><span>Cash</span><strong id="cashLabel">$10,000.00</strong></div>
+            <div class="row"><span>Holdings</span><strong id="holdingsLabel">0</strong></div>
           </div>
           <div class="stat">
-            <div style="display:flex;justify-content:space-between"><span>Portfolio</span><strong id="portfolioLabel">$10,000.00</strong></div>
-            <div style="display:flex;justify-content:space-between"><span>P/L</span><strong class="pnl" id="pnlLabel">$0.00</strong></div>
+            <div class="row"><span>Portfolio</span><strong id="portfolioLabel">$10,000.00</strong></div>
+            <div class="row"><span>P/L</span><strong class="pnl" id="pnlLabel">$0.00</strong></div>
           </div>
         </div>
 
@@ -474,7 +505,11 @@
               <span class="muted">70 / 30 lines</span>
             </div>
           </div>
-          <div class="helper" id="helperText">Welcome! We’ll guide you to a quick win. Tap Next to begin.</div>
+        </div>
+
+        <div class="coach" id="coachBox">
+          <div class="coach-title">Coach</div>
+          <div class="coach-msg" id="coachMsg" aria-live="polite">Welcome! We’ll guide you to a quick win. Tap Next to begin.</div>
         </div>
 
         <div class="qty">
@@ -485,17 +520,42 @@
         </div>
 
         <div class="trade-controls">
-          <button class="btn btn-buy btn-disabled" id="buyBtn">Buy</button>
-          <button class="btn btn-sell btn-disabled" id="sellBtn">Sell</button>
-          <button class="next-btn" id="nextBtn">Next ▶</button>
+          <div class="action-wrap">
+            <button class="btn btn-buy btn-disabled" id="buyBtn">Buy</button>
+            <div class="hint" id="hintBuy">Tap Buy to open</div>
+          </div>
+          <div class="action-wrap">
+            <button class="btn btn-sell btn-disabled" id="sellBtn">Sell</button>
+            <div class="hint" id="hintSell">Tap Sell to lock profit</div>
+          </div>
+          <div class="next-wrap">
+            <button class="next-btn suggested" id="nextBtn">Next ▶</button>
+            <div class="hint" id="hintNext" style="left:auto; right:12px; transform:none; bottom:calc(100% + 10px)">Tap Next to continue</div>
+          </div>
         </div>
       </div>
 
       <div class="level-complete" id="levelComplete">
         <div class="stars" aria-hidden="true"><div class="star"></div><div class="star"></div><div class="star"></div></div>
         <h3 style="font-family:Poppins;font-weight:900;margin:6px 0">Congratulations — Level Completed!</h3>
-        <p class="muted" style="margin:4px 0 10px">You reached $11,000. Nicely done.</p>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+        <p class="muted" style="margin:4px 0 10px">You reached $11,000. Here’s your trade summary and impact:</p>
+
+        <div class="summary" id="summaryBox">
+          <div class="row"><small>Start Cash</small><strong id="sumStart">$10,000.00</strong></div>
+          <div class="row"><small>Final Portfolio</small><strong id="sumFinal">$11,100.00</strong></div>
+          <div class="row"><small>Total Profit</small><strong id="sumProfit">+$1,100.00</strong></div>
+          <div class="row"><small>ROI</small><strong id="sumROI">+11.00%</strong></div>
+          <hr style="border:none;border-top:1px solid rgba(255,255,255,.1);margin:8px 0">
+          <div class="row"><small>Entry</small><strong id="sumEntry">100 @ $100.00</strong></div>
+          <div class="row"><small>Exit</small><strong id="sumExit">100 @ $111.00</strong></div>
+          <div class="row"><small>Bars Held</small><strong id="sumBars">12</strong></div>
+          <div class="row"><small>RSI at Entry/Exit</small><strong id="sumRSI">— → —</strong></div>
+          <div class="row"><small>Beat Goal By</small><strong id="sumBeat">+$100.00</strong></div>
+          <hr style="border:none;border-top:1px solid rgba(255,255,255,.1);margin:8px 0">
+          <div class="row"><small>Impact</small><strong id="sumImpact">+ $11 move × 100 shares = +$1,100</strong></div>
+        </div>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px">
           <button class="btn" id="openWaitlistFromComplete">Register Interest</button>
           <button class="btn btn-outline" id="closeDemoFromComplete">Close</button>
         </div>
@@ -508,12 +568,38 @@
     <div class="waitlist-card">
       <button class="close-x" id="closeWaitlist">✕</button>
       <h3 class="section-title" style="margin:0 0 8px">Be First In — iOS & Android Launch</h3>
-      <p class="muted">Leave your email to get notified at launch and receive exclusive early access.</p>
+      <p class="muted">Leave your email to get notified at launch. We’ll verify ownership via one-time code.</p>
       <div class="waitlist-row">
-        <input id="waitlistEmail" class="input" type="email" placeholder="Enter your email" />
+        <input id="waitlistEmail" class="input" type="email" placeholder="Enter your email" autocomplete="email" />
         <button class="btn btn-big" id="joinWaitlist">Register Interest</button>
       </div>
-      <div class="muted" style="margin-top:8px;font-size:.9rem">We respect your inbox. No spam, ever.</div>
+      <input type="text" id="hp_field" class="hidden" tabindex="-1" aria-hidden="true" autocomplete="off" />
+      <div class="muted" style="margin-top:8px;font-size:.9rem">No spam ever.</div>
+    </div>
+  </div>
+
+  <!-- OTP MODAL (Email verification) -->
+  <div class="waitlist-modal" id="otpModal" role="dialog" aria-label="Verify your email">
+    <div class="otp-card">
+      <button class="close-x" id="closeOtp">✕</button>
+      <h3 class="section-title" style="margin:0 0 8px">Verify your email</h3>
+      <p class="muted" style="margin:0 0 10px">We’ll send a 6‑digit code to confirm it’s really you.</p>
+
+      <div class="waitlist-row" style="grid-template-columns:1fr auto">
+        <input id="otpEmail" class="input" type="email" placeholder="you@example.com" autocomplete="email" />
+        <button class="btn" id="sendOtpBtn">Send OTP</button>
+      </div>
+
+      <div class="otp-row">
+        <input id="otpCode" class="input otp-input" type="text" inputmode="numeric" maxlength="6" placeholder="______" />
+        <button class="btn btn-big" id="verifyOtpBtn">Verify</button>
+      </div>
+
+      <div class="muted" id="otpStatus" style="margin-top:10px;font-size:.9rem">Enter the code within 5 minutes.</div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:10px">
+        <button class="btn btn-outline" id="resendOtpBtn">Resend</button>
+        <button class="btn btn-outline" id="cancelOtpBtn">Cancel</button>
+      </div>
     </div>
   </div>
 
@@ -535,24 +621,110 @@
     </div>
   </div>
 
-  <script>
-    // Safe viewport height for mobile (prevents iOS 100vh issues)
-    function setVH(){
-      document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
-    }
-    setVH();
-    window.addEventListener('resize', setVH);
-    window.addEventListener('orientationchange', ()=> setTimeout(setVH, 200));
+  <!-- EmailJS (for OTP sending) -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" defer></script>
 
-    // Year
+  <script>
+    /*
+      CENTRAL CONFIG — edit this block only to configure your register/OTP flow.
+      Everything else uses these values.
+    */
+    const CFG = {
+      brand: 'FracShr',
+      web3forms: {
+        accessKey: '27183595-25e6-4c36-93ba-8c855c7763eb',        // Required: from web3forms.com
+        api: 'https://api.web3forms.com/submit'
+      },
+      otp: {
+        required: true,                                 // Enforce OTP verification
+        expiryMs: 5 * 60 * 1000,                        // 5 minutes
+        resendMs: 45 * 1000                             // 45 seconds cooldown
+      },
+      emailjs: {
+        publicKey: '6BWuApUnhyOgHXQ5q',           // Required: from emailjs.com
+        serviceId: 'service_63pnjrq',           // Required
+        templateId: 'template_hi01far',         // Required. Template should accept variables:
+                                                        // to_email, subject, message, otp, site_name
+        sendThanks: true,                                // Send a friendly welcome after verification
+        thanksDelayMs: 400                               // Slight delay after submission before sending thanks
+      },
+      // Polished email body templates (OTP, thanks, and owner notification via Web3Forms)
+      emailBodies: {
+        otp: {
+          selected: 'Professional',
+          variants: {
+            Professional: {
+              subject: '${brand} verification code: ${otp}',
+              text: 'Hello${commaName}\\n\\nYour one-time verification code for ${brand} is: ${otp}.\\n\\nThis code expires in ${minutes} minutes. If you didn’t request this, you can safely ignore this email.\\n\\n— ${brand} Team'
+            },
+            Friendly: {
+              subject: 'Your ${brand} code: ${otp}',
+              text: 'Hey ${email},\\n\\nHere’s your ${brand} code: ${otp} (valid for ${minutes} minutes).\\nSee you inside!\\n\\n— Team ${brand}'
+            },
+            Playful: {
+              subject: '🚀 ${brand} OTP: ${otp}',
+              text: 'Captain ${email},\\n\\nDocking clearance code: ${otp}\\nIt self-destructs in ${minutes} minutes. Use it to confirm your spot on the ${brand} waitlist.\\n\\n🛰️ ${brand} Control'
+            }
+          }
+        },
+        thanks: {
+          selected: 'Detailed',
+          variants: {
+            Concise: {
+              subject: 'Welcome to ${brand}!',
+              text: 'Hi ${email},\\n\\nYou’re on the ${brand} waitlist. We’ll email you as soon as we launch. Thanks for joining!\\n\\n— ${brand} Team'
+            },
+            Detailed: {
+              subject: 'You’re in! Next steps for ${brand}',
+              text: 'Hi ${email},\\n\\nThanks for verifying your email and joining the ${brand} waitlist.\\nHere’s what to expect:\\n• Early access invites as we roll out\\n• Feature previews and feedback opportunities\\n• Launch announcement for iOS & Android\\n\\nWe’re excited to have you aboard.\\n\\n— ${brand} Team'
+            },
+            Playful: {
+              subject: '✨ Welcome aboard, ${email}!',
+              text: 'Hey ${email},\\n\\nYou’re officially on the ${brand} waitlist. Keep an eye out for mission updates and your early access badge.\\n\\nTo the moon,\\n${brand} 🚀'
+            }
+          }
+        },
+        owner: {
+          // Used as subject/message into Web3Forms so you get a nice notification
+          selected: 'Default',
+          variants: {
+            Default: {
+              subject: 'New verified waitlist signup — ${brand}',
+              text:
+                'New verified signup for ${brand}\\n' +
+                'Email: ${email}\\n' +
+                'Source: ${source}\\n' +
+                'Time: ${ts}\\n' +
+                'User Agent: ${ua}\\n' +
+                'Referrer: ${ref}'
+            }
+          }
+        }
+      }
+    };
+
+    /* =================== PAGE UTILITIES / BOOT =================== */
+    function setVH(){ document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px'); }
+    setVH(); window.addEventListener('resize', setVH); window.addEventListener('orientationchange', ()=> setTimeout(setVH, 200));
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Mobile menu toggle
+    // Menu
     const menuBtn = document.getElementById('menuBtn');
     const navLinks = document.getElementById('navLinks');
-    menuBtn?.addEventListener('click', ()=> navLinks.classList.toggle('open'));
+    menuBtn?.addEventListener('click', ()=>{
+      const open = !navLinks.classList.contains('open');
+      navLinks.classList.toggle('open', open);
+      menuBtn.setAttribute('aria-expanded', open?'true':'false');
+      document.body.classList.toggle('menu-open', open);
+    });
+    navLinks.addEventListener('click', (e)=>{
+      if(e.target.closest('a,button')){
+        navLinks.classList.remove('open'); document.body.classList.remove('menu-open'); menuBtn.setAttribute('aria-expanded','false');
+      }
+    });
+    window.addEventListener('resize', ()=>{ if(window.innerWidth>760){ navLinks.classList.remove('open'); document.body.classList.remove('menu-open'); menuBtn.setAttribute('aria-expanded','false'); }});
 
-    // Background candles
+    // Background visuals
     const bgCandles = document.getElementById('bgCandles');
     function spawnCandles(count=30){
       for (let i=0;i<count;i++){
@@ -568,61 +740,252 @@
     spawnCandles(40);
     setInterval(()=>spawnCandles(3), 3000);
 
-    // Scroll reveal
+    // Reveal on scroll
     const revealEls=document.querySelectorAll('.reveal');
     const io=new IntersectionObserver(entries=>{
       entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); }});
     },{threshold:.12});
     revealEls.forEach(el=>io.observe(el));
 
-    // Waitlist modal
-    const waitlistModal=document.getElementById('waitlistModal');
-    function openWaitlist(){ waitlistModal.classList.add('active'); }
-    function closeWaitlist(){ waitlistModal.classList.remove('active'); }
-    document.getElementById('closeWaitlist').addEventListener('click', closeWaitlist);
-    ['openWaitlistTop','openWaitlistHero','openWaitlistCard','openWaitlistLevels','openWaitlistWar','openWaitlistChallenges']
-      .forEach(id=> document.getElementById(id)?.addEventListener('click', openWaitlist));
-    function captureWaitlist(id){
-      const el=document.getElementById(id);
-      const email=(el.value||'').trim();
-      if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-        el.focus(); el.style.borderColor='var(--accent3)'; setTimeout(()=> el.style.borderColor='rgba(255,255,255,.1)',1500); return;
-      }
-      try{ localStorage.setItem('fracshr_waitlist', email); }catch(e){}
-      alert('Thanks! You’re on the list. We’ll email you when we launch on iOS & Android.');
-      el.value=''; closeWaitlist(); hideStickyCTA(true);
-    }
-    document.getElementById('joinWaitlist').addEventListener('click', ()=> captureWaitlist('waitlistEmail'));
-    document.getElementById('joinWaitlistBottom').addEventListener('click', ()=> captureWaitlist('waitlistEmailBottom'));
-    document.getElementById('joinWaitlistSticky').addEventListener('click', ()=> captureWaitlist('waitlistEmailSticky'));
-
-    // Sticky CTA with close and persistence
+    // Sticky CTA
     const stickyCTA=document.getElementById('stickyCTA');
     const closeStickyCTA=document.getElementById('closeStickyCTA');
-    function showStickyCTA(){
-      if (localStorage.getItem('fracshr_hide_sticky')==='1') return;
-      stickyCTA.classList.remove('hidden');
-    }
-    function hideStickyCTA(persist=false){
-      stickyCTA.classList.add('hidden');
-      if(persist){ try{ localStorage.setItem('fracshr_hide_sticky','1'); }catch(e){} }
-    }
+    function showStickyCTA(){ if (localStorage.getItem('fracshr_hide_sticky')!=='1') stickyCTA.classList.remove('hidden'); }
+    function hideStickyCTA(persist=false){ stickyCTA.classList.add('hidden'); if(persist){ try{ localStorage.setItem('fracshr_hide_sticky','1'); }catch(e){} } }
     closeStickyCTA.addEventListener('click', ()=> hideStickyCTA(true));
     setTimeout(showStickyCTA, 15000);
 
-    // DEMO GAME (Responsive + Candles + SMA + RSI)
+    // Modals
+    const waitlistModal=document.getElementById('waitlistModal');
+    const otpModal=document.getElementById('otpModal');
+    const openWaitlist = ()=> waitlistModal.classList.add('active');
+    const closeWaitlist = ()=> waitlistModal.classList.remove('active');
+    const openOtp = ()=> otpModal.classList.add('active');
+    const closeOtp = ()=> otpModal.classList.remove('active');
+    document.getElementById('closeWaitlist').addEventListener('click', closeWaitlist);
+    document.getElementById('closeOtp').addEventListener('click', closeOtp);
+    document.getElementById('cancelOtpBtn').addEventListener('click', closeOtp);
+
+    ['openWaitlistTop','openWaitlistHero','openWaitlistCard','openWaitlistLevels','openWaitlistWar','openWaitlistChallenges']
+      .forEach(id=> document.getElementById(id)?.addEventListener('click', openWaitlist));
+
+    // Helpers
+    function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((v||'').trim()); }
+    function nowIso(){ return new Date().toISOString(); }
+    function templ(str, data){
+      return String(str).replace(/\$\{(\w+)\}/g, (_,k)=> (data[k] !== undefined && data[k] !== null) ? String(data[k]) : '');
+    }
+
+    /* =================== WAITLIST + OTP (Web3Forms + EmailJS) =================== */
+
+    // EmailJS init
+    window.addEventListener('load', ()=>{
+      if (window.emailjs && CFG.emailjs.publicKey && !CFG.emailjs.publicKey.includes('YOUR_')) {
+        emailjs.init(CFG.emailjs.publicKey);
+      }
+    });
+
+    // State
+    let OTP_STATE = { email:null, code:null, expires:0, resendAt:0, source:'Unknown' };
+
+    // Elements
+    const otpEmailEl = document.getElementById('otpEmail');
+    const otpCodeEl  = document.getElementById('otpCode');
+    const otpStatus  = document.getElementById('otpStatus');
+    const sendOtpBtn = document.getElementById('sendOtpBtn');
+    const resendOtpBtn = document.getElementById('resendOtpBtn');
+    const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+
+    function generateCode(){ return String(Math.floor(100000 + Math.random()*900000)); }
+
+    async function sendEmailJS(to, subject, message, extraVars={}){
+      // Requires properly configured template in EmailJS
+      return emailjs.send(CFG.emailjs.serviceId, CFG.emailjs.templateId, {
+        to_email: to,
+        subject,
+        message,
+        otp: extraVars.otp || '',
+        site_name: CFG.brand
+      });
+    }
+
+    function selectedTemplate(section, data){
+      const sec = CFG.emailBodies[section];
+      const variant = sec.variants[sec.selected];
+      return {
+        subject: templ(variant.subject, data),
+        text: templ(variant.text, data)
+      };
+    }
+
+    async function sendOTP(){
+      const email = (otpEmailEl.value||'').trim();
+      if (!validEmail(email)) {
+        otpEmailEl.focus();
+        otpEmailEl.style.borderColor = '#FF4D8D';
+        setTimeout(()=> otpEmailEl.style.borderColor='rgba(255,255,255,.1)', 1500);
+        return;
+      }
+      // Require configured EmailJS keys
+      if (!window.emailjs || CFG.emailjs.publicKey.includes('YOUR_') || CFG.emailjs.serviceId.includes('YOUR_') || CFG.emailjs.templateId.includes('YOUR_')) {
+        otpStatus.textContent = 'OTP service is not configured yet. Please try again later.';
+        return;
+      }
+      const now = Date.now();
+      if (now < OTP_STATE.resendAt) {
+        const secs = Math.ceil((OTP_STATE.resendAt - now)/1000);
+        otpStatus.textContent = `Please wait ${secs}s before resending.`;
+        return;
+      }
+      const code = generateCode();
+      OTP_STATE = {
+        email,
+        code,
+        expires: now + CFG.otp.expiryMs,
+        resendAt: now + CFG.otp.resendMs,
+        source: OTP_STATE.source || 'Waitlist'
+      };
+      otpStatus.textContent = 'Sending code...';
+      const minutes = Math.round(CFG.otp.expiryMs/60000);
+      const template = selectedTemplate('otp', {
+        brand: CFG.brand,
+        otp: code,
+        email,
+        minutes,
+        commaName: email ? ` ${email}` : ''
+      });
+      try{
+        await sendEmailJS(email, template.subject, template.text, { otp: code });
+        otpStatus.textContent = `OTP sent! Check your inbox. Code valid for ${minutes} minutes.`;
+      }catch(_e){
+        otpStatus.textContent = 'Could not send OTP right now. Please try again in a moment.';
+      }
+    }
+
+    async function verifyOTP(){
+      const entered = (otpCodeEl.value||'').trim();
+      const now = Date.now();
+      if (!OTP_STATE.code || now > OTP_STATE.expires) {
+        otpStatus.textContent = 'Code expired. Please resend a new OTP.';
+        return;
+      }
+      if (entered !== OTP_STATE.code) {
+        otpStatus.textContent = 'Invalid code. Please try again.';
+        otpCodeEl.focus();
+        return;
+      }
+      // Success: submit to Web3Forms
+      const email = OTP_STATE.email;
+      closeOtp();
+      await submitWeb3Forms(email, OTP_STATE.source);
+      if (CFG.emailjs.sendThanks && window.emailjs && !CFG.emailjs.publicKey.includes('YOUR_')) {
+        setTimeout(async ()=>{
+          const tmpl = selectedTemplate('thanks', { brand: CFG.brand, email });
+          try { await sendEmailJS(email, tmpl.subject, tmpl.text); } catch(_e){}
+        }, CFG.emailjs.thanksDelayMs);
+      }
+    }
+
+    sendOtpBtn.addEventListener('click', sendOTP);
+    resendOtpBtn.addEventListener('click', sendOTP);
+    verifyOtpBtn.addEventListener('click', verifyOTP);
+    otpCodeEl.addEventListener('keydown', (e)=> { if(e.key==='Enter'){ verifyOTP(); } });
+
+    function beginWaitlist(inputId, source){
+      const el = document.getElementById(inputId);
+      const email = (el?.value||'').trim();
+      const hp = document.getElementById('hp_field')?.value || '';
+      if (!validEmail(email)) {
+        el?.focus();
+        el && (el.style.borderColor = '#FF4D8D');
+        setTimeout(()=> { if(el) el.style.borderColor='rgba(255,255,255,.1)'; }, 1500);
+        return;
+      }
+      if (hp) { // bot trap: if filled, silently accept
+        submitWeb3Forms(email, source);
+        return;
+      }
+      if (CFG.otp.required) {
+        closeWaitlist();
+        otpEmailEl.value = email;
+        OTP_STATE.source = source || 'Waitlist';
+        openOtp();
+      } else {
+        submitWeb3Forms(email, source);
+      }
+    }
+
+    async function submitWeb3Forms(email, source){
+      if (!CFG.web3forms.accessKey || CFG.web3forms.accessKey.includes('YOUR_')) {
+        alert('Waitlist temporarily unavailable. Please configure WEB3FORMS_ACCESS_KEY in the config block.');
+        return;
+      }
+      const dataCtx = {
+        brand: CFG.brand,
+        email,
+        source: source || 'Unknown',
+        ts: nowIso(),
+        ua: navigator.userAgent,
+        ref: document.referrer
+      };
+      const ownerTpl = selectedTemplate('owner', dataCtx);
+      const payload = {
+        access_key: CFG.web3forms.accessKey,
+        subject: ownerTpl.subject,
+        from_name: `${CFG.brand} Site`,
+        email: email,
+        message: ownerTpl.text,
+        page_url: location.href,
+        referrer: dataCtx.ref,
+        user_agent: dataCtx.ua
+      };
+      try{
+        const res = await fetch(CFG.web3forms.api, {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json', 'Accept':'application/json' },
+          body: JSON.stringify(payload),
+          cache: 'no-store',
+          redirect: 'follow'
+        });
+        if (res.ok) {
+          localStorage.setItem('fracshr_waitlisted', '1');
+          hideStickyCTA(true);
+          alert('Thanks! You’re verified and on the waitlist. We’ll email you at launch.');
+        } else {
+          alert('Something went wrong submitting your interest. Please try again.');
+        }
+      }catch(_e){
+        alert('Network error. Please try again shortly.');
+      }
+    }
+
+    // Hook buttons/inputs to beginWaitlist
+    document.getElementById('joinWaitlist').addEventListener('click', ()=> beginWaitlist('waitlistEmail', 'Modal'));
+    document.getElementById('joinWaitlistBottom').addEventListener('click', ()=> beginWaitlist('waitlistEmailBottom', 'Bottom CTA'));
+    document.getElementById('joinWaitlistSticky').addEventListener('click', ()=> beginWaitlist('waitlistEmailSticky', 'Sticky CTA'));
+
+    // Close modals by backdrop click
+    waitlistModal.addEventListener('click', (e)=> { if(e.target===waitlistModal) closeWaitlist(); });
+    otpModal.addEventListener('click', (e)=> { if(e.target===otpModal) closeOtp(); });
+
+    // Keyboard escape
+    window.addEventListener('keydown', (e)=> {
+      if(e.key==='Escape'){
+        if(waitlistModal.classList.contains('active')) closeWaitlist();
+        else if(otpModal.classList.contains('active')) closeOtp();
+        else if(demoModal.classList.contains('active')) closeDemo();
+      }
+    });
+
+    /* =================== DEMO GAME (unchanged core) =================== */
     const demoModal=document.getElementById('demoModal');
     const playDemoButtons=['playDemoTop','playDemoHero','playDemoCard','playDemoLevels','playDemoChallenges']
       .map(id=>document.getElementById(id)).filter(Boolean);
     playDemoButtons.forEach(btn=> btn.addEventListener('click', openDemo));
     document.getElementById('demoClose').addEventListener('click', closeDemo);
-    window.addEventListener('keydown', (e)=> {
-      if(e.key==='Escape'){ if(waitlistModal.classList.contains('active')) closeWaitlist(); else if(demoModal.classList.contains('active')) closeDemo(); }
-    });
-    waitlistModal.addEventListener('click', (e)=> { if(e.target===waitlistModal) closeWaitlist(); });
-    demoModal.addEventListener('click', (e)=> { if(e.target===demoModal) closeDemo(); });
 
     const priceLabel=document.getElementById('priceLabel');
+    const priceNote=document.getElementById('priceNote');
     const cashLabel=document.getElementById('cashLabel');
     const holdingsLabel=document.getElementById('holdingsLabel');
     const portfolioLabel=document.getElementById('portfolioLabel');
@@ -631,45 +994,54 @@
     const sellBtn=document.getElementById('sellBtn');
     const nextBtn=document.getElementById('nextBtn');
     const qtyInput=document.getElementById('qtyInput');
-    const helperText=document.getElementById('helperText');
     const resetDemoBtn=document.getElementById('resetDemo');
     const levelComplete=document.getElementById('levelComplete');
+    const coachMsg=document.getElementById('coachMsg');
     document.getElementById('openWaitlistFromComplete').addEventListener('click', openWaitlist);
     document.getElementById('closeDemoFromComplete').addEventListener('click', closeDemo);
 
+    const hintBuy = document.getElementById('hintBuy');
+    const hintSell = document.getElementById('hintSell');
+    const hintNext = document.getElementById('hintNext');
+
     let demoState=null;
     let guideTimer=null;
-
-    // Chart data and canvases
+    let actions=[];
     const priceCanvas=document.getElementById('priceCanvas');
     const rsiCanvas=document.getElementById('rsiCanvas');
-    let pctx, rctx, dpr;
-    let bars=[];  // {o,h,l,c}
-    const MAX_BARS=60;
+    let pctx, rctx, dpr, ro;
+    let bars=[]; const MAX_BARS=80;
 
     function openDemo(){ demoModal.classList.add('active'); initDemo(); }
-    function closeDemo(){ demoModal.classList.remove('active'); if(guideTimer){ clearInterval(guideTimer); guideTimer=null; } }
-
+    function closeDemo(){ demoModal.classList.remove('active'); if(guideTimer){ clearInterval(guideTimer); guideTimer=null; } clearHints(); }
     resetDemoBtn.addEventListener('click', initDemo);
 
     function initDemo(){
       if(guideTimer){ clearInterval(guideTimer); guideTimer=null; }
       levelComplete.classList.remove('active');
+      actions=[];
 
       demoState={
         step:0,
-        price:100.00,
+        marketPrice:100.00,
+        useLockedPrice:false,
+        lockedPrice:null,
         cash:10000.00,
         holdings:0,
         avgPrice:0,
         realizedPnL:0,
-        goal:11000.00
+        goal:11000.00,
+        startCash:10000.00,
+        buyIndex:null,
+        sellIndex:null,
+        rsiBuy:null,
+        rsiSell:null
       };
       qtyInput.value=100; qtyInput.disabled=true;
-      buyBtn.classList.add('btn-disabled');
-      sellBtn.classList.add('btn-disabled');
-      nextBtn.classList.remove('hidden'); nextBtn.textContent='Next ▶';
-      showHelper("Welcome! We’ll guide you to a quick win. Tap Next to begin.");
+      buyBtn.classList.add('btn-disabled'); sellBtn.classList.add('btn-disabled');
+      nextBtn.classList.remove('hidden'); nextBtn.textContent='Next ▶'; nextBtn.classList.add('suggested');
+      showCoach("Welcome! I’m your coach. Tap Next and I’ll walk you through a winning trade.");
+      clearHints(); hintNext.classList.add('show');
 
       setupCanvases();
       generateInitialBars();
@@ -679,20 +1051,31 @@
 
     function setupCanvases(){
       dpr=window.devicePixelRatio||1;
-      [priceCanvas, rsiCanvas].forEach(cv=>{
-        const rect=cv.getBoundingClientRect();
-        const w = Math.max(100, rect.width);
-        const h = Math.max(60, rect.height);
-        cv.width = Math.round(w * dpr);
-        cv.height = Math.round(h * dpr);
-      });
+      if(!ro){
+        ro = new ResizeObserver(()=>{
+          const rectP=priceCanvas.getBoundingClientRect();
+          const rectR=rsiCanvas.getBoundingClientRect();
+          priceCanvas.width = Math.round(Math.max(100, rectP.width) * dpr);
+          priceCanvas.height = Math.round(Math.max(80, rectP.height) * dpr);
+          rsiCanvas.width = Math.round(Math.max(100, rectR.width) * dpr);
+          rsiCanvas.height = Math.round(Math.max(60, rectR.height) * dpr);
+          pctx.setTransform(dpr,0,0,dpr,0,0);
+          rctx.setTransform(dpr,0,0,dpr,0,0);
+          drawAll();
+        });
+      }
       pctx=priceCanvas.getContext('2d'); rctx=rsiCanvas.getContext('2d');
+      const rectP=priceCanvas.getBoundingClientRect();
+      const rectR=rsiCanvas.getBoundingClientRect();
+      priceCanvas.width = Math.round(Math.max(100, rectP.width) * dpr);
+      priceCanvas.height = Math.round(Math.max(80, rectP.height) * dpr);
+      rsiCanvas.width = Math.round(Math.max(100, rectR.width) * dpr);
+      rsiCanvas.height = Math.round(Math.max(60, rectR.height) * dpr);
       pctx.setTransform(dpr,0,0,dpr,0,0);
       rctx.setTransform(dpr,0,0,dpr,0,0);
+      ro.observe(priceCanvas.parentElement);
+      ro.observe(rsiCanvas.parentElement);
     }
-    ['resize','orientationchange'].forEach(evt =>
-      window.addEventListener(evt, ()=>{ if(demoModal.classList.contains('active')){ setupCanvases(); drawAll(); }})
-    );
 
     function generateInitialBars(){
       bars=[];
@@ -706,10 +1089,9 @@
         bars.push({o,h,l,c});
         last=c;
       }
-      demoState.price = bars[bars.length-1].c;
+      demoState.marketPrice = bars[bars.length-1].c;
     }
 
-    // Indicators
     function SMA(closes, period){
       const out=new Array(closes.length).fill(null);
       let sum=0;
@@ -744,194 +1126,154 @@
     function getCloses(){ return bars.map(b=>b.c); }
 
     function drawAll(){ drawPriceChart(); drawRSIChart(); }
-
     function drawPriceChart(){
-      const ctx=pctx;
-      const w=priceCanvas.clientWidth; const h=priceCanvas.clientHeight;
+      const ctx=pctx; const w=priceCanvas.clientWidth; const h=priceCanvas.clientHeight;
       ctx.clearRect(0,0,w,h);
-
-      // Grid
       ctx.strokeStyle='rgba(255,255,255,.06)'; ctx.lineWidth=1;
       for(let i=0;i<=5;i++){ ctx.beginPath(); ctx.moveTo(0,i*(h/5)); ctx.lineTo(w,i*(h/5)); ctx.stroke(); }
 
       const PADDING=10;
       const visible=bars.slice(-50);
       const highs=visible.map(b=>b.h), lows=visible.map(b=>b.l);
-      const min=Math.min(...lows); const max=Math.max(...highs);
-      const range=(max-min)||1;
-      const cw=w - PADDING*2;
-      const ch=h - PADDING*2;
-      const bw = Math.max(2, cw/visible.length - 2);
-
-      // SMA lines
+      const min=Math.min(...lows); const max=Math.max(...highs); const range=(max-min)||1;
+      const cw=w - PADDING*2; const ch=h - PADDING*2; const bw = Math.max(2, cw/visible.length - 2);
       const closes=visible.map(b=>b.c);
       const sma10=SMA(closes,10), sma20=SMA(closes,20);
-
       function yFor(v){ return h - PADDING - ((v - min)/range)*ch; }
 
-      // Candles
       visible.forEach((b, i)=>{
         const x = PADDING + i*(cw/visible.length) + 1;
-        // Wick
         ctx.strokeStyle='rgba(255,255,255,.35)';
         ctx.beginPath(); ctx.moveTo(x+bw/2, yFor(b.h)); ctx.lineTo(x+bw/2, yFor(b.l)); ctx.stroke();
-
-        // Body
-        const up=b.c>=b.o;
-        ctx.fillStyle = up ? getComputedStyle(document.documentElement).getPropertyValue('--up').trim() : getComputedStyle(document.documentElement).getPropertyValue('--down').trim();
-        const top = yFor(up?b.c:b.o);
-        const bottom = yFor(up?b.o:b.c);
+        const up=b.c>=b.o; ctx.fillStyle = up ? getComputedStyle(document.documentElement).getPropertyValue('--up').trim() : getComputedStyle(document.documentElement).getPropertyValue('--down').trim();
+        const top = yFor(up?b.c:b.o); const bottom = yFor(up?b.o:b.c);
         const height=Math.max(1, bottom - top);
         ctx.fillRect(x, top, bw, height);
       });
 
-      // SMA(10)
       ctx.lineWidth=2; ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--accent5').trim(); ctx.beginPath();
-      sma10.forEach((v,i)=>{
-        if(v==null) return;
-        const x=PADDING + i*(cw/sma10.length) + bw/2;
-        const y=yFor(v);
-        if(i===0 || sma10[i-1]==null) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-      });
-      ctx.stroke();
-
-      // SMA(20)
+      sma10.forEach((v,i)=>{ if(v==null) return; const x=PADDING + i*(cw/sma10.length) + bw/2; const y=yFor(v); if(i===0||sma10[i-1]==null) ctx.moveTo(x,y); else ctx.lineTo(x,y);}); ctx.stroke();
       ctx.lineWidth=2; ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--accent1').trim(); ctx.beginPath();
-      sma20.forEach((v,i)=>{
-        if(v==null) return;
-        const x=PADDING + i*(cw/sma20.length) + bw/2;
-        const y=yFor(v);
-        if(i===0 || sma20[i-1]==null) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-      });
-      ctx.stroke();
+      sma20.forEach((v,i)=>{ if(v==null) return; const x=PADDING + i*(cw/sma20.length) + bw/2; const y=yFor(v); if(i===0||sma20[i-1]==null) ctx.moveTo(x,y); else ctx.lineTo(x,y);}); ctx.stroke();
     }
-
     function drawRSIChart(){
-      const ctx=rctx;
-      const w=rsiCanvas.clientWidth; const h=rsiCanvas.clientHeight;
+      const ctx=rctx; const w=rsiCanvas.clientWidth; const h=rsiCanvas.clientHeight;
       ctx.clearRect(0,0,w,h);
-
-      // Grid + bands
       ctx.strokeStyle='rgba(255,255,255,.06)'; ctx.lineWidth=1;
       for(let i=0;i<=4;i++){ ctx.beginPath(); ctx.moveTo(0,i*(h/4)); ctx.lineTo(w,i*(h/4)); ctx.stroke(); }
-
-      const closes=getCloses().slice(-50);
-      const rsiArr=RSI(closes,14);
-
+      const closes=getCloses().slice(-50); const rsiArr=RSI(closes,14);
       function yForRSI(v){ return h - (v/100)*h; }
-
-      // Overbought/oversold zones
-      ctx.fillStyle='rgba(255,77,141,.08)';
-      ctx.fillRect(0, 0, w, yForRSI(70));
-      ctx.fillStyle='rgba(32,227,178,.08)';
-      ctx.fillRect(0, yForRSI(30), w, h - yForRSI(30));
-
-      // 70/50/30 lines
-      ctx.strokeStyle='rgba(255,255,255,.25)'; ctx.lineWidth=1;
-      [70,50,30].forEach(v=>{
-        ctx.beginPath(); ctx.moveTo(0, yForRSI(v)); ctx.lineTo(w, yForRSI(v)); ctx.stroke();
-      });
-
-      // RSI line
+      ctx.fillStyle='rgba(255,77,141,.08)'; ctx.fillRect(0, 0, w, yForRSI(70));
+      ctx.fillStyle='rgba(32,227,178,.08)'; ctx.fillRect(0, yForRSI(30), w, h - yForRSI(30));
+      ctx.strokeStyle='rgba(255,255,255,.25)'; [70,50,30].forEach(v=>{ ctx.beginPath(); ctx.moveTo(0, yForRSI(v)); ctx.lineTo(w, yForRSI(v)); ctx.stroke(); });
       ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--accent5').trim(); ctx.lineWidth=2; ctx.beginPath();
-      rsiArr.forEach((v,i)=>{
-        if(v==null) return;
-        const x = (i/(rsiArr.length-1)) * (w-10) + 5;
-        const y = yForRSI(v);
-        if(i===0 || rsiArr[i-1]==null) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-      });
-      ctx.stroke();
+      rsiArr.forEach((v,i)=>{ if(v==null) return; const x = (i/(rsiArr.length-1)) * (w-10) + 5; const y = yForRSI(v); if(i===0||rsiArr[i-1]==null) ctx.moveTo(x,y); else ctx.lineTo(x,y);}); ctx.stroke();
     }
 
     function addBar(nextClose){
       const last=bars[bars.length-1]||{c:100};
-      const o=last.c;
-      const c=Number(nextClose.toFixed(2));
-      const h=Math.max(o,c)+Math.random()*0.25;
-      const l=Math.min(o,c)-Math.random()*0.25;
-      bars.push({o,h,l,c});
-      if(bars.length>MAX_BARS) bars.shift();
-      demoState.price=c;
+      const o=last.c; const c=Number(nextClose.toFixed(2));
+      const h=Math.max(o,c)+Math.random()*0.25; const l=Math.min(o,c)-Math.random()*0.25;
+      bars.push({o,h,l,c}); if(bars.length>MAX_BARS) bars.shift();
+      demoState.marketPrice=c;
     }
 
     function idleWobble(){
-      if(guideTimer || demoState?.step>=3) return;
+      if(guideTimer) return;
       const last=bars[bars.length-1]?.c||100;
-      const next=last + (Math.random()-.5)*0.3;
-      addBar(next);
-      drawAll();
+      const next= last + (Math.random()-.5)*0.25;
+      addBar(next); drawAll(); updateUI();
     }
-    setInterval(idleWobble, 1400);
+    setInterval(idleWobble, 1200);
 
+    function getUsedPrice(){ return demoState.useLockedPrice ? demoState.lockedPrice : demoState.marketPrice; }
     function updateUI(){
-      priceLabel.textContent = fmtMoney(demoState.price);
+      const usedPrice = getUsedPrice();
+      priceLabel.textContent = fmtMoney(usedPrice);
+      priceNote.classList.toggle('hidden', !demoState.useLockedPrice);
       cashLabel.textContent = fmtMoney(demoState.cash);
       holdingsLabel.textContent = String(demoState.holdings);
-      const portfolio = demoState.cash + demoState.holdings * demoState.price;
+      const portfolio = demoState.cash + demoState.holdings * usedPrice;
       portfolioLabel.textContent = fmtMoney(portfolio);
-      const unreal = demoState.holdings>0 ? (demoState.price - demoState.avgPrice)*demoState.holdings : 0;
+      const unreal = demoState.holdings>0 ? (usedPrice - demoState.avgPrice)*demoState.holdings : 0;
       const totalPNL = demoState.realizedPnL + unreal;
-      pnlLabel.textContent = (totalPNL>=0?'+':'') + fmtMoney(Math.abs(totalPNL));
+      pnlLabel.textContent = (totalPNL>=0?'+':'-') + fmtMoney(Math.abs(totalPNL));
       pnlLabel.style.color = totalPNL>=0 ? 'var(--up)' : 'var(--down)';
     }
     function fmtMoney(n){ return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
-    function showHelper(t){ helperText.textContent=t; }
+    function showCoach(t){ coachMsg.textContent=t; }
+    function clearHints(){ [hintBuy, hintSell, hintNext].forEach(h=> h.classList.remove('show')); [buyBtn,sellBtn,nextBtn].forEach(b=> b.classList.remove('suggested')); }
 
     nextBtn.addEventListener('click', ()=>{
       switch(demoState.step){
         case 0:
           demoState.step=1;
           qtyInput.disabled=false; qtyInput.value=100;
-          buyBtn.classList.remove('btn-disabled');
-          showHelper("Step 1: Set quantity to 100 and tap BUY to open a position.");
+          buyBtn.classList.remove('btn-disabled'); buyBtn.classList.add('suggested');
+          showCoach("Step 1: Set quantity to 100 and tap BUY to open a position.");
           nextBtn.classList.add('hidden');
+          clearHints(); hintBuy.classList.add('show');
           break;
-        case 2: // after buy
+        case 2:
           demoState.step=3;
-          showHelper("Step 2: Watch the market move up. Portfolio updates live.");
+          demoState.useLockedPrice = false;
+          showCoach("Step 2: Watch the price move to your target. I’ll do the lifting—just observe.");
           nextBtn.classList.add('hidden');
-          startGuidedRise();
+          clearHints(); startGuidedRise();
           break;
         case 4:
           demoState.step=5;
-          sellBtn.classList.remove('btn-disabled');
-          showHelper("Step 3: Tap SELL to lock in profit and reach the goal.");
+          sellBtn.classList.remove('btn-disabled'); sellBtn.classList.add('suggested');
+          showCoach("Step 3: Tap SELL to lock in your profit and finish the level.");
           nextBtn.classList.add('hidden');
+          clearHints(); hintSell.classList.add('show');
           break;
       }
     });
 
     buyBtn.addEventListener('click', ()=>{
       if(buyBtn.classList.contains('btn-disabled')) return;
-      const qty=Math.max(1, Math.floor(Number(qtyInput.value)||0));
-      const cost=qty * demoState.price;
-      if(cost>demoState.cash){ showHelper("Not enough cash. Try a smaller quantity."); return; }
-      demoState.cash-=cost; demoState.holdings+=qty; demoState.avgPrice=demoState.price;
+      let qty=Math.max(1, Math.floor(Number(qtyInput.value)||0));
+      if(qty !== 100){
+        qtyInput.value = 100;
+        showCoach("For this demo, buy 100 shares. I’ve set it for you—tap BUY again.");
+        return;
+      }
+      const buyPrice = 100.00;
+      const cost=qty * buyPrice;
+      if(cost>demoState.cash){ showCoach("Not enough cash. Reduce quantity or reset."); return; }
+      demoState.cash-=cost; demoState.holdings+=qty; demoState.avgPrice=buyPrice;
+      demoState.useLockedPrice = true; demoState.lockedPrice = 100.00;
+
+      const closes=getCloses(); // quick RSI snapshot (optional)
+      demoState.buyIndex = bars.length-1;
+
       updateUI(); drawAll();
-      buyBtn.classList.add('btn-disabled'); qtyInput.disabled=true;
+      buyBtn.classList.add('btn-disabled'); buyBtn.classList.remove('suggested'); qtyInput.disabled=true;
       demoState.step=2;
-      showHelper("Great! Position opened. Tap Next to continue.");
-      nextBtn.classList.remove('hidden'); nextBtn.textContent='Next ▶';
+      showCoach("Great entry. Price is locked for clarity while the chart animates. Tap Next to continue.");
+      nextBtn.classList.remove('hidden'); nextBtn.classList.add('suggested');
+      clearHints(); hintNext.classList.add('show');
     });
 
     function startGuidedRise(){
       const target=111.00;
-      const steps=12;
-      const interval=1000; // slower for clarity
+      const steps=12; const interval=950;
       let tick=0;
       guideTimer=setInterval(()=>{
         tick++;
         const last=bars[bars.length-1]?.c || 100;
         const remaining=target - last;
-        const move = remaining/Math.max(1, (steps - tick + 1)) + (Math.random()*0.05);
+        const move = remaining/Math.max(1, (steps - tick + 1)) + (Math.random()*0.04);
         const next= last + Math.max(0.06, move);
         addBar(next);
         drawAll(); updateUI();
-        if(tick>=steps || demoState.price>=target){
+        if(tick>=steps || demoState.marketPrice>=target){
           clearInterval(guideTimer); guideTimer=null;
           demoState.step=4;
-          showHelper("Nice! You’re in profit. Tap Next to proceed.");
-          nextBtn.classList.remove('hidden');
+          showCoach("Nice! You’re in profit. Tap Next for the final step.");
+          nextBtn.classList.remove('hidden'); nextBtn.classList.add('suggested');
+          clearHints(); hintNext.classList.add('show');
         }
       }, interval);
     }
@@ -939,34 +1281,60 @@
     sellBtn.addEventListener('click', ()=>{
       if(sellBtn.classList.contains('btn-disabled')) return;
       if(demoState.holdings<=0) return;
-      const revenue = demoState.holdings * demoState.price;
+
+      const sellPrice = demoState.marketPrice;
+      const revenue = demoState.holdings * sellPrice;
       const costBasis = demoState.holdings * demoState.avgPrice;
       const pl = revenue - costBasis;
       demoState.cash += revenue;
       demoState.realizedPnL += pl;
+
+      demoState.sellIndex = bars.length-1;
       demoState.holdings = 0;
       updateUI();
-      if(demoState.cash >= demoState.goal){
-        setTimeout(()=> levelComplete.classList.add('active'), 600);
+
+      const portfolio = demoState.cash;
+      if(portfolio >= demoState.goal){
+        setTimeout(()=> { fillSummary(); levelComplete.classList.add('active'); }, 500);
       }else{
-        showHelper("Almost there! Try another trade or reset the demo.");
+        showCoach("Almost there! Try another trade or reset the demo.");
       }
-      sellBtn.classList.add('btn-disabled');
+      sellBtn.classList.add('btn-disabled'); sellBtn.classList.remove('suggested');
+      clearHints();
     });
 
-    // Keyboard shortcuts (optional): B buy, S sell, N next
-    window.addEventListener('keydown', (e)=>{
-      if(!demoModal.classList.contains('active')) return;
-      if(e.key==='b' || e.key==='B'){ buyBtn.click(); }
-      if(e.key==='s' || e.key==='S'){ sellBtn.click(); }
-      if(e.key==='n' || e.key==='N'){ nextBtn.click(); }
-    });
+    function fillSummary(){
+      const start = demoState.startCash;
+      const final = demoState.cash + demoState.holdings*getUsedPrice();
+      const profit = final - start;
+      const roi = (profit / start) * 100;
 
-    // Attach demo openers (redundant safety)
+      const barsHeld = (demoState.sellIndex!=null && demoState.buyIndex!=null) ? (demoState.sellIndex - demoState.buyIndex) : 0;
+      const beat = final - demoState.goal;
+
+      document.getElementById('sumStart').textContent = fmtMoney(start);
+      document.getElementById('sumFinal').textContent = fmtMoney(final);
+      document.getElementById('sumProfit').textContent = (profit>=0?'+':'-') + fmtMoney(Math.abs(profit));
+      document.getElementById('sumROI').textContent = (roi>=0?'+':'') + roi.toFixed(2) + '%';
+      document.getElementById('sumEntry').textContent = `100 @ ${fmtMoney(100)}`;
+      document.getElementById('sumExit').textContent = `100 @ ${fmtMoney(111)}`;
+      document.getElementById('sumBars').textContent = String(Math.max(0, barsHeld));
+      document.getElementById('sumRSI').textContent = '— → —';
+      document.getElementById('sumBeat').textContent = (beat>=0?'+':'-') + fmtMoney(Math.abs(beat));
+      document.getElementById('sumImpact').textContent = `+ $${(111-100).toFixed(2)} move × 100 shares = +${fmtMoney((111-100)*100)}`;
+    }
+
+    function clearHints(){ [hintBuy, hintSell, hintNext].forEach(h=> h.classList.remove('show')); [buyBtn,sellBtn,nextBtn].forEach(b=> b.classList.remove('suggested')); }
+
+    // Demo openers (safety)
     ['playDemoTop','playDemoHero','playDemoCard','playDemoLevels','playDemoChallenges']
       .forEach(id=> document.getElementById(id)?.addEventListener('click', openDemo));
+
+    document.getElementById('openWaitlistCard')?.addEventListener('click', openWaitlist);
+    document.getElementById('openWaitlistLevels')?.addEventListener('click', openWaitlist);
+    document.getElementById('openWaitlistWar')?.addEventListener('click', openWaitlist);
+    document.getElementById('openWaitlistChallenges')?.addEventListener('click', openWaitlist);
   </script>
 </body>
 </html>
 ```
-
