@@ -10,7 +10,7 @@
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <link rel="canonical" href="https://fracshr.com/" />
 
-  <!-- CSP: allow TradingView frames and external script -->
+  <!-- Content Security Policy -->
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
     base-uri 'self';
@@ -27,7 +27,7 @@
     block-all-mixed-content
   ">
 
-  <!-- Optional performance hint -->
+  <!-- Optional performance hints -->
   <link rel="preconnect" href="https://s3.tradingview.com" crossorigin>
   <link rel="preconnect" href="https://s.tradingview.com" crossorigin>
   <link rel="preconnect" href="https://www.tradingview-widget.com" crossorigin>
@@ -46,60 +46,27 @@
     }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0;scroll-behavior:smooth;color:var(--text)}
-    body{
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-      line-height:1.55;
-      background-color: var(--bg);
-      overflow-x:hidden;
-    }
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;line-height:1.55;background-color:var(--bg);overflow-x:hidden}
     .no-scroll{overflow:hidden}
 
     /* Aurora background animation */
-    .bg-aurora {
-        position: fixed;
-        inset: 0;
-        z-index: -1;
-        pointer-events: none;
-        background: 
-            radial-gradient(circle at 10% 20%, var(--accent2) 0%, transparent 30%),
-            radial-gradient(circle at 80% 10%, var(--accent3) 0%, transparent 30%),
-            radial-gradient(circle at 90% 80%, var(--accent1) 0%, transparent 30%),
-            radial-gradient(circle at 30% 90%, var(--accent4) 0%, transparent 30%),
-            radial-gradient(circle at 50% 50%, var(--accent5) 0%, transparent 25%);
-        background-color: var(--bg);
-        background-size: 300% 300%;
-        animation: gradientShift 40s ease-in-out infinite alternate;
-        opacity: 0.2;
-        filter: blur(40px);
-    }
-
-    @keyframes gradientShift {
-        0%   { background-position: 0% 0%; }
-        25%  { background-position: 50% 50%; background-size: 350% 350%; }
-        50%  { background-position: 100% 0%; }
-        75%  { background-position: 50% 100%; background-size: 400% 400%; }
-        100% { background-position: 0% 50%; }
-    }
+    .bg-aurora{position:fixed;inset:0;z-index:-1;pointer-events:none;background:
+      radial-gradient(circle at 10% 20%, var(--accent2) 0%, transparent 30%),
+      radial-gradient(circle at 80% 10%, var(--accent3) 0%, transparent 30%),
+      radial-gradient(circle at 90% 80%, var(--accent1) 0%, transparent 30%),
+      radial-gradient(circle at 30% 90%, var(--accent4) 0%, transparent 30%),
+      radial-gradient(circle at 50% 50%, var(--accent5) 0%, transparent 25%);
+      background-color:var(--bg);background-size:300% 300%;animation:gradientShift 40s ease-in-out infinite alternate;opacity:0.2;filter:blur(40px)}
+    @keyframes gradientShift{0%{background-position:0% 0%}25%{background-position:50% 50%;background-size:350% 350%}50%{background-position:100% 0%}75%{background-position:50% 100%;background-size:400% 400%}100%{background-position:0% 50%}}
 
     /* Header / Nav */
     header{position:sticky;top:0;z-index:40;background:rgba(10,14,26,.7);backdrop-filter:saturate(120%) blur(10px);border-bottom:1px solid rgba(255,255,255,.08)}
     .nav{max-width:1200px;margin:0 auto;padding:10px 18px;display:flex;justify-content:center;align-items:center;gap:14px;flex-wrap:wrap}
     .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text)}
-    .logo{
-      width:56px;height:56px;border-radius:14px;display:grid;place-items:center;
-      background:radial-gradient(100% 100% at 30% 30%, #1b2333 0%, #0f1624 60%, #0c121a 100%);
-      box-shadow:0 10px 26px rgba(45,226,230,.18), 0 0 0 3px rgba(255,255,255,.06) inset;
-      position:relative;overflow:hidden;
-    }
+    .logo{width:56px;height:56px;border-radius:14px;display:grid;place-items:center;background:radial-gradient(100% 100% at 30% 30%, #1b2333 0%, #0f1624 60%, #0c121a 100%);box-shadow:0 10px 26px rgba(45,226,230,.18), 0 0 0 3px rgba(255,255,255,.06) inset;position:relative;overflow:hidden}
     .logo .halo{position:absolute;inset:-30%;background:conic-gradient(from 0deg,var(--accent1),var(--accent2),var(--accent3),var(--accent1));filter:blur(24px);opacity:.18;animation:spin 18s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
-    .wordmark{
-      font-weight:900;letter-spacing:.6px;font-size:1.5rem;
-      background:linear-gradient(90deg,#fff,#b7f7ff 60%,#fff);-webkit-background-clip:text;background-clip:text;color:transparent;
-      display:inline-block;
-    }
-    .nav svg.brandmark{display:block}
-
+    .wordmark{font-weight:900;letter-spacing:.6px;font-size:1.5rem;background:linear-gradient(90deg,#fff,#b7f7ff 60%,#fff);-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block}
     .menu-btn{display:none;min-width:44px;min-height:44px;line-height:1;background:transparent;border:2px solid rgba(255,255,255,.18);color:var(--text);border-radius:12px;padding:8px 12px;font-weight:800;font-size:20px}
     .nav-links{display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:center}
     .nav-links a{color:var(--muted);text-decoration:none;font-weight:700}
@@ -109,42 +76,26 @@
     .btn-outline{background:transparent;color:var(--text);border:2px solid rgba(255,255,255,.16);box-shadow:none}
     .btn-outline:hover{border-color:rgba(255,255,255,.35)}
     .cta-pulse{position:relative}
-    .cta-pulse::after{content:"";position:absolute;inset:-8px;border-radius:18px;border:2px solid rgba(45,226,230,.25);animation:pulse 2.2s infinite ease-out}
+    .cta-pulse::after{content:'';position:absolute;inset:-8px;border-radius:18px;border:2px solid rgba(45,226,230,.25);animation:pulse 2.2s infinite ease-out}
     @keyframes pulse{0%{transform:scale(1);opacity:.9}70%{transform:scale(1.12);opacity:0}100%{transform:scale(1.12);opacity:0}}
     @media (max-width:760px){
       .nav{justify-content:space-between}
       .menu-btn{display:block}
-      .nav-links{
-        position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top,0) + 56px);
-        background:linear-gradient(180deg,#101a33,#0b1426);
-        border-top:1px solid rgba(255,255,255,.08);
-        display:block;transform:translateY(-8px);opacity:0;pointer-events:none;
-        max-height:70vh;overflow:auto;padding:12px;transition:transform .25s ease, opacity .25s ease; z-index:55;
-      }
+      .nav-links{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top,0) + 56px);background:linear-gradient(180deg,#101a33,#0b1426);border-top:1px solid rgba(255,255,255,.08);display:block;transform:translateY(-8px);opacity:0;pointer-events:none;max-height:70vh;overflow:auto;padding:12px;transition:transform .25s ease, opacity .25s ease;z-index:55}
       .nav-links.open{transform:translateY(0);opacity:1;pointer-events:auto}
-      .nav-links a, .nav-links .btn, .nav-links .btn-outline{
-        display:block;width:100%;text-align:center;margin:6px 0;font-size:clamp(1rem, 4.2vw, 1.1rem);padding:14px 16px;border-radius:14px
-      }
+      .nav-links a, .nav-links .btn, .nav-links .btn-outline{display:block;width:100%;text-align:center;margin:6px 0;font-size:clamp(1rem,4.2vw,1.1rem);padding:14px 16px;border-radius:14px}
       body.menu-open{overflow:hidden}
     }
 
     /* Hero */
     .hero{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:60px 18px 20px;display:grid;gap:22px;justify-items:center;text-align:center}
     .tagline{display:inline-block;padding:8px 14px;border-radius:999px;font-weight:900;font-size:.8rem;color:#07131a;background:linear-gradient(90deg,var(--accent4),var(--accent1));box-shadow:var(--shadow)}
-    h1.big{
-      font-weight:900;line-height:1.06;margin:16px 0 10px;font-size:clamp(2rem,4.2vw,3.6rem);
-      background:linear-gradient(90deg,#fff,#b7f7ff 60%,#fff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 10px 40px rgba(138,43,226,.16)
-    }
+    h1.big{font-weight:900;line-height:1.06;margin:16px 0 10px;font-size:clamp(2rem,4.2vw,3.6rem);background:linear-gradient(90deg,#fff,#b7f7ff 60%,#fff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 10px 40px rgba(138,43,226,.16)}
     .lead{color:var(--muted);max-width:760px}
     .hero-ctas{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
 
-    /* Ticker */
-    .ticker-container {
-        padding: 8px 0;
-        border-top: 1px solid rgba(255,255,255,.06);
-        border-bottom: 1px solid rgba(255,255,255,.06);
-        background: linear-gradient(0deg,rgba(255,255,255,.03),rgba(0,0,0,.0));
-    }
+    /* Ticker container */
+    .ticker-container{padding:8px 0;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);background:linear-gradient(0deg,rgba(255,255,255,.03),rgba(0,0,0,.0))}
 
     /* Sections */
     section{position:relative;z-index:1;padding:60px 18px}
@@ -163,74 +114,36 @@
     /* Demo modal (phone) */
     .demo-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(5,7,18,.76);backdrop-filter:blur(10px);z-index:60;padding:18px}
     .demo-modal.active{display:flex}
-    .phone{
-      width:min(430px,94vw); height:min(780px, calc(var(--vh) * 92));
-      border-radius:28px;overflow:hidden;
-      background:linear-gradient(180deg,#111b33,#0b1426);
-      border:1px solid rgba(255,255,255,.08);
-      box-shadow:0 40px 120px rgba(0,0,0,.55),0 0 0 8px rgba(255,255,255,.04) inset;
-      position:relative;display:flex;flex-direction:column;
-      isolation:isolate;
-    }
+    .phone{width:min(430px,94vw);height:min(780px, calc(var(--vh) * 92));border-radius:28px;overflow:hidden;background:linear-gradient(180deg,#111b33,#0b1426);border:1px solid rgba(255,255,255,.08);box-shadow:0 40px 120px rgba(0,0,0,.55),0 0 0 8px rgba(255,255,255,.04) inset;position:relative;display:flex;flex-direction:column;isolation:isolate}
     .notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:42%;height:22px;background:#0a0f24;border-radius:14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
     .demo-head{padding:38px 12px 10px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(138,43,226,.18),transparent 60%);border-bottom:1px solid rgba(255,255,255,.06)}
     .demo-title{font-weight:800;letter-spacing:.2px}
     .demo-close{background:transparent;border:none;color:var(--muted);font-weight:800;cursor:pointer}
-    .demo-body{
-      padding:10px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      min-height:0;
-      flex: 1;
-      position:relative;
-      z-index:1;
-    }
-    .asset-card{
-      display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;
-      background:#121f3d;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:10px
-    }
+
+    .demo-body{padding:10px;display:flex;flex-direction:column;gap:10px;min-height:0;flex:1;position:relative;z-index:1}
+    .asset-card{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;background:#121f3d;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:10px}
     .asset-name{font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .asset-price{font-weight:900;font-size:1.05rem;color:var(--up); text-align:right; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1, 'lnum' 1;}
+    .asset-price{font-weight:900;font-size:1.05rem;color:var(--up);text-align:right;font-variant-numeric:tabular-nums;font-feature-settings:'tnum' 1,'lnum' 1}
     .badge{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:999px;background:rgba(45,226,230,.16);color:#bfeff3;font-size:.72rem;font-weight:800;border:1px solid rgba(45,226,230,.35)}
-    .hidden{display:none !important;}
+    .hidden{display:none !important}
+
     .statbar{display:grid;grid-template-columns:1fr 1fr;gap:8px}
     @media (max-width:420px){ .statbar{grid-template-columns:1fr} }
     .stat{background:#121f3d;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:8px;font-size:.9rem}
     .stat .row{display:flex;justify-content:space-between;align-items:baseline}
-    .stat .row strong{font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1, 'lnum' 1;}
-    .chartWrap{
-      display:grid;
-      gap:8px;
-      position:relative;
-      z-index:1;
-      flex: 1;
-      min-height: 0;
-      overflow-y: auto;
-      overflow-x: hidden;
-    }
+    .stat .row strong{font-variant-numeric:tabular-nums;font-feature-settings:'tnum' 1,'lnum' 1}
+
+    .chartWrap{display:grid;gap:8px;position:relative;z-index:1;flex:1;min-height:0;overflow-y:auto;overflow-x:hidden}
     .chartCard{background:#0e1b38;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:6px;min-height:0;position:relative;z-index:1}
     #priceCanvas,#rsiCanvas{width:100%;height:100%;display:block}
-    .chartWrap > .chartCard:first-child { min-height: clamp(180px, 40vh, 280px); height: 65%; }
-    .chartWrap > .chartCard:last-child { min-height: clamp(100px, 22vh, 150px); height: 35%; }
+    .chartWrap > .chartCard:first-child{min-height:clamp(180px,40vh,280px);height:65%}
+    .chartWrap > .chartCard:last-child{min-height:clamp(100px,22vh,150px);height:35%}
     .legend{display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:.8rem;color:var(--muted)}
     .legend .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
     @media (max-height:700px){ .legend{display:none} }
 
-    .coach{
-      display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;
-      background:#0c1a34;border:1px solid rgba(255,255,255,.18);
-      border-radius:14px;padding:8px;color:#e9f7ff;box-shadow:var(--shadow);
-      position:relative;z-index:5;
-    }
-    .coach-avatar{
-      width:40px;height:40px;border-radius:50%;overflow:hidden;
-      background:radial-gradient(100% 100% at 30% 30%, #1b2333 0%, #0f1624 60%, #0c121a 100%);
-      border:1px solid rgba(255,255,255,.18);
-      box-shadow:0 6px 18px rgba(0,0,0,.35), inset 0 0 0 2px rgba(255,255,255,.06);
-      flex:0 0 auto;
-    }
-    .coach-avatar svg{display:block;width:100%;height:100%}
+    .coach{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;background:#0c1a34;border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:8px;color:#e9f7ff;box-shadow:var(--shadow);position:relative;z-index:5}
+    .coach-avatar{width:40px;height:40px;border-radius:50%;overflow:hidden;background:radial-gradient(100% 100% at 30% 30%,#1b2333 0%,#0f1624 60%,#0c121a 100%);border:1px solid rgba(255,255,255,.18);box-shadow:0 6px 18px rgba(0,0,0,.35), inset 0 0 0 2px rgba(255,255,255,.06);flex:0 0 auto}
     .coach-title{font-size:.78rem;font-weight:900;letter-spacing:.5px;color:#9fd0ff;text-transform:uppercase}
     .coach-msg{font-size:.95rem;line-height:1.35}
     .coach-toggle{background:transparent;border:2px solid rgba(255,255,255,.2);color:#cfe8ff;border-radius:10px;padding:6px 10px;font-weight:900;cursor:pointer}
@@ -251,12 +164,7 @@
     .next-btn.hidden{display:none}
     @keyframes pop{0%{transform:translateY(0) scale(1)}50%{transform:translateY(-1px) scale(1.03)}100%{transform:translateY(0) scale(1)}}
     .suggested{animation:pop 1.1s ease-in-out infinite}
-    .hint{
-      position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);
-      background:rgba(12,26,52,.98);color:#e9f7ff;border:2px solid rgba(45,226,230,.5);
-      border-radius:12px;padding:6px 10px;font-size:.85rem;white-space:nowrap;box-shadow:var(--shadow);
-      display:none;z-index:10;pointer-events:none
-    }
+    .hint{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);background:rgba(12,26,52,.98);color:#e9f7ff;border:2px solid rgba(45,226,230,.5);border-radius:12px;padding:6px 10px;font-size:.85rem;white-space:nowrap;box-shadow:var(--shadow);display:none;z-index:10;pointer-events:none}
     .hint::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:8px solid transparent;border-top-color:rgba(45,226,230,.5)}
     .hint.show{display:block}
 
@@ -267,10 +175,8 @@
     .star:nth-child(2){animation-delay:.15s;transform:scale(1.05)}.star:nth-child(3){animation-delay:.3s;transform:scale(1.1)}
     @keyframes twinkle{0%{transform:translateY(0) scale(1);opacity:.9}50%{transform:translateY(-3px) scale(1.06);opacity:1}100%{transform:translateY(0) scale(1);opacity:.9}}
 
-    .summary{
-      width:min(420px, 96%); text-align:left; background:#101c38; border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:12px; margin-top:10px; color:var(--text)
-    }
-    .summary .row{display:flex;justify-content:space-between;margin:6px 0;font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1, 'lnum' 1;}
+    .summary{width:min(420px, 96%);text-align:left;background:#101c38;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px;margin-top:10px;color:var(--text)}
+    .summary .row{display:flex;justify-content:space-between;margin:6px 0;font-variant-numeric:tabular-nums;font-feature-settings:'tnum' 1,'lnum' 1}
     .summary small{color:var(--muted)}
 
     .waitlist-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(5,7,18,.72);backdrop-filter:blur(8px);z-index:70;padding:18px}
@@ -282,7 +188,7 @@
     .close-x{background:transparent;border:none;color:#aaa;font-weight:900;cursor:pointer;float:right}
 
     .otp-card{width:min(520px,96vw);background:linear-gradient(180deg,#101a33,#0b1426);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:18px;box-shadow:var(--shadow);text-align:center}
-    .otp-input { text-align: center; font-size: 1.5rem; letter-spacing: 0.5em; font-family: monospace; }
+    .otp-input{ text-align:center;font-size:1.5rem;letter-spacing:.5em;font-family:monospace}
 
     .success-card{width:min(560px,96vw);background:linear-gradient(180deg,#0f1726,#0b1422);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px;box-shadow:var(--shadow);text-align:center}
     .success-badge{display:inline-block;background:linear-gradient(90deg,var(--accent4),var(--accent1));color:#07121f;border-radius:999px;padding:6px 10px;font-weight:900;margin-bottom:8px}
@@ -299,7 +205,7 @@
 
     footer{padding:40px 18px;text-align:center;color:var(--muted);border-top:1px solid rgba(255,255,255,.06)}
 
-    @media (prefers-reduced-motion: reduce){ * { animation: none !important; transition: none !important } .bg-aurora{display:none} }
+    @media (prefers-reduced-motion: reduce){ *{animation:none !important;transition:none !important} .bg-aurora{display:none} }
   </style>
 </head>
 <body>
@@ -313,7 +219,10 @@
           <svg class="brandmark" width="34" height="34" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs><linearGradient id="mk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2DE2E6"/><stop offset=".55" stop-color="#8A2BE2"/><stop offset="1" stop-color="#FF4D8D"/></linearGradient></defs>
             <g stroke="url(#mk)" stroke-linecap="round" stroke-width="6"><line x1="36" y1="22" x2="36" y2="106"/><line x1="64" y1="14" x2="64" y2="114"/><line x1="92" y1="30" x2="92" y2="104"/></g>
-            <rect x="28" y="48" width="16" height="30" rx="4" fill="url(#mk)"/><rect x="56" y="40" width="16" height="44" rx="4" fill="url(#mk)"/><rect x="84" y="58" width="16" height="26" rx="4" fill="url(#mk)"/><path d="M26 20 L46 30 L26 40 Z" fill="#FFC857" opacity="0.95"/>
+            <rect x="28" y="48" width="16" height="30" rx="4" fill="url(#mk)"/>
+            <rect x="56" y="40" width="16" height="44" rx="4" fill="url(#mk)"/>
+            <rect x="84" y="58" width="16" height="26" rx="4" fill="url(#mk)"/>
+            <path d="M26 20 L46 30 L26 40 Z" fill="#FFC857" opacity="0.95"/>
           </svg>
         </div>
         <div class="wordmark">FracShr</div>
@@ -346,7 +255,8 @@
     <div class="ticker-container">
       <div class="tradingview-widget-container">
         <div class="tradingview-widget-container__widget"></div>
-        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+        <!-- Include a nonce to keep CSP happy, even though it's an external script -->
+        <script nonce="fs2025" type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
         {
           "symbols": [
             { "proName": "FOREXCOM:SPXUSD", "title": "S&P 500" },
@@ -523,8 +433,8 @@
     <div style="font-size:.9rem">© <span id="year"></span> FracShr. All rights reserved. Market data by <a href="https://www.tradingview.com/" target="_blank" rel="noopener" style="color:var(--muted)">TradingView</a>.</div>
   </footer>
 
-  <!-- DEMO GAME MODAL -->
-  <div class="demo-modal" id="demoModal" aria-hidden="true" aria-modal="true" role="dialog" aria-label="FracShr Demo Game">
+  <!-- MODALS (no aria-hidden here to avoid the console warning) -->
+  <div class="demo-modal" id="demoModal" role="dialog" aria-modal="true" aria-label="FracShr Demo Game">
     <div class="phone" role="document">
       <div class="notch" aria-hidden="true"></div>
       <div class="demo-head">
@@ -581,7 +491,8 @@
           <button class="coach-toggle" id="coachToggle" aria-expanded="false" aria-controls="coachBox">Show Coach</button>
         </div>
         <div class="qty">
-          <input type="number" id="qtyInput" value="100" min="1" step="1" /><div style="display:flex;gap:6px"><button class="btn btn-outline" id="resetDemo">Reset</button></div>
+          <input type="number" id="qtyInput" value="100" min="1" step="1" />
+          <div style="display:flex;gap:6px"><button class="btn btn-outline" id="resetDemo">Reset</button></div>
         </div>
         <div class="trade-controls">
           <div class="action-wrap"><button class="btn btn-buy btn-disabled" id="buyBtn">Buy</button><div class="hint" id="hintBuy">Tap Buy to open</div></div>
@@ -608,14 +519,14 @@
           <div class="row"><small>Impact</small><strong id="sumImpact">+ $11 move × 100 shares = +$1,100</strong></div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px">
-          <button class="btn" id="openWaitlistFromComplete">Register Interest</button><button class="btn btn-outline" id="closeDemoFromComplete">Close</button>
+          <button class="btn" id="openWaitlistFromComplete">Register Interest</button>
+          <button class="btn btn-outline" id="closeDemoFromComplete">Close</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Waitlist / OTP / Success Modals -->
-  <div class="waitlist-modal" id="waitlistModal" aria-hidden="true" aria-modal="true" role="dialog" aria-label="Register your interest">
+  <div class="waitlist-modal" id="waitlistModal" role="dialog" aria-modal="true" aria-label="Register your interest">
     <div class="waitlist-card">
       <button class="close-x" id="closeWaitlist" aria-label="Close">✕</button>
       <h3 class="section-title" style="margin:0 0 8px">Be First In — iOS & Android Launch</h3>
@@ -626,19 +537,19 @@
     </div>
   </div>
 
-  <div class="waitlist-modal" id="otpModal" aria-hidden="true" aria-modal="true" role="dialog" aria-label="Verify your email">
+  <div class="waitlist-modal" id="otpModal" role="dialog" aria-modal="true" aria-label="Verify your email">
     <div class="otp-card">
       <button class="close-x" id="closeOtp" aria-label="Close">✕</button>
       <h3 class="section-title" style="margin:0 0 8px">Verify your email</h3>
       <p class="muted" style="margin:0 0 10px">We’ve sent a 6‑digit code. Enter it to confirm your spot.</p>
       <div class="waitlist-row" style="grid-template-columns:1fr auto"><input id="otpEmail" class="input" type="email" placeholder="you@example.com" autocomplete="email" /><button class="btn" id="sendOtpBtn">Resend</button></div>
-      <div class="waitlist-row" style="grid-template-columns:1fr auto; margin-top:10px"><input id="otpCode" class="input otp-input" type="text" inputmode="numeric" maxlength="6" placeholder="______" /><button class="btn btn-big" id="verifyOtpBtn">Verify</button></div>
+      <div class="waitlist-row" style="grid-template-columns:1fr auto;margin-top:10px"><input id="otpCode" class="input otp-input" type="text" inputmode="numeric" maxlength="6" placeholder="______" /><button class="btn btn-big" id="verifyOtpBtn">Verify</button></div>
       <div class="muted" id="otpStatus" style="margin-top:10px;font-size:.9rem">Code expires in 5 minutes.</div>
       <div style="display:flex;gap:8px;justify-content:center;margin-top:10px"><button class="btn btn-outline" id="cancelOtpBtn">Cancel</button></div>
     </div>
   </div>
 
-  <div class="waitlist-modal" id="successModal" aria-hidden="true" aria-modal="true" role="dialog" aria-label="Welcome">
+  <div class="waitlist-modal" id="successModal" role="dialog" aria-modal="true" aria-label="Welcome">
     <div class="success-card">
       <div class="success-badge">Verified</div>
       <h3 class="section-title" style="margin:6px 0 4px">You’re on the Waitlist</h3>
@@ -672,9 +583,9 @@
     function setVH(){ document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px'); }
     setVH(); window.addEventListener('resize', setVH); window.addEventListener('orientationchange', ()=> setTimeout(setVH, 200));
     document.getElementById('year').textContent = new Date().getFullYear();
-    const validEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((v||'').trim());
     const debounce = (fn, ms)=>{ let t; return (...args)=>{ clearTimeout(t); t = setTimeout(()=> fn.apply(this,args), ms); }; };
     const nowIso = ()=> new Date().toISOString();
+    const isValidEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((v||'').trim());
 
     /* Scroll lock when modal/menu open */
     function updateBodyScrollLock(){
@@ -682,11 +593,28 @@
       const menuOpen = document.body.classList.contains('menu-open');
       document.body.classList.toggle('no-scroll', anyModalOpen || menuOpen);
     }
-    function setDialogState(el, open){
-      if(!el) return;
-      el.classList.toggle('active', open);
-      el.setAttribute('aria-hidden', open ? 'false' : 'true');
-      updateBodyScrollLock();
+
+    /* Focus-safe dialog state (no aria-hidden toggling) */
+    function setDialogState(modal, open){
+      if(!modal) return;
+      if (open){
+        modal._returnFocusEl = document.activeElement && document.contains(document.activeElement) ? document.activeElement : null;
+        modal.classList.add('active');
+        updateBodyScrollLock();
+        // focus first focusable control
+        setTimeout(()=> {
+          const first = modal.querySelector('input,button,select,textarea,[tabindex]:not([tabindex="-1"])');
+          first?.focus();
+        }, 0);
+      } else {
+        // Move focus out BEFORE hiding to avoid aria-hidden/focus warnings
+        const fallback = document.getElementById('menuBtn') || document.body;
+        if (modal.contains(document.activeElement)) {
+          (modal._returnFocusEl && document.contains(modal._returnFocusEl) ? modal._returnFocusEl : fallback).focus({preventScroll:true});
+        }
+        modal.classList.remove('active');
+        updateBodyScrollLock();
+      }
     }
 
     /* Header menu */
@@ -727,6 +655,7 @@
     const waitlistModal=document.getElementById('waitlistModal');
     const otpModal=document.getElementById('otpModal');
     const successModal=document.getElementById('successModal');
+
     function trapFocus(modal){
       function handler(e){
         if (e.key !== 'Tab') return;
@@ -741,31 +670,44 @@
       return ()=> modal.removeEventListener('keydown', handler);
     }
     let untrapWaitlist=null, untrapOtp=null, untrapSuccess=null;
-    const openWaitlist = ()=> { setDialogState(waitlistModal, true); setTimeout(()=> document.getElementById('waitlistEmail')?.focus(), 0); untrapWaitlist = trapFocus(waitlistModal); };
+    const openWaitlist = (ev)=> { setDialogState(waitlistModal, true); untrapWaitlist = trapFocus(waitlistModal); };
     const closeWaitlist = ()=> { setDialogState(waitlistModal, false); if(untrapWaitlist){ untrapWaitlist(); untrapWaitlist=null; } };
-    const openOtp = ()=> { setDialogState(otpModal, true); setTimeout(()=> document.getElementById('otpEmail')?.focus(), 0); untrapOtp = trapFocus(otpModal); };
+    const openOtp = ()=> { setDialogState(otpModal, true); untrapOtp = trapFocus(otpModal); };
     const closeOtp = ()=> { setDialogState(otpModal, false); if(untrapOtp){ untrapOtp(); untrapOtp=null; } };
-    const openSuccess = ()=> { setDialogState(successModal, true); setTimeout(()=> document.getElementById('successClose')?.focus(), 0); untrapSuccess = trapFocus(successModal); };
+    const openSuccess = ()=> { setDialogState(successModal, true); untrapSuccess = trapFocus(successModal); };
     const closeSuccess = ()=> { setDialogState(successModal, false); if(untrapSuccess){ untrapSuccess(); untrapSuccess=null; } };
 
     /* OTP + Web3Forms */
     let OTP_STATE = { email:null, code:null, expires:0, resendAt:0, source:'Unknown' };
-    const wlStatus = document.getElementById('wlStatus'); const otpEmailEl = document.getElementById('otpEmail'); const otpCodeEl = document.getElementById('otpCode'); const otpStatus = document.getElementById('otpStatus');
-    async function sendEmailJS(to, subject, message, templateVars={}){ const payload = { service_id: CFG.emailjs.serviceId, template_id: CFG.emailjs.templateId, user_id: CFG.emailjs.publicKey, template_params: { to_email: to, subject, message, otp: templateVars.otp || '', site_name: CFG.brand } }; const res = await fetch(CFG.emailjs.endpoint, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(payload) }); if(!res.ok) throw new Error('EmailJS REST failed: ' + res.status); return res.text(); }
-    function generateCode(){ return String(Math.floor(100000 + Math.random()*900000)); }
+    const wlStatus = document.getElementById('wlStatus');
+    const otpEmailEl = document.getElementById('otpEmail');
+    const otpCodeEl = document.getElementById('otpCode');
+    const otpStatus = document.getElementById('otpStatus');
+
+    async function sendEmailJS(to, subject, message, templateVars={}) {
+      const payload = {
+        service_id: CFG.emailjs.serviceId,
+        template_id: CFG.emailjs.templateId,
+        user_id: CFG.emailjs.publicKey,
+        template_params: { to_email: to, subject, message, otp: templateVars.otp || '', site_name: CFG.brand }
+      };
+      const res = await fetch(CFG.emailjs.endpoint, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(payload) });
+      if(!res.ok) throw new Error('EmailJS REST failed: ' + res.status);
+      return res.text();
+    }
+    const generateCode = ()=> String(Math.floor(100000 + Math.random()*900000));
 
     function beginWaitlist(inputId, source, hpId){
       const el = document.getElementById(inputId);
       const email = (el?.value||'').trim();
       const hp = (document.getElementById(hpId)?.value||'').trim();
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      if (!isValidEmail(email)) {
         el?.focus(); if (el) { el.style.borderColor='#FF4D8D'; setTimeout(()=> el.style.borderColor='rgba(255,255,255,.1)', 1500); }
-        wlStatus.textContent = 'Please enter a valid email.';
-        return;
+        wlStatus.textContent = 'Please enter a valid email.'; return;
       }
       if (hp) { closeWaitlist(); return; }
       OTP_STATE.source = source||'Waitlist';
-      document.getElementById('otpEmail').value = email;
+      otpEmailEl.value = email;
       closeWaitlist();
       openOtp();
       sendOTP(true);
@@ -773,7 +715,7 @@
 
     async function sendOTP(auto=false){
       const email = (otpEmailEl.value||'').trim();
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      if (!isValidEmail(email)) {
         otpEmailEl.focus(); otpEmailEl.style.borderColor = '#FF4D8D'; setTimeout(()=> otpEmailEl.style.borderColor='rgba(255,255,255,.1)', 1500);
         return;
       }
@@ -791,13 +733,9 @@
       otpStatus.textContent = 'Sending code...';
       const minutes = Math.round(CFG.otp.expiryMs/60000);
       const subject = `${CFG.brand} verification code: ${code}`;
-      const text = `Hello ${email}\n\nYour one-time verification code for ${CFG.brand} is: ${code}.\nThis code expires in ${minutes} minutes. If you didn’t request this, ignore this email.\n\n— ${CFG.brand} Team`;
-      try{
-        await sendEmailJS(email, subject, text, { otp: code });
-        otpStatus.textContent = `OTP sent to ${email}. Code valid for ${minutes} minutes.`;
-      }catch(err){
-        otpStatus.textContent = 'Could not send OTP. Please try again later.';
-      }
+      const text = `Hello ${email}\n\nYour one-time verification code for ${CFG.brand} is: ${code}.\nThis code expires in ${minutes} minutes.\n\n— ${CFG.brand} Team`;
+      try{ await sendEmailJS(email, subject, text, { otp: code }); otpStatus.textContent = `OTP sent to ${email}. Code valid for ${minutes} minutes.`; }
+      catch(err){ otpStatus.textContent = 'Could not send OTP. Please try again later.'; }
     }
 
     async function verifyOTP(){
@@ -1110,6 +1048,15 @@
     // Cross-Modal Buttons
     document.getElementById('openWaitlistFromComplete')?.addEventListener('click', () => { demoGame.close(); openWaitlist(); });
     document.getElementById('successPlayDemo')?.addEventListener('click', () => { closeSuccess(); demoGame.open(); });
+
+    // ESC key to close topmost modal
+    document.addEventListener('keydown', (e)=>{
+      if(e.key !== 'Escape') return;
+      if (document.getElementById('successModal')?.classList.contains('active')) closeSuccess();
+      else if (document.getElementById('otpModal')?.classList.contains('active')) closeOtp();
+      else if (document.getElementById('waitlistModal')?.classList.contains('active')) closeWaitlist();
+      else if (document.getElementById('demoModal')?.classList.contains('active')) demoGame.close();
+    });
   </script>
 
   <noscript>
