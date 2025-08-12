@@ -10,7 +10,19 @@
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <link rel="canonical" href="https://fracshr.com/" />
 
-  <!-- Security headers (meta form) -->
+  <!--
+    NOTE ON SECURITY HEADERS:
+    The 'frame-ancestors' directive was removed from the meta tag below because it is not
+    supported in this context and causes a console error. To prevent your site from being
+    iframed (clickjacking protection), you must send this directive as an HTTP header
+    from your server.
+
+    Example HTTP Header:
+    Content-Security-Policy: frame-ancestors 'none';
+
+    This is the most secure way to implement it. The 'X-Frame-Options: DENY' header
+    also works, but the CSP directive is the modern standard.
+  -->
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self' https:;
     script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://api.emailjs.com;
@@ -18,9 +30,8 @@
     img-src 'self' data: https:;
     font-src 'self' https://fonts.gstatic.com;
     connect-src 'self' https://api.web3forms.com https://api.emailjs.com;
-    frame-ancestors 'none';
     base-uri 'self';
-    form-action 'self' https://api/web3forms.com;
+    form-action 'self' https://api.web3forms.com;
     upgrade-insecure-requests;
     block-all-mixed-content">
   <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin" />
@@ -296,7 +307,7 @@
       <a class="brand" href="/" aria-label="FracShr home">
         <div class="logo" aria-hidden="true">
           <div class="halo"></div>
-          <svg width="34" height="34" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <svg width="34" height="34" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
             <defs>
               <linearGradient id="gStroke" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0" stop-color="#2DE2E6"/><stop offset=".5" stop-color="#8A2BE2"/><stop offset="1" stop-color="#FF4D8D"/>
