@@ -11,44 +11,39 @@
   <link rel="canonical" href="https://fracshr.com/" />
 
   <!--
-    NOTE ON SECURITY HEADERS:
-    The 'frame-ancestors' directive was removed from the meta tag below because it is not
-    supported in this context and causes a console error. To prevent your site from being
-    iframed (clickjacking protection), you must send this directive as an HTTP header
-    from your server.
-
-    Example HTTP Header:
-    Content-Security-Policy: frame-ancestors 'none';
-
-    This is the most secure way to implement it. The 'X-Frame-Options: DENY' header
-    also works, but the CSP directive is the modern standard.
+    Security notes for your server/CDN (HTTP response headers):
+    - To prevent embedding: Content-Security-Policy: frame-ancestors 'none'
+    - Add: Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+    - Add: X-Content-Type-Options: nosniff
+    - Add: Cross-Origin-Opener-Policy: same-origin
+    - Add: Permissions-Policy: geolocation=(), microphone=(), camera=()
   -->
+
+  <!-- CSP via meta (for static hosting like GitHub Pages). Nonce must match the inline script below. -->
   <meta http-equiv="Content-Security-Policy" content="
-    default-src 'self' https:;
-    script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://api.emailjs.com;
+    default-src 'self';
+    script-src 'self' 'nonce-fs2025';
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     img-src 'self' data: https:;
-    font-src 'self' https://fonts.gstatic.com;
+    font-src https://fonts.gstatic.com;
     connect-src 'self' https://api.web3forms.com https://api.emailjs.com;
+    object-src 'none';
+    frame-src 'none';
     base-uri 'self';
-    form-action 'self' https://api.web3forms.com;
+    form-action 'self' https://api/web3forms.com;
     upgrade-insecure-requests;
     block-all-mixed-content">
-  <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin" />
-  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()" />
 
-  <!-- Favicon (inline SVG) -->
-  <link rel="icon" href='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="%232DE2E6"/><stop offset=".6" stop-color="%238A2BE2"/><stop offset="1" stop-color="%23FF4D8D"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="%230f1624"/><path d="M32 6 L54 18 L54 46 L32 58 L10 46 L10 18 Z" fill="none" stroke="url(%23g)" stroke-width="4" stroke-linejoin="round"/></svg>'>
+  <!-- Favicon (inline SVG) — trading candles + play triangle -->
+  <link rel="icon" href='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="%230f1624"/><stop offset="1" stop-color="%230a0d12"/></linearGradient><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="%232DE2E6"/><stop offset=".5" stop-color="%238A2BE2"/><stop offset="1" stop-color="%23FF4D8D"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="url(%23bg)"/><g stroke="url(%23g)" stroke-width="3" stroke-linecap="round"><line x1="18" y1="16" x2="18" y2="48"/><rect x="14" y="26" width="8" height="14" rx="2" fill="url(%23g)" stroke="none"/><line x1="32" y1="12" x2="32" y2="52"/><rect x="28" y="24" width="8" height="20" rx="2" fill="url(%23g)" stroke="none"/><line x1="46" y1="20" x2="46" y2="50"/><rect x="42" y="30" width="8" height="12" rx="2" fill="url(%23g)" stroke="none"/></g><path d="M50 10 L58 14 L50 18 Z" fill="%23FFC857"/></svg>'>
 
-  <!-- DNS hints -->
-  <link rel="dns-prefetch" href="//fonts.googleapis.com">
-  <link rel="dns-prefetch" href="//fonts.gstatic.com">
-  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
-  <link rel="dns-prefetch" href="//api.web3forms.com">
-  <link rel="dns-prefetch" href="//api.emailjs.com">
+  <!-- DNS / connection hints (HTTPS only) -->
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+  <link rel="dns-prefetch" href="https://api.web3forms.com">
+  <link rel="dns-prefetch" href="https://api.emailjs.com">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="preconnect" href="https://api.web3forms.com">
   <link rel="preconnect" href="https://api.emailjs.com">
 
@@ -107,6 +102,9 @@
       background:linear-gradient(90deg,#fff,#b7f7ff 60%,#fff);-webkit-background-clip:text;background-clip:text;color:transparent;
       display:inline-block;
     }
+    /* New inline logo SVG: candles + play */
+    .nav svg.brandmark{display:block}
+
     .menu-btn{display:none;min-width:44px;min-height:44px;line-height:1;background:transparent;border:2px solid rgba(255,255,255,.18);color:var(--text);border-radius:12px;padding:8px 12px;font-weight:800;font-size:20px}
     .nav-links{display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:center}
     .nav-links a{color:var(--muted);text-decoration:none;font-weight:700}
@@ -178,60 +176,66 @@
       position:relative;display:flex;flex-direction:column;
       isolation:isolate;
     }
-    .notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:42%;height:26px;background:#0a0f24;border-radius:14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
-    .demo-head{padding:48px 12px 10px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(138,43,226,.18),transparent 60%);border-bottom:1px solid rgba(255,255,255,.06)}
+    .notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:42%;height:22px;background:#0a0f24;border-radius:14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+    .demo-head{padding:38px 12px 10px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(138,43,226,.18),transparent 60%);border-bottom:1px solid rgba(255,255,255,.06)}
     .demo-title{font-weight:800;letter-spacing:.2px}
     .demo-close{background:transparent;border:none;color:var(--muted);font-weight:800;cursor:pointer}
 
     .demo-body{
       padding:10px;display:grid;gap:10px;
+      /* Compacted layout gives charts more space */
       grid-template-rows:auto auto 1fr auto auto auto;
       min-height:0;overflow:auto;position:relative;z-index:1;
     }
     .asset-card{
       display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;
-      background:#121f3d;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:12px
+      background:#121f3d;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:10px
     }
     .asset-name{font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .asset-price{font-weight:900;font-size:1.1rem;color:var(--up); text-align:right; font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "lnum" 1;}
-    .badge{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:999px;background:rgba(45,226,230,.16);color:#bfeff3;font-size:.75rem;font-weight:800;border:1px solid rgba(45,226,230,.35)}
+    .asset-price{font-weight:900;font-size:1.05rem;color:var(--up); text-align:right; font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "lnum" 1;}
+    .badge{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:999px;background:rgba(45,226,230,.16);color:#bfeff3;font-size:.72rem;font-weight:800;border:1px solid rgba(45,226,230,.35)}
     .hidden{display:none !important;}
 
-    .statbar{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .statbar{display:grid;grid-template-columns:1fr 1fr;gap:8px}
     @media (max-width:420px){ .statbar{grid-template-columns:1fr} }
-    .stat{background:#121f3d;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px;font-size:.92rem}
+    .stat{background:#121f3d;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:8px;font-size:.9rem}
     .stat .row{display:flex;justify-content:space-between;align-items:baseline}
     .stat .row strong{font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "lnum" 1;}
 
     .chartWrap{display:grid;gap:8px;min-height:0;position:relative;z-index:1}
-    .chartCard{background:#0e1b38;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:8px;min-height:0;position:relative;z-index:1}
+    .chartCard{background:#0e1b38;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:6px;min-height:0;position:relative;z-index:1}
     #priceCanvas,#rsiCanvas{width:100%;display:block}
-    #priceCanvas{height:clamp(160px, 34vh, 260px)}
-    #rsiCanvas{height:clamp(90px, 18vh, 130px)}
-    .legend{display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:.85rem;color:var(--muted)}
+    /* Taller charts by default for better visibility */
+    #priceCanvas{height:clamp(180px, 40vh, 280px)}
+    #rsiCanvas{height:clamp(100px, 22vh, 150px)}
+    .legend{display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:.8rem;color:var(--muted)}
     .legend .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
-    @media (max-height:650px){ .legend{display:none} }
+    @media (max-height:700px){ .legend{display:none} }
 
-    /* Coach with avatar */
+    /* Coach — compact and collapsible */
     .coach{
-      display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;
+      display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;
       background:#0c1a34;border:1px solid rgba(255,255,255,.18);
-      border-radius:14px;padding:10px;color:#e9f7ff;box-shadow:var(--shadow);
+      border-radius:14px;padding:8px;color:#e9f7ff;box-shadow:var(--shadow);
       position:relative;z-index:5;
     }
     .coach-avatar{
-      width:46px;height:46px;border-radius:50%;overflow:hidden;
+      width:40px;height:40px;border-radius:50%;overflow:hidden;
       background:radial-gradient(100% 100% at 30% 30%, #1b2333 0%, #0f1624 60%, #0c121a 100%);
       border:1px solid rgba(255,255,255,.18);
       box-shadow:0 6px 18px rgba(0,0,0,.35), inset 0 0 0 2px rgba(255,255,255,.06);
       flex:0 0 auto;
     }
     .coach-avatar svg{display:block;width:100%;height:100%}
-    .coach-title{font-size:.8rem;font-weight:900;letter-spacing:.5px;color:#9fd0ff;text-transform:uppercase}
+    .coach-title{font-size:.78rem;font-weight:900;letter-spacing:.5px;color:#9fd0ff;text-transform:uppercase}
     .coach-msg{font-size:.95rem;line-height:1.35}
+    .coach-toggle{background:transparent;border:2px solid rgba(255,255,255,.2);color:#cfe8ff;border-radius:10px;padding:6px 10px;font-weight:900;cursor:pointer}
+    .coach.collapsed .coach-msg{display:none}
+    .coach.collapsed{padding:6px}
+    @media (max-height:760px){ .coach{padding:6px} .coach-msg{font-size:.9rem} }
 
     .qty{display:grid;grid-template-columns:1fr auto;gap:8px;background:#121f3d;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:8px;align-items:center;position:relative;z-index:5}
-    .qty input{width:100%;background:transparent;border:none;color:#fff;font-weight:900;font-size:1.1rem;outline:none}
+    .qty input{width:100%;background:transparent;border:none;color:#fff;font-weight:900;font-size:1.05rem;outline:none}
     .trade-controls{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center;z-index:6}
     .action-wrap{position:relative}
     .btn-buy{background:linear-gradient(90deg,var(--up),var(--accent4));color:#07121f}
@@ -307,20 +311,25 @@
       <a class="brand" href="/" aria-label="FracShr home">
         <div class="logo" aria-hidden="true">
           <div class="halo"></div>
-          <svg width="34" height="34" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
+          <!-- New brand mark: candles + play triangle -->
+          <svg class="brandmark" width="34" height="34" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs>
-              <linearGradient id="gStroke" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#2DE2E6"/><stop offset=".5" stop-color="#8A2BE2"/><stop offset="1" stop-color="#FF4D8D"/>
-              </linearGradient>
-              <linearGradient id="gFill" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0" stop-color="#2DE2E6"/><stop offset="1" stop-color="#8A2BE2"/>
+              <linearGradient id="mk" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#2DE2E6"/><stop offset=".55" stop-color="#8A2BE2"/><stop offset="1" stop-color="#FF4D8D"/>
               </linearGradient>
             </defs>
-            <path d="M55 6 L96 30 L96 80 L55 104 L14 80 L14 30 Z" fill="none" stroke="url(#gStroke)" stroke-width="6" stroke-linejoin="round"/>
-            <path d="M34 34 H68 M34 54 H58 M34 34 V78" stroke="url(#gStroke)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M72 38 C60 30, 48 38, 48 46 C48 54, 76 54, 76 64 C76 74, 60 78, 48 70" fill="none" stroke="url(#gStroke)" stroke-width="6" stroke-linecap="round"/>
-            <rect x="50" y="24" width="6" height="16" rx="3" fill="url(#gFill)"/>
-            <rect x="50" y="72" width="6" height="14" rx="3" fill="url(#gFill)"/>
+            <!-- Candle wicks -->
+            <g stroke="url(#mk)" stroke-linecap="round" stroke-width="6">
+              <line x1="36" y1="22" x2="36" y2="106"/>
+              <line x1="64" y1="14" x2="64" y2="114"/>
+              <line x1="92" y1="30" x2="92" y2="104"/>
+            </g>
+            <!-- Candle bodies -->
+            <rect x="28" y="48" width="16" height="30" rx="4" fill="url(#mk)"/>
+            <rect x="56" y="40" width="16" height="44" rx="4" fill="url(#mk)"/>
+            <rect x="84" y="58" width="16" height="26" rx="4" fill="url(#mk)"/>
+            <!-- Play triangle accent -->
+            <path d="M26 20 L46 30 L26 40 Z" fill="#FFC857" opacity="0.95"/>
           </svg>
         </div>
         <div class="wordmark">FracShr</div>
@@ -519,7 +528,7 @@
   </footer>
 
   <!-- DEMO GAME MODAL -->
-  <div class="demo-modal" id="demoModal" aria-hidden="true" role="dialog" aria-label="FracShr Demo Game">
+  <div class="demo-modal" id="demoModal" aria-hidden="true" aria-modal="true" role="dialog" aria-label="FracShr Demo Game">
     <div class="phone" role="document">
       <div class="notch" aria-hidden="true"></div>
       <div class="demo-head">
@@ -566,8 +575,8 @@
           </div>
         </div>
 
-        <!-- Coach with avatar -->
-        <div class="coach" id="coachBox" role="region" aria-labelledby="coachTitle">
+        <!-- Coach with avatar (collapsible) -->
+        <div class="coach collapsed" id="coachBox" role="region" aria-labelledby="coachTitle">
           <div class="coach-avatar" aria-hidden="true">
             <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
               <defs>
@@ -579,7 +588,7 @@
               <circle cx="50" cy="56" r="26" fill="url(#skin)"/>
               <path d="M20 45c6-16 24-26 44-18 8 3 14 9 16 18-4-4-9-6-14-7-9-3-19-2-28 2-6 2-12 4-18 5z" fill="#2E2B45"/>
               <circle cx="40" cy="54" r="3.5" fill="#1b2233"/>
-              <circle cx="60" cy="54" r="3.5" fill="#1b2233"/>
+              <circle cx="60" cy="54" r="3.5" fill "#1b2233"/>
               <path d="M42 66c4 4 12 4 16 0" stroke="#C76F8D" stroke-width="3" stroke-linecap="round" fill="none"/>
               <rect x="34" y="73" width="32" height="12" rx="6" fill="#2DE2E6" opacity=".15"/>
             </svg>
@@ -588,6 +597,7 @@
             <div class="coach-title" id="coachTitle">Coach Ava</div>
             <div class="coach-msg" id="coachMsg" aria-live="polite">Welcome! We’ll guide you to a quick win. Tap Next to begin.</div>
           </div>
+          <button class="coach-toggle" id="coachToggle" aria-expanded="false" aria-controls="coachBox">Show Coach</button>
         </div>
 
         <div class="qty">
@@ -643,7 +653,7 @@
   </div>
 
   <!-- WAITLIST MODAL -->
-  <div class="waitlist-modal" id="waitlistModal" role="dialog" aria-label="Register your interest">
+  <div class="waitlist-modal" id="waitlistModal" aria-hidden="true" aria-modal="true" role="dialog" aria-label="Register your interest">
     <div class="waitlist-card">
       <button class="close-x" id="closeWaitlist" aria-label="Close">✕</button>
       <h3 class="section-title" style="margin:0 0 8px">Be First In — iOS & Android Launch</h3>
@@ -659,7 +669,7 @@
   </div>
 
   <!-- OTP MODAL -->
-  <div class="waitlist-modal" id="otpModal" role="dialog" aria-label="Verify your email">
+  <div class="waitlist-modal" id="otpModal" aria-hidden="true" aria-modal="true" role="dialog" aria-label="Verify your email">
     <div class="otp-card">
       <button class="close-x" id="closeOtp" aria-label="Close">✕</button>
       <h3 class="section-title" style="margin:0 0 8px">Verify your email</h3>
@@ -684,7 +694,7 @@
   </div>
 
   <!-- SUCCESS MODAL -->
-  <div class="waitlist-modal" id="successModal" role="dialog" aria-label="Welcome">
+  <div class="waitlist-modal" id="successModal" aria-hidden="true" aria-modal="true" role="dialog" aria-label="Welcome">
     <div class="success-card">
       <div class="success-badge">Verified</div>
       <h3 class="section-title" style="margin:6px 0 4px">Welcome to the Trading Revolution</h3>
@@ -717,10 +727,7 @@
     <input type="text" id="hp_field_sticky" class="hidden" tabindex="-1" aria-hidden="true" autocomplete="off" />
   </div>
 
-  <!-- EmailJS (pinned version) -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3.11.0/dist/email.min.js" defer></script>
-
-  <script>
+  <script nonce="fs2025">
     /* CENTRAL CONFIG */
     const CFG = {
       brand: 'FracShr',
@@ -730,11 +737,12 @@
       },
       otp: { required: true, expiryMs: 5 * 60 * 1000, resendMs: 45 * 1000 },
       emailjs: {
-        publicKey: '6BWuApUnhyOgHXQ5q',
+        publicKey: '6BWuApUnhyOgHXQ5q', // used as user_id in REST
         serviceId: 'service_63pnjrq',
         templateId: 'template_hi01far',
         sendThanks: false,
-        thanksDelayMs: 400
+        thanksDelayMs: 400,
+        endpoint: 'https://api.emailjs.com/api/v1.0/email/send'
       },
       emailBodies: {
         otp: {
@@ -768,6 +776,23 @@
     const debounce = (fn, ms)=>{ let t; return (...args)=>{ clearTimeout(t); t = setTimeout(()=> fn.apply(this,args), ms); }; };
     function nowIso(){ return new Date().toISOString(); }
 
+    /* Manage scroll lock when any modal/menu is open */
+    function updateBodyScrollLock(){
+      const anyModalOpen = ['waitlistModal','otpModal','successModal','demoModal'].some(id=>{
+        const el = document.getElementById(id); return el && el.classList.contains('active');
+      });
+      const menuOpen = document.body.classList.contains('menu-open');
+      document.body.classList.toggle('no-scroll', anyModalOpen || menuOpen);
+    }
+
+    /* A11y: toggle aria-hidden for dialogs */
+    function setDialogState(el, open){
+      if(!el) return;
+      el.classList.toggle('active', open);
+      el.setAttribute('aria-hidden', open ? 'false' : 'true');
+      updateBodyScrollLock();
+    }
+
     /* Header menu */
     const menuBtn = document.getElementById('menuBtn');
     const navLinks = document.getElementById('navLinks');
@@ -776,12 +801,14 @@
       navLinks.classList.toggle('open', open);
       menuBtn.setAttribute('aria-expanded', open?'true':'false');
       document.body.classList.toggle('menu-open', open);
+      updateBodyScrollLock();
     });
     navLinks?.addEventListener('click', (e)=>{
       if(e.target.closest('a,button')){
         navLinks.classList.remove('open');
         document.body.classList.remove('menu-open');
         menuBtn.setAttribute('aria-expanded','false');
+        updateBodyScrollLock();
       }
     });
     window.addEventListener('resize', ()=>{
@@ -789,6 +816,7 @@
         navLinks?.classList.remove('open');
         document.body.classList.remove('menu-open');
         menuBtn?.setAttribute('aria-expanded','false');
+        updateBodyScrollLock();
       }
     });
 
@@ -854,12 +882,12 @@
       return ()=> modal.removeEventListener('keydown', handler);
     }
     let untrapWaitlist=null, untrapOtp=null, untrapSuccess=null;
-    const openWaitlist = ()=> { waitlistModal.classList.add('active'); setTimeout(()=> document.getElementById('waitlistEmail')?.focus(), 0); untrapWaitlist = trapFocus(waitlistModal); };
-    const closeWaitlist = ()=> { waitlistModal.classList.remove('active'); if(untrapWaitlist){ untrapWaitlist(); untrapWaitlist=null; } };
-    const openOtp = ()=> { otpModal.classList.add('active'); setTimeout(()=> document.getElementById('otpEmail')?.focus(), 0); untrapOtp = trapFocus(otpModal); };
-    const closeOtp = ()=> { otpModal.classList.remove('active'); if(untrapOtp){ untrapOtp(); untrapOtp=null; } };
-    const openSuccess = ()=> { successModal.classList.add('active'); setTimeout(()=> document.getElementById('successClose')?.focus(), 0); untrapSuccess = trapFocus(successModal); };
-    const closeSuccess = ()=> { successModal.classList.remove('active'); if(untrapSuccess){ untrapSuccess(); untrapSuccess=null; } };
+    const openWaitlist = ()=> { setDialogState(waitlistModal, true); setTimeout(()=> document.getElementById('waitlistEmail')?.focus(), 0); untrapWaitlist = trapFocus(waitlistModal); };
+    const closeWaitlist = ()=> { setDialogState(waitlistModal, false); if(untrapWaitlist){ untrapWaitlist(); untrapWaitlist=null; } };
+    const openOtp = ()=> { setDialogState(otpModal, true); setTimeout(()=> document.getElementById('otpEmail')?.focus(), 0); untrapOtp = trapFocus(otpModal); };
+    const closeOtp = ()=> { setDialogState(otpModal, false); if(untrapOtp){ untrapOtp(); untrapOtp=null; } };
+    const openSuccess = ()=> { setDialogState(successModal, true); setTimeout(()=> document.getElementById('successClose')?.focus(), 0); untrapSuccess = trapFocus(successModal); };
+    const closeSuccess = ()=> { setDialogState(successModal, false); if(untrapSuccess){ untrapSuccess(); untrapSuccess=null; } };
     document.getElementById('closeWaitlist')?.addEventListener('click', closeWaitlist);
     document.getElementById('closeOtp')?.addEventListener('click', closeOtp);
     document.getElementById('cancelOtpBtn')?.addEventListener('click', closeOtp);
@@ -876,15 +904,6 @@
     const sendOtpBtn = document.getElementById('sendOtpBtn');
     const resendOtpBtn = document.getElementById('resendOtpBtn');
     const verifyOtpBtn = document.getElementById('verifyOtpBtn');
-
-    let emailjsRetry = 0;
-    const EMAILJS_RETRY_MAX = 8;
-    function ensureEmailJSInit(){
-      if (window.emailjs && CFG.emailjs.publicKey) {
-        try { emailjs.init(CFG.emailjs.publicKey); } catch(e){}
-      }
-    }
-    window.addEventListener('load', ensureEmailJSInit);
 
     function beginWaitlist(inputId, source, hpId='hp_field'){
       const el = document.getElementById(inputId);
@@ -909,22 +928,31 @@
     }
     function generateCode(){ return String(Math.floor(100000 + Math.random()*900000)); }
 
-    async function sendEmailJS(to, subject, message, extraVars={}){ ensureEmailJSInit(); return emailjs.send(CFG.emailjs.serviceId, CFG.emailjs.templateId, { to_email: to, subject, message, otp: extraVars.otp || '', site_name: CFG.brand }); }
+    async function sendEmailJS(to, subject, message, extraVars={}){
+      const payload = {
+        service_id: CFG.emailjs.serviceId,
+        template_id: CFG.emailjs.templateId,
+        user_id: CFG.emailjs.publicKey,
+        template_params: {
+          to_email: to,
+          subject,
+          message,
+          otp: extraVars.otp || '',
+          site_name: CFG.brand
+        }
+      };
+      const res = await fetch(CFG.emailjs.endpoint, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error('EmailJS REST failed');
+      return res.text();
+    }
 
     async function sendOTP(auto=false){
       const email = (otpEmailEl.value||'').trim();
       if (!validEmail(email)) { otpEmailEl.focus(); otpEmailEl.style.borderColor = '#FF4D8D'; setTimeout(()=> otpEmailEl.style.borderColor='rgba(255,255,255,.1)', 1500); return; }
-      if (!window.emailjs) {
-        if (emailjsRetry < EMAILJS_RETRY_MAX) {
-          emailjsRetry++;
-          otpStatus.textContent = 'Preparing email service...';
-          setTimeout(()=> sendOTP(auto), 600);
-        } else {
-          otpStatus.textContent = 'Email service unavailable. Please try again later.';
-        }
-        return;
-      }
-      emailjsRetry = 0;
       const now = Date.now();
       if (!auto && now < OTP_STATE.resendAt) {
         const secs = Math.ceil((OTP_STATE.resendAt - now)/1000);
@@ -956,7 +984,7 @@
       const email = OTP_STATE.email;
       closeOtp();
       await submitWeb3Forms(email, OTP_STATE.source);
-      if (CFG.emailjs.sendThanks && window.emailjs) {
+      if (CFG.emailjs.sendThanks) {
         setTimeout(async ()=>{
           const subject = templ(CFG.emailBodies.thanks.subject, { brand: CFG.brand, email });
           const text = templ(CFG.emailBodies.thanks.text, { brand: CFG.brand, email });
@@ -1022,7 +1050,7 @@
       }
     });
 
-    /* DEMO GAME — optimized to avoid leaks; coach/hints always above charts */
+    /* DEMO GAME — optimized layout; coach collapsible; charts larger */
     const demoModal=document.getElementById('demoModal');
     const playDemoButtons=['playDemoTop','playDemoHero','playDemoCard','playDemoLevels','playDemoChallenges']
       .map(id=>document.getElementById(id)).filter(Boolean);
@@ -1047,15 +1075,13 @@
     const hintBuy = document.getElementById('hintBuy');
     const hintSell = document.getElementById('hintSell');
     const hintNext = document.getElementById('hintNext');
+    const coachBox = document.getElementById('coachBox');
+    const coachToggle = document.getElementById('coachToggle');
 
     let demoState=null;
     let guideTimer=null; // setTimeout id for guided rise
     let idleRaf=null; // requestAnimationFrame id
     let idleTimeout=null; // setTimeout id
-    let actions=[];
-    const priceCanvas=document.getElementById('priceCanvas');
-    const rsiCanvas=document.getElementById('rsiCanvas');
-    let pctx, rctx, dpr, ro;
     let bars=[];
     const MAX_BARS=80;
     let demoOpen=false;
@@ -1068,14 +1094,18 @@
       sma20: css.getPropertyValue('--accent1').trim() || '#2DE2E6'
     };
 
-    function openDemo(){ demoOpen=true; demoModal.classList.add('active'); initDemo(); startIdle(); }
-    function closeDemo(){ demoOpen=false; demoModal.classList.remove('active'); stopIdle(); stopGuide(); if(ro){ try{ ro.disconnect(); }catch(e){} ro=null; } clearHints(); }
+    function openDemo(){
+      demoOpen=true; setDialogState(demoModal, true); initDemo(); startIdle();
+      // Default collapse coach on shorter screens
+      setCoachCollapsed(window.innerHeight < 780);
+    }
+    function closeDemo(){ demoOpen=false; setDialogState(demoModal, false); stopIdle(); stopGuide(); if(ro){ try{ ro.disconnect(); }catch(e){} ro=null; } clearHints(); }
+
     resetDemoBtn?.addEventListener('click', ()=> { stopIdle(); stopGuide(); initDemo(); startIdle(); });
 
     function initDemo(){
       stopGuide();
       levelComplete.classList.remove('active');
-      actions=[];
       demoState={
         step:0, marketPrice:100.00, useLockedPrice:false, lockedPrice:null,
         cash:10000.00, holdings:0, avgPrice:0, realizedPnL:0, goal:11000.00,
@@ -1088,6 +1118,10 @@
       clearHints(); hintNext.classList.add('show');
       setupCanvases(); generateInitialBars(); drawAll(); updateUI();
     }
+
+    let pctx, rctx, dpr, ro;
+    const priceCanvas=document.getElementById('priceCanvas');
+    const rsiCanvas=document.getElementById('rsiCanvas');
 
     function setupCanvases(){
       dpr=window.devicePixelRatio||1; pctx=priceCanvas.getContext('2d'); rctx=rsiCanvas.getContext('2d');
@@ -1229,6 +1263,14 @@
     function showCoach(t){ coachMsg.textContent=t; }
     function clearHints(){ [hintBuy, hintSell, hintNext].forEach(h=> h.classList.remove('show')); [buyBtn,sellBtn,nextBtn].forEach(b=> b.classList.remove('suggested')); }
 
+    // Coach collapse/expand
+    function setCoachCollapsed(collapsed){
+      coachBox.classList.toggle('collapsed', collapsed);
+      coachToggle.setAttribute('aria-expanded', (!collapsed).toString());
+      coachToggle.textContent = collapsed ? 'Show Coach' : 'Hide Coach';
+    }
+    coachToggle?.addEventListener('click', ()=> setCoachCollapsed(!coachBox.classList.contains('collapsed')));
+
     nextBtn?.addEventListener('click', ()=>{
       switch(demoState.step){
         case 0:
@@ -1319,7 +1361,7 @@
       const final = demoState.cash + demoState.holdings*getUsedPrice();
       const profit = final - start;
       const roi = (profit / start) * 100;
-      const barsHeld = (demoState.sellIndex!=null && demoState.buyIndex!=null) ? (demoState.sellIndex - demoState.buyIndex) : 12;
+      const barsHeld = 12;
       const beat = final - demoState.goal;
       document.getElementById('sumStart').textContent = '$' + start.toFixed(2);
       document.getElementById('sumFinal').textContent = '$' + final.toFixed(2);
